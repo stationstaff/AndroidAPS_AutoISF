@@ -19,15 +19,15 @@ However, it is important to start with well-tested basal rate and settings for i
   [Bjr](https://github.com/blaqone) and [myself](https://github.com/T-o-b-i-a-s).
 * This repository here was created to provide a stable version of AndroidAPS with the current autoISF extensions
   already integrated to simplify the build process.
-* This branch https://github.com/T-o-b-i-a-s/AndroidAPS/tree/3.2.0.4-ai3.0.1-fewVersionReminders uses
+* This branch https://github.com/T-o-b-i-a-s/AndroidAPS/tree/3.2.0.4-ai3.0.1-noVersionCheck uses
   AndroidAPS 3.2.0.4 (which was the `master` version on the official [Nightscout AndroidAPS]
   (https://github.com/nightscout/AndroidAPS)
   repo before 3.3 was released) as a base and adds autoISF 3.0.1 to it.
 
-## What's new in AutoISF Version 3.0.1-fewVersionReminders when compared to 3.0
+## What's new in AutoISF Version 3.0.1-noVersionCheck when compared to 3.0
 * Reduced and simplified number of autoISF settings
 * Support for 1-minute glucose values from Freestyle Libre 3
-* Notification messages that the a new AndroidAPS 3.3.x version is available are only shown every 150 days
+* Check for new versions and blocked signatures disabled
 
 ## Why was autoISF not added to the current AndroidAPS version 3.3.x? 
 * With AndroidAPS 3.3 many parts of the application have been refactored in Kotlin
@@ -47,7 +47,7 @@ However, it is important to start with well-tested basal rate and settings for i
 * Usually this will be `master`, which contains an out-dated version of AndroidAPS, do **not** use the `master` branch
 * If it is not already selected, switch to the branch you want to build by clicking on the branch name,
   choosing "show more" under "Remote branches" and look for the name of
-  the branch with an "origin/" prefix: e.g. `origin/3.2.0.4-ai3.0.1-fewVersionReminders`. Left-click that name and
+  the branch with an "origin/" prefix: e.g. `origin/3.2.0.4-ai3.0.1-noVersionCheck`. Left-click that name and
   select "Checkout". The following screenshot shows how this will look like in Win 10 Android Studio (a different branch was used here):
   ![Branch selection](Branch_selection_sample.png)
 6. The system will now create a local branch with the same name as the remote branch and switch to that branch, which is indicated by the name of
