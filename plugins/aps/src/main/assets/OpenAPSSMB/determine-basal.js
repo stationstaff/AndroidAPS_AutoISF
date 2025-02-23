@@ -111,6 +111,18 @@ function enable_smb(
 }
 
 function loop_smb(microBolusAllowed, profile, iob_data, useIobTh, iobThEffective) {
+    var iobThUser = profile.iob_threshold_percent;
+    if ( useIobTh ) {
+        var iobThPercent = round(iobThEffective/profile.max_iob*100.0, 0);
+        if ( iobThPercent == iobThUser ) {
+            console.error("User setting iobTH="+iobThUser+"% not modulated");
+        } else {
+            console.error("User setting iobTH="+iobThUser+"% modulated to "+round(iobThPercent,2)+"% or "+round(iobThEffective,2)+"U") ;
+            console.error("  due to profile %, exercise mode or similar");
+        }
+    } else {
+        console.error("User setting iobTH=100% disables iobTH method")
+    }
     if ( !microBolusAllowed ) {
         return "AAPS";                                                  // see message in enable_smb
     }
@@ -135,18 +147,7 @@ function loop_smb(microBolusAllowed, profile, iob_data, useIobTh, iobThEffective
         } else {
             msgEven    = "odd";
         }
-        var iobThUser = profile.iob_threshold_percent;
-        if ( useIobTh ) {
-            var iobThPercent = round(iobThEffective/profile.max_iob*100.0, 0);
-            if ( iobThPercent == iobThUser ) {
-                console.error("User setting iobTH="+iobThUser+"% not modulated");
-            } else {
-                console.error("User setting iobTH="+iobThUser+"% modulated to "+round(iobThPercent,2)+"% or "+round(iobThEffective,2)+"U") ;
-                console.error("  due to profile %, exercise mode or similar");
-            }
-        } else {
-            console.error("User setting iobTH=100% disables iobTH method")
-        }
+
         if ( !evenTarget ) {
             console.error("SMB disabled; current target " +target +msgUnits +msgEven +msgTail);
             console.error("Loop allows minimal power");
