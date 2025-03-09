@@ -13,7 +13,7 @@
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <maxFileSize>5MB</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 30 days' worth of history -->
+            <!-- keep 100 days' worth of history -->
             <maxHistory>100</maxHistory>
         </rollingPolicy>
         <encoder>
