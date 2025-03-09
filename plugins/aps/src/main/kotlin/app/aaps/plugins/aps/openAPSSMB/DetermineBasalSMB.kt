@@ -218,9 +218,9 @@ class DetermineBasalSMB @Inject constructor(
         var max_bg = profile.max_bg
 
         // Activity detection (steps)
-        consoleError.add("----------------------------------");
-        consoleError.add("Activity detection: ");
-        consoleError.add("----------------------------------");
+        consoleError.add("----------------------------------")
+        consoleError.add("Activity detection: ")
+        consoleError.add("----------------------------------")
 
         val activityDetection = profile.activity_detection
         var stepActivityDetected = false
@@ -235,46 +235,46 @@ class DetermineBasalSMB @Inject constructor(
         val now = profile.now
         val timeSinceStart = profile.time_since_start
 
-        if ( !activityDetection ) {
-            consoleError.add("Activity detection disabled in the settings. ");
+        if ( !activityDetection!!) {
+            consoleError.add("Activity detection disabled in the settings. ")
         } else if ( profile.temptargetSet) {
-            consoleError.add("Activity detection disabled: tempTarget. ");
-        } else if (!phoneMoved) {
-            consoleError.add("Activity detection disabled: Phone seems not to be carried for the last 15 m. ");
+            consoleError.add("Activity detection disabled: tempTarget. ")
+        } else if (!phoneMoved!!) {
+            consoleError.add("Activity detection disabled: Phone seems not to be carried for the last 15 m. ")
         } else {
-            consoleError.add("0-5 m ago: "+recentSteps5Minutes+" steps; ");
-            consoleError.add("5-10 m ago: "+recentSteps10Minutes+" steps; ");
-            consoleError.add("10-15 m ago: "+recentSteps15Minutes+" steps; ");
-            consoleError.add("Last 30 m: "+recentSteps30Minutes+" steps; ");
-            consoleError.add("Last 60 m: "+recentSteps60Minutes+" steps; ");
-            if ( timeSinceStart < 60 && recentSteps60Minutes <= 200 ) {
+            consoleError.add("0-5 m ago: "+recentSteps5Minutes+" steps; ")
+            consoleError.add("5-10 m ago: "+recentSteps10Minutes+" steps; ")
+            consoleError.add("10-15 m ago: "+recentSteps15Minutes+" steps; ")
+            consoleError.add("Last 30 m: "+recentSteps30Minutes+" steps; ")
+            consoleError.add("Last 60 m: "+recentSteps60Minutes+" steps; ")
+            if ( timeSinceStart!! < 60 && recentSteps60Minutes!! <= 200 ) {
                 consoleError.add("Activity monitor initialising for ${(60-timeSinceStart)} more minutes: inactivity detection disabled")
-            } else if ( (now < 8 || now >= 22) && recentSteps60Minutes <= 200 ) {
+            } else if ( (now!! < 8 || now >= 22) && recentSteps60Minutes!! <= 200 ) {
                 consoleError.add("Activity monitor disabled inactivity detection: sleeping hours")
-            } else if ( recentSteps5Minutes > 300 || recentSteps10Minutes > 300  || recentSteps15Minutes > 300  || recentSteps30Minutes > 1500 || recentSteps60Minutes > 2500 ) {
-                stepActivityDetected = true;
-                activityRatio = 0.7;
-                consoleError.add("-> Activity monitor detected activity, sensitivity ratio: " + activityRatio);
+            } else if ( recentSteps5Minutes!! > 300 || recentSteps10Minutes!! > 300  || recentSteps15Minutes!! > 300  || recentSteps30Minutes!! > 1500 || recentSteps60Minutes!! > 2500 ) {
+                stepActivityDetected = true
+                activityRatio = 0.7
+                consoleError.add("-> Activity monitor detected activity, sensitivity ratio: " + activityRatio)
             } else if ( recentSteps5Minutes > 200 || recentSteps10Minutes > 200  || recentSteps15Minutes > 200
                 || recentSteps30Minutes > 500 || recentSteps60Minutes > 800 ) {
-                stepActivityDetected = true;
-                activityRatio = 0.85;
-                consoleError.add("-> Activity monitor detected partial activity, sensitivity ratio: " + activityRatio);
+                stepActivityDetected = true
+                activityRatio = 0.85
+                consoleError.add("-> Activity monitor detected partial activity, sensitivity ratio: " + activityRatio)
             } else if ( bg < target_bg && recentSteps60Minutes <= 200 ) {
-                consoleError.add("Activity monitor disabled inactivity detection: : bg < target");
+                consoleError.add("Activity monitor disabled inactivity detection: : bg < target")
             } else if ( recentSteps60Minutes < 50 ) {
-                stepInactivityDetected = true;
-                activityRatio = 1.2;
-                consoleError.add("-> Activity monitor detected inactivity, sensitivity ratio: " + activityRatio);
+                stepInactivityDetected = true
+                activityRatio = 1.2
+                consoleError.add("-> Activity monitor detected inactivity, sensitivity ratio: " + activityRatio)
             } else if ( recentSteps60Minutes <= 200 ) {
-                stepInactivityDetected = true;
-                activityRatio = 1.1;
-                consoleError.add("-> Activity monitor detected partial inactivity, sensitivity ratio: " + activityRatio);
+                stepInactivityDetected = true
+                activityRatio = 1.1
+                consoleError.add("-> Activity monitor detected partial inactivity, sensitivity ratio: " + activityRatio)
             } else {
-                consoleError.add("-> Activity monitor detected neutral state, sensitivity ratio unchanged: " + activityRatio);
+                consoleError.add("-> Activity monitor detected neutral state, sensitivity ratio unchanged: " + activityRatio)
             }
         }
-        consoleError.add("----------------------------------");
+        consoleError.add("----------------------------------")
 
         var sensitivityRatio: Double
         val high_temptarget_raises_sensitivity = profile.exercise_mode || profile.high_temptarget_raises_sensitivity
