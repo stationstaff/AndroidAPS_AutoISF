@@ -57,6 +57,20 @@
                         tools:ignore="HardcodedText" />
                 </androidx.cardview.widget.CardView>
 
+                <ImageView
+                    android:id="@+id/exercise_mode_checkbox_icon"
+                    android:layout_width="48dp"
+                    android:layout_height="match_parent"
+                    android:padding="2dp"
+                    android:layout_marginStart="2dp"
+                    android:layout_marginEnd="2dp"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:layout_weight="0"
+                    android:contentDescription="Enable exercise mode"
+                    app:srcCompat="@drawable/ic_cp_activity_inactive"
+                    tools:ignore="HardcodedText"
+                    android:background="@color/ribbonDefault" />
+
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
