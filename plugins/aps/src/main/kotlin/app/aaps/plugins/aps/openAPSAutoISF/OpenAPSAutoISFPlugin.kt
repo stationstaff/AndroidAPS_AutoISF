@@ -640,7 +640,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         } else if ( isTempTarget ) {
             consoleLog.add("Activity monitor disabled: tempTarget")
             } else if ( !phoneMoved ) {
-                consoleError.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
+                consoleLog.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
         } else {
             if ( time_since_start < 60 && recentSteps60Minutes <= 200 ) {
                 consoleLog.add("Activity monitor initialising for ${60-time_since_start} more minutes: inactivity detection disabled")
@@ -961,22 +961,32 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         }
         var finalISF = 1.0
         var originSensFinal = origin_sens
-        if (exerciseModeActive) {
-            finalISF = liftISFlimited * sensitivityRatio
-            originSensFinal = "including exercise mode impact"
-        } else if ( resistanceModeActive ) {
-            finalISF = liftISFlimited * sensitivityRatio                  //# on top of TT modification
-            originSensFinal = "including resistance mode impact"
-        } else if ( stepActivityDetected || stepInactivityDetected ) {
-            finalISF = liftISFlimited * sensitivityRatio                  //# on top of activity detection
-            originSensFinal  = "including (in-)activity detection impact"
-        } else if (liftISFlimited >= 1) {
-            finalISF = max(liftISFlimited, sensitivityRatio)
-            originSensFinal = if (liftISFlimited >= sensitivityRatio) "" else "from low TT modifier"
-        } else {
-            finalISF = min(liftISFlimited, sensitivityRatio)
-            if (liftISFlimited <= sensitivityRatio) {
-                originSensFinal = ""                                        // low TT lowers sensitivity dominates
+        when {
+            exerciseModeActive          -> {
+                finalISF = liftISFlimited * sensitivityRatio                  //# on top of TT modification
+                originSensFinal = "including exercise mode impact"
+            }
+            resistanceModeActive        -> {
+                finalISF = liftISFlimited * sensitivityRatio                  //# on top of TT modification
+                originSensFinal = "including resistance mode impact"
+            }
+            stepActivityDetected        -> {
+                finalISF = liftISFlimited * sensitivityRatio                  //# on top of activity detection
+                originSensFinal  = "including activity detection impact"
+            }
+            stepInactivityDetected      -> {
+                finalISF = liftISFlimited * sensitivityRatio                  //# on top of activity detection
+                originSensFinal  = "including inactivity detection impact"
+            }
+            liftISFlimited >= 1         -> {
+                finalISF = max(liftISFlimited, sensitivityRatio)
+                originSensFinal = if (liftISFlimited >= sensitivityRatio) "" else "from low TT modifier"
+            }
+            else                        -> {
+                finalISF = min(liftISFlimited, sensitivityRatio)
+                if (liftISFlimited <= sensitivityRatio) {
+                    originSensFinal = ""                                        // low TT lowers sensitivity dominates
+                }
             }
         }
         consoleError.add("final ISF factor is ${round(finalISF, 2)} " + originSensFinal)
