@@ -57,19 +57,28 @@
                         tools:ignore="HardcodedText" />
                 </androidx.cardview.widget.CardView>
 
-                <ImageView
-                    android:id="@+id/exercise_mode_checkbox_icon"
+                <androidx.cardview.widget.CardView
                     android:layout_width="48dp"
                     android:layout_height="match_parent"
-                    android:padding="2dp"
-                    android:layout_marginStart="2dp"
-                    android:layout_marginEnd="2dp"
-                    android:gravity="center_vertical|center_horizontal"
                     android:layout_weight="0"
-                    android:contentDescription="Enable exercise mode"
-                    app:srcCompat="@drawable/ic_cp_activity_inactive"
-                    tools:ignore="HardcodedText"
-                    android:background="@color/ribbonDefault" />
+                    android:layout_marginEnd="4dp"
+                    app:cardCornerRadius="4dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/exercise_mode_checkbox_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="2dp"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginEnd="0dp"
+                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_weight="1"
+                        android:contentDescription="Enable exercise mode"
+                        app:srcCompat="@drawable/ic_cp_activity_inactive"
+                        tools:ignore="HardcodedText"
+                        android:background="@color/ribbonDefault" />
+                </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="wrap_content"
