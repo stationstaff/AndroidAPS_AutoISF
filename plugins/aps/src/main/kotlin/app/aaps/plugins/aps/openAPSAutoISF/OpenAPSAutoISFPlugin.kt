@@ -639,8 +639,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             consoleLog.add("Activity monitor disabled in settings")
         } else if ( isTempTarget ) {
             consoleLog.add("Activity monitor disabled: tempTarget")
-            } else if ( !phoneMoved ) {
-                consoleLog.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
+        } else if ( !phoneMoved ) {
+            consoleLog.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
         } else {
             if ( time_since_start < 60 && recentSteps60Minutes <= 200 ) {
                 consoleLog.add("Activity monitor initialising for ${60-time_since_start} more minutes: inactivity detection disabled")
@@ -819,7 +819,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 liftISF = bg_ISF * acce_ISF                                 // bg_ISF could become > 1 now
                 consoleError.add("bg_ISF adaptation lifted to ${round(liftISF, 2)} as bg accelerates already")
             }
-            final_ISF = withinISFlimits(liftISF, autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, isTempTarget, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
+            final_ISF = withinISFlimits(liftISF, autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
             return min(720.0, round(sens / final_ISF, 1))         // observe ISF maximum of 720(?)
         } else if (bg_ISF > 1.0) {
             sens_modified = true
@@ -872,7 +872,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 consoleError.add("strongest autoISF factor ${round(liftISF, 2)} weakened to ${round(liftISF * acce_ISF, 2)} as bg decelerates already")
                 liftISF = liftISF * acce_ISF
             }
-            final_ISF = withinISFlimits(liftISF, autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, isTempTarget, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
+            final_ISF = withinISFlimits(liftISF, autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
             return round(sens / final_ISF, 1)
         }
         consoleError.add("----------------------------------")
@@ -948,7 +948,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     }
 
     fun withinISFlimits(
-        liftISF: Double, minISFReduction: Double, maxISFReduction: Double, sensitivityRatio: Double, origin_sens: String, temptargetSet: Boolean,
+        liftISF: Double, minISFReduction: Double, maxISFReduction: Double, sensitivityRatio: Double, origin_sens: String,
         exerciseModeActive: Boolean, resistanceModeActive: Boolean, stepActivityDetected:Boolean, stepInactivityDetected: Boolean
     ): Double {
         var liftISFlimited: Double = liftISF
