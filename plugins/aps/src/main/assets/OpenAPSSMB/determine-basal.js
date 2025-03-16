@@ -245,7 +245,7 @@ function interpolate(xdata, profile)    //, type)
     return newVal;
 }
 
-function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityRatio, origin_sens, profile, high_temptarget_raises_sensitivity, target_bg, normalTarget, stepActivityDetected, stepInactivityDetected)
+function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
 {   // extracted 17.Mar.2022
     if ( liftISF < minISFReduction ) {
         console.error("weakest autoISF factor", round(liftISF,2), "limited by autoISF_min", minISFReduction);
@@ -255,9 +255,12 @@ function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityR
         liftISF = maxISFReduction;
     }
     var final_ISF = 1;
-    if ( high_temptarget_raises_sensitivity && profile.temptargetSet && target_bg > normalTarget ) {
+    if ( exerciseModeActive ) {
         final_ISF = liftISF * sensitivityRatio ;                 //# on top of TT modification
         origin_sens = "including exercise mode impact";
+    } else if ( resistanceModeActive ) {
+        final_ISF = liftISF * sensitivityRatio ;                 //# on top of activity detection
+        origin_sens = "including (in-)activity detection impact";
     } else if ( stepActivityDetected || stepInactivityDetected ) {
         final_ISF = liftISF * sensitivityRatio ;                 //# on top of activity detection
         origin_sens = "including (in-)activity detection impact";
@@ -280,7 +283,7 @@ function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityR
 }
 
 function autoISF(sens, origin_sens, target_bg, profile, glucose_status, meal_data, currentTime,
-autosens_data, sensitivityRatio, loop_wanted_smb, high_temptarget_raises_sensitivity, normalTarget, stepActivityDetected, stepInactivityDetected)
+autosens_data, sensitivityRatio, loop_wanted_smb, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
 {   if ( !profile.enable_autoISF ) {
         console.error("autoISF disabled in Preferences");
         console.error("----------------------------------");
@@ -352,7 +355,7 @@ autosens_data, sensitivityRatio, loop_wanted_smb, high_temptarget_raises_sensiti
              liftISF = bg_ISF * acce_ISF;                                 // bg_ISF could become > 1 now
              console.error("bg_ISF adaptation lifted to", round(liftISF,2), "as bg accelerates already");
         }
-        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, high_temptarget_raises_sensitivity, target_bg, normalTarget, stepActivityDetected, stepInactivityDetected);
+        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
         return Math.min(720, round(profile.sens / final_ISF, 1));         // observe ISF maximum of 720(?)
     } else if ( bg_ISF > 1 ) {
         sens_modified = true;
@@ -392,7 +395,7 @@ autosens_data, sensitivityRatio, loop_wanted_smb, high_temptarget_raises_sensiti
             console.error("strongest autoISF factor", round(liftISF,2), "weakened to", round(liftISF*acce_ISF,2), "as bg decelerates already");
             liftISF = liftISF * acce_ISF;                                                               // brakes on for otherwise stronger or stable ISF
         }                                                                                               // brakes on for otherwise stronger or stable ISF
-        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, high_temptarget_raises_sensitivity, target_bg, normalTarget, stepActivityDetected, stepInactivityDetected);
+        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
         return round(profile.sens / final_ISF, 1);
     }
     console.error("----------------------------------");
@@ -584,9 +587,9 @@ var determine_basal = function determine_basal(glucose_status, currenttemp, iob_
     if (activityRatio<1)        { stepActivityDetected = true}
     else if (activityRatio>1)   { stepInactivityDetected = true}
 
-    var sensitivityRatio;
+    var sensitivityRatio = 1.0;
     var origin_sens = "";
-    var high_temptarget_raises_sensitivity = profile.exercise_mode || profile.high_temptarget_raises_sensitivity;
+
     if ( profile.full_basal_exercise_target && profile.exercise_mode ) {
         var fullBasalTarget = profile.full_basal_exercise_target;
     } else {
@@ -601,29 +604,35 @@ var determine_basal = function determine_basal(glucose_status, currenttemp, iob_
         // 80 mg/dL with low_temptarget_lowers_sensitivity would give 1.5x basal, but is limited to autosens_max (1.2x by default)
     }
     var exercise_ratio = 1;
-    if ( high_temptarget_raises_sensitivity && profile.temptargetSet && target_bg > normalTarget
-        || profile.low_temptarget_lowers_sensitivity && profile.temptargetSet && target_bg < normalTarget
-        || stepActivityDetected || stepInactivityDetected ) {
-        if ( high_temptarget_raises_sensitivity && profile.temptargetSet && target_bg > normalTarget
-            || profile.low_temptarget_lowers_sensitivity && profile.temptargetSet && target_bg < normalTarget ) {
+
+    var exerciseModeActive = (profile.exercise_mode || profile.high_temptarget_raises_sensitivity) && profile.temptargetSet && target_bg > normalTarget
+    var resistanceModeActive = profile.low_temptarget_lowers_sensitivity && profile.temptargetSet && target_bg < normalTarget
+    //var high_temptarget_raises_sensitivity = profile.exercise_mode || profile.high_temptarget_raises_sensitivity
+    // when temptarget is 160 mg/dL, run 50% basal (120 = 75%; 140 = 60%),  80 mg/dL with low_temptarget_lowers_sensitivity would give 1.5x basal, but is limited to autosens_max (1.2x by default)
+
+
+    if ( exerciseModeActive || resistanceModeActive || stepActivityDetected || stepInactivityDetected ) {
+        if ( exerciseModeActive || resistanceModeActive ) {
             // w/ target 100, temp target 110 = .89, 120 = 0.8, 140 = 0.67, 160 = .57, and 200 = .44
             // e.g.: Sensitivity ratio set to 0.8 based on temp target of 120; Adjusting basal from 1.65 to 1.35; ISF from 58.9 to 73.6
             //sensitivityRatio = 2/(2+(target_bg-normalTarget)/40);
+            var resistanceMax = Math.min(1.5, profile.autosens_max)  // additional safety limit
             var c = halfBasalTarget - normalTarget;
             // getting multiplication less or equal to 0 means that we have a really low target with a really low halfBasalTarget
             // with low TT and lowTTlowersSensitivity we need autosens_max as a value
             // we use multiplication instead of the division to avoid "division by zero error"
             if (c * (c + target_bg-normalTarget) <= 0.0) {
-                // limit sensitivityRatio to profile.autosens_max (1.2x by default)
-                sensitivityRatio = profile.autosens_max;
+                sensitivityRatio = resistanceMax;
+                origin_sens = "from resistance max limit";
             } else {
                 sensitivityRatio = c/(c+target_bg-normalTarget);
+                // limit sensitivityRatio to profile.autosens_max (1.2x by default)
+                sensitivityRatio = Math.min(sensitivityRatio, resistanceMax);
+                sensitivityRatio = round(sensitivityRatio,2);
+                exercise_ratio = sensitivityRatio;
+                origin_sens = "from TT modifier";
+                console.log("Sensitivity ratio set to "+sensitivityRatio+" based on temp target of "+target_bg);
             }
-            sensitivityRatio = Math.min(sensitivityRatio, profile.autosens_max);
-            sensitivityRatio = round(sensitivityRatio,2);
-            exercise_ratio = sensitivityRatio;
-            origin_sens = "from TT modifier";
-            console.log("Sensitivity ratio set to "+sensitivityRatio+" based on temp target of "+target_bg);
         } else if ( stepActivityDetected ) {
             sensitivityRatio = activityRatio;
             origin_sens = "from activity detection";
@@ -733,7 +742,7 @@ var determine_basal = function determine_basal(glucose_status, currenttemp, iob_
         );
     }
 
-    sens = autoISF(sens, origin_sens, target_bg, profile, glucose_status, meal_data, currentTime, autosens_data, sensitivityRatio, loop_wanted_smb, high_temptarget_raises_sensitivity, normalTarget, stepActivityDetected, stepInactivityDetected);
+    sens = autoISF(sens, origin_sens, target_bg, profile, glucose_status, meal_data, currentTime, autosens_data, sensitivityRatio, loop_wanted_smb, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
     // compare currenttemp to iob_data.lastTemp and cancel temp if they don't match
     var lastTempAge;
     if (typeof iob_data.lastTemp !== 'undefined' ) {
