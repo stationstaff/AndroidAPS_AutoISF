@@ -245,7 +245,7 @@ function interpolate(xdata, profile)    //, type)
     return newVal;
 }
 
-function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
+function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityRatio, origin_sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)
 {   // extracted 17.Mar.2022
     if ( liftISF < minISFReduction ) {
         console.error("weakest autoISF factor", round(liftISF,2), "limited by autoISF_min", minISFReduction);
@@ -260,10 +260,14 @@ function withinISFlimits(liftISF, minISFReduction, maxISFReduction, sensitivityR
         origin_sens = "including exercise mode impact";
     } else if ( resistanceModeActive ) {
         final_ISF = liftISF * sensitivityRatio ;                 //# on top of activity detection
-        origin_sens = "including (in-)activity detection impact";
+        origin_sens = "including resistance mode impact";
     } else if ( stepActivityDetected || stepInactivityDetected ) {
         final_ISF = liftISF * sensitivityRatio ;                 //# on top of activity detection
-        origin_sens = "including (in-)activity detection impact";
+        if ( stepActivityDetected ) {
+            origin_sens = "including activity detection impact";
+        } else {
+            origin_sens = "including inactivity detection impact";
+        }
     } else if ( liftISF >= 1 ) {
         final_ISF = Math.max(liftISF, sensitivityRatio);
         if (liftISF >= sensitivityRatio) {
@@ -355,7 +359,7 @@ autosens_data, sensitivityRatio, loop_wanted_smb, exerciseModeActive, resistance
              liftISF = bg_ISF * acce_ISF;                                 // bg_ISF could become > 1 now
              console.error("bg_ISF adaptation lifted to", round(liftISF,2), "as bg accelerates already");
         }
-        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
+        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
         return Math.min(720, round(profile.sens / final_ISF, 1));         // observe ISF maximum of 720(?)
     } else if ( bg_ISF > 1 ) {
         sens_modified = true;
@@ -395,7 +399,7 @@ autosens_data, sensitivityRatio, loop_wanted_smb, exerciseModeActive, resistance
             console.error("strongest autoISF factor", round(liftISF,2), "weakened to", round(liftISF*acce_ISF,2), "as bg decelerates already");
             liftISF = liftISF * acce_ISF;                                                               // brakes on for otherwise stronger or stable ISF
         }                                                                                               // brakes on for otherwise stronger or stable ISF
-        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, profile, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
+        final_ISF = withinISFlimits(liftISF, profile.autoISF_min, maxISFReduction, sensitivityRatio, origin_sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected);
         return round(profile.sens / final_ISF, 1);
     }
     console.error("----------------------------------");
