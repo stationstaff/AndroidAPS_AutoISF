@@ -672,8 +672,12 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             }
         }
         preferences.put(DoubleKey.ActivityMonitorRatio, activityRatio)
-        aapsLogger.debug(LTag.APS, "Activity Monitor found steps 5m:$recentSteps5Minutes, 10m:$recentSteps10Minutes, 15m:$recentSteps15Minutes, 30m:$recentSteps30Minutes, 60m:$recentSteps60Minutes, activityRatio:$activityRatio")
-        aapsLogger.debug(LTag.APS, "Activity Monitor used phoneMoved:$phoneMoved, lastAppStart:$lastAppStart, activityDetection:$activityDetection, ignoreSleep:$ignore_inactivity_overnight, sleepStart:$inactivity_idle_start, sleepEnd:$inactivity_idle_end")
+        var activityMsg = "Activity Monitor json: {\"activity_scale_factor\":$activity_scale_factor,\"inactivity_scale_factor\":$inactivity_scale_factor"
+        activityMsg += ",\"recentSteps5Minutes\":$recentSteps5Minutes,\"recentSteps10Minutes\":$recentSteps10Minutes,\"recentSteps15Minutes\":$recentSteps15Minutes"
+        activityMsg += ",\"recentSteps30Minutes\":$recentSteps30Minutes,\"recentSteps60Minutes\":$recentSteps60Minutes"
+        activityMsg += ",\"phoneMoved\":$phoneMoved,\"lastAppStart\":$lastAppStart,\"activityDetection\":$activityDetection"
+        activityMsg += ",\"ignoreSleep\":$ignore_inactivity_overnight,\"sleepStart\":$inactivity_idle_start,\"sleepEnd:\":$inactivity_idle_end}"
+        aapsLogger.debug(LTag.APS, activityMsg)
         return activityRatio
     }
 
