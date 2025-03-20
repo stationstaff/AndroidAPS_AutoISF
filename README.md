@@ -24,13 +24,13 @@ However, it is important to start with well-tested basal rate and settings for i
   (https://github.com/nightscout/AndroidAPS)
   repo before 3.3 was released) as a base and adds autoISF 3.0.3 to it.
 
-## What's new in AutoISF Version 3.0.3-noVersionCheck when compared to 3.0
+## What's new in AutoISF Version 3.0.3-noVersionCheck when compared to AutoISF 3.0
 * Reduced and simplified number of autoISF settings
 * Support for 1-minute glucose values from Freestyle Libre 3
 * Check for new versions and blocked signatures disabled
 * Always report iobTH settings in SMB autoISF log
+* Fix resistance mode (opposite of exercise mode, i.e. low TT lowers resistance) activation
 * Limit resistance mode to 1.5 as safety setting
-* Fix resistance mode activation
 
 ## Why was autoISF not added to the current AndroidAPS version 3.3.x? 
 * With AndroidAPS 3.3 many parts of the application have been refactored in Kotlin
