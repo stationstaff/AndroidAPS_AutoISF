@@ -675,8 +675,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         var activityMsg = "Activity Monitor json: {\"activity_scale_factor\":$activity_scale_factor,\"inactivity_scale_factor\":$inactivity_scale_factor"
         activityMsg += ",\"recentSteps5Minutes\":$recentSteps5Minutes,\"recentSteps10Minutes\":$recentSteps10Minutes,\"recentSteps15Minutes\":$recentSteps15Minutes"
         activityMsg += ",\"recentSteps30Minutes\":$recentSteps30Minutes,\"recentSteps60Minutes\":$recentSteps60Minutes"
-        activityMsg += ",\"phoneMoved\":$phoneMoved,\"lastAppStart\":$lastAppStart,\"activityDetection\":$activityDetection"
-        activityMsg += ",\"ignoreSleep\":$ignore_inactivity_overnight,\"sleepStart\":$inactivity_idle_start,\"sleepEnd:\":$inactivity_idle_end}"
+        activityMsg += ",\"phone_moved\":$phoneMoved,\"time_since_start\":$lastAppStart,\"activity_detection\":$activityDetection"
+        activityMsg += ",\"ignore_inactivity_overnight\":$ignore_inactivity_overnight,\"inactivity_idle_start\":$inactivity_idle_start,\"inactivity_idle_end\":$inactivity_idle_end}"
         aapsLogger.debug(LTag.APS, activityMsg)
         return activityRatio
     }
