@@ -260,11 +260,13 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         binding.exerciseModeCheckboxIcon.setOnClickListener {
             if (preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)) {
                 binding.exerciseModeCheckboxIcon.setImageResource(app.aaps.core.objects.R.drawable.ic_cp_activity_inactive)
-                binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonDefault)
+                //binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonDefault)
+                binding.exerciseModeCheckboxIcon.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.ribbonDefaultColor))
                 preferences.put(BooleanKey.ApsAutoIsfHighTtRaisesSens, false)
             } else {
                 binding.exerciseModeCheckboxIcon.setImageResource(app.aaps.core.objects.R.drawable.ic_cp_activity_active)
-                binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonWarning)
+                //binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonWarning)
+                binding.exerciseModeCheckboxIcon.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.ribbonWarningColor))
                 preferences.put(BooleanKey.ApsAutoIsfHighTtRaisesSens, true)
             }
         }
@@ -380,10 +382,12 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         // Mod check color of exercise mode toggle icon
         if (preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)) {
             binding.exerciseModeCheckboxIcon.setImageResource(app.aaps.core.objects.R.drawable.ic_cp_activity_active)
-            binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonWarning)
+            //binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonWarning)
+            binding.exerciseModeCheckboxIcon.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.ribbonWarningColor))
         } else {
             binding.exerciseModeCheckboxIcon.setImageResource(app.aaps.core.objects.R.drawable.ic_cp_activity_inactive)
-            binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonDefault)
+            //binding.exerciseModeCheckboxIcon.setBackgroundResource(app.aaps.core.ui.R.color.ribbonDefault)
+            binding.exerciseModeCheckboxIcon.setBackgroundColor(rh.gac(context, app.aaps.core.ui.R.attr.ribbonDefaultColor))
         }
         // End mod
     }
