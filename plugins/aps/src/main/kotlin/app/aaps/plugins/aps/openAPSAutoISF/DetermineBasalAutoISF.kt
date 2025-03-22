@@ -304,7 +304,7 @@ class DetermineBasalAutoISF @Inject constructor(
         var sensitivityRatio = 1.0
         val normalTarget = 100 // evaluate high/low temptarget against 100, not scheduled target (which might change)
         // var origin_sens = ""
-        var exercise_ratio = 1.0
+        // var exercise_ratio = 1.0
         val exerciseModeActive = (profile.exercise_mode || profile.high_temptarget_raises_sensitivity) && profile.temptargetSet && target_bg > normalTarget
         val resistanceModeActive = profile.low_temptarget_lowers_sensitivity && profile.temptargetSet && target_bg < normalTarget
         //val high_temptarget_raises_sensitivity = profile.exercise_mode || profile.high_temptarget_raises_sensitivity
@@ -324,7 +324,7 @@ class DetermineBasalAutoISF @Inject constructor(
                     // limit sensitivityRatio to profile.autosens_max (1.2x by default)
                     sensitivityRatio = min(sensitivityRatio, resistanceMax)
                     sensitivityRatio = round(sensitivityRatio, 2)
-                    exercise_ratio = sensitivityRatio
+                    // exercise_ratio = sensitivityRatio
                     // origin_sens = "from TT modifier"
                     consoleError.add("Sensitivity ratio set to $sensitivityRatio based on temp target of $target_bg; ")
                 }
@@ -336,12 +336,13 @@ class DetermineBasalAutoISF @Inject constructor(
                 // origin_sens = "from inactivity detection";
             }
         } else {
+            consoleError.add("Sensitivity ratio unchanged: 1.0")
             sensitivityRatio = autosens_data.ratio
             consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
         var iobTH_reduction_ratio = 1.0
         if (iob_threshold_percent != 100) {
-            iobTH_reduction_ratio = profile_percentage / 100.0 * exercise_ratio * activityRatio
+            iobTH_reduction_ratio = profile_percentage / 100.0 * sensitivityRatio   //exercise_ratio * activityRatio
         }
         basal = profile.current_basal * sensitivityRatio
         basal = round_basal(basal)
