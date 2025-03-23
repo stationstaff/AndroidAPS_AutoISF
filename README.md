@@ -29,7 +29,7 @@ However, it is important to start with well-tested basal rate and settings for i
 * Support for 1-minute glucose values from Freestyle Libre 3
 * Check for new versions and blocked signatures disabled
 * Always report iobTH settings in SMB autoISF log
-* Fix resistance mode (opposite of exercise mode, i.e. low TT lowers resistance) activation
+* Fix resistance mode (opposite of exercise mode, i.e. low TT raises resistance or lowers sensitivity) activation
 * Limit resistance mode to 1.5 as safety setting
 
 ## Why was autoISF not added to the current AndroidAPS version 3.3.x? 
@@ -56,9 +56,11 @@ However, it is important to start with well-tested basal rate and settings for i
 6. The system will now create a local branch with the same name as the remote branch and switch to that branch, which is indicated by the name of
    the branch being shown in the lower right corner / upper right corner
 7. You can now build the APK with Build -> Generate signed Bundle / APK
-8. In case of any error messages during the build, try to first run a "Clean build" by selecting
+8. If you get an error about an incompatible JVM or Java Version, read the troubleshooting section within the official
+   [AndroidAPS documentation](https://androidaps.readthedocs.io/en/latest/GettingHelp/TroubleshootingAndroidStudio.html#incompatible-gradle-jvm) 
+9. In case of any error messages during the build, try to first run a "Clean build" by selecting
    Build -> Clean to remove any remnants from previous builds and then start the APK build again.
-9. If you experience recurring problems with building the APK, as a last resort consider to
+10. If you experience recurring problems with building the APK, as a last resort consider to
    delete your current Android Studio completely, reinstall the most recent version and clone
    this repo into a new directory on your computer (different than the one you have used before).
 
