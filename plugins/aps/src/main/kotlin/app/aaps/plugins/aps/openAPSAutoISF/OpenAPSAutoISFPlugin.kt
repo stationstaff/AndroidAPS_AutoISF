@@ -1,5 +1,6 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
+import app.aaps.core.interfaces.automation.AutomationStateInterface
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
@@ -120,6 +121,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         .description(R.string.description_auto_isf),
     aapsLogger, rh
 ), APS, PluginConstraints {
+
+    @Inject lateinit var automationStateService: AutomationStateInterface
 
     // last values
     override var lastAPSRun: Long = 0
@@ -635,6 +638,10 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val inactivity_idle_start =  preferences.get(IntKey.ActivityMonitorIdleStart)           // profile.inactivity_idle_start;
         val inactivity_idle_end = preferences.get(IntKey.ActivityMonitorIdleEnd)                // profile.inactivity_idle_end;
 
+        //val existSleepState = automationStateService.hasStateValues("Sleeping")
+        val useSleepState = automationStateService.inState("Sleeping", "True")
+        aapsLogger.debug(LTag.APS, "Sleeping state exists: ${automationStateService.hasStateValues("Sleeping")},  current value: $useSleepState")
+
         if ( !activityDetection ) {
             consoleLog.add("Activity monitor disabled in settings")
         } else if ( isTempTarget ) {
@@ -643,7 +650,9 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             consoleLog.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
         } else {
             if ( time_since_start < 60 && recentSteps60Minutes <= 200 ) {
-                consoleLog.add("Activity monitor initialising for ${60-time_since_start} more minutes: inactivity detection disabled")
+                consoleLog.add("Activity monitor initialising for ${60 - time_since_start} more minutes: inactivity detection disabled")
+            } else if ( useSleepState) {
+                consoleLog.add("Activity monitor disabled inactivity detection: sleeping state")
             } else if ( ( inactivity_idle_start>inactivity_idle_end && ( now>=inactivity_idle_start || now<inactivity_idle_end ) )  // includes midnight
                 || ( now>=inactivity_idle_start && now<inactivity_idle_end)                                                         // excludes midnight
                 && recentSteps60Minutes <= 200 && ignore_inactivity_overnight ) {
