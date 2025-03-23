@@ -44,6 +44,7 @@ import app.aaps.plugins.automation.actions.ActionProfileSwitch
 import app.aaps.plugins.automation.actions.ActionProfileSwitchPercent
 import app.aaps.plugins.automation.actions.ActionRunAutotune
 import app.aaps.plugins.automation.actions.ActionSendSMS
+import app.aaps.plugins.automation.actions.ActionSetAutomationState
 import app.aaps.plugins.automation.actions.ActionSetAcceWeight
 import app.aaps.plugins.automation.actions.ActionSetIobTH
 import app.aaps.plugins.automation.actions.ActionSettingsExport
@@ -58,6 +59,7 @@ import app.aaps.plugins.automation.events.EventLocationChange
 import app.aaps.plugins.automation.keys.AutomationStringKey
 import app.aaps.plugins.automation.services.LocationServiceHelper
 import app.aaps.plugins.automation.triggers.Trigger
+import app.aaps.plugins.automation.triggers.TriggerAutomationState
 import app.aaps.plugins.automation.triggers.TriggerAutosensValue
 import app.aaps.plugins.automation.triggers.TriggerBTDevice
 import app.aaps.plugins.automation.triggers.TriggerBg
@@ -73,6 +75,7 @@ import app.aaps.plugins.automation.triggers.TriggerIob
 import app.aaps.plugins.automation.triggers.TriggerIobTH
 import app.aaps.plugins.automation.triggers.TriggerLocation
 import app.aaps.plugins.automation.triggers.TriggerPodChange
+import app.aaps.plugins.automation.triggers.TriggerProfile
 import app.aaps.plugins.automation.triggers.TriggerProfilePercent
 import app.aaps.plugins.automation.triggers.TriggerPumpBatteryAge
 import app.aaps.plugins.automation.triggers.TriggerPumpBatteryLevel
@@ -399,6 +402,7 @@ class AutomationPlugin @Inject constructor(
             ActionAlarm(injector),
             ActionSettingsExport(injector),
             ActionCarePortalEvent(injector),
+            ActionSetAutomationState(injector),
             ActionProfileSwitchPercent(injector),
             ActionProfileSwitch(injector),
             ActionSendSMS(injector)
@@ -424,7 +428,8 @@ class AutomationPlugin @Inject constructor(
             TriggerIob(injector),
             TriggerCOB(injector),
             TriggerProfilePercent(injector),
-            TriggerTempTarget(injector),
+            TriggerProfile(injector),
+            TriggerAutomationState(injector), TriggerTempTarget(injector),
             TriggerTempTargetValue(injector),
             TriggerWifiSsid(injector),
             TriggerLocation(injector),
