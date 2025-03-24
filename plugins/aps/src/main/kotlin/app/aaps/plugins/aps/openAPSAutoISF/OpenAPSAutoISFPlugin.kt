@@ -640,7 +640,11 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         //val existSleepState = automationStateService.hasStateValues("Sleeping")
         val useSleepState = automationStateService.inState("Sleeping", "True")
-        aapsLogger.debug(LTag.APS, "Sleeping state exists: ${automationStateService.hasStateValues("Sleeping")},  current value: $useSleepState")
+        // really still sleeping?
+        if (useSleepState && (recentSteps5Minutes>20 && recentSteps15Minutes>20) && now>=inactivity_idle_end) {
+            automationStateService.setState("query_got_up", "query_it")
+        }
+        aapsLogger.debug(LTag.APS, "Sleeping state exists: ${automationStateService.hasStateValues("Sleeping")}, current value: $useSleepState, trigger awake test:${useSleepState && (recentSteps5Minutes>20 && recentSteps15Minutes>20) && now>=inactivity_idle_end}")
 
         if ( !activityDetection ) {
             consoleLog.add("Activity monitor disabled in settings")
