@@ -677,11 +677,11 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 consoleLog.add("Activity monitor detected partial activity, sensitivity ratio: $activityRatio")
             } else if ( bg < target_bg && recentSteps60Minutes <= 200 ) {
                 consoleLog.add("Activity monitor disabled inactivity detection: bg < target")
-            } else if ( recentSteps60Minutes < -50 ) {
+            } else if ( recentSteps60Minutes < 50 ) {
                 //stepInactivityDetected = true;
                 activityRatio = 1 + 0.2 * inactivity_scale_factor
                 consoleLog.add("Activity monitor detected inactivity, sensitivity ratio: $activityRatio")
-            } else if ( recentSteps60Minutes <= -200 ) {
+            } else if ( recentSteps60Minutes <= 200 ) {
                 //stepInactivityDetected = true;
                 activityRatio = 1 + 0.1 * inactivity_scale_factor
                 consoleLog.add("Activity monitor detected partial inactivity, sensitivity ratio: $activityRatio")
