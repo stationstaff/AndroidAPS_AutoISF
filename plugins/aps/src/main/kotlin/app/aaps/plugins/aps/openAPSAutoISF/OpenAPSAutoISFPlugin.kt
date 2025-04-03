@@ -133,7 +133,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     override var lastAPSResult: DetermineBasalResult? = null
     private var consoleError = mutableListOf<String>()
     private var consoleLog = mutableListOf<String>()
-    val autoIsfVersion = "3.0.3"
+    val autoIsfVersion = "3.1.0"
     val autoIsfWeights; get() = preferences.get(BooleanKey.ApsUseAutoIsfWeights)
     private val autoISF_max; get() = preferences.get(DoubleKey.ApsAutoIsfMax)
     private val autoISF_min; get() = preferences.get(DoubleKey.ApsAutoIsfMin)
@@ -182,7 +182,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "Loaded $count variable sensitivity values from database")
     }
 
-    override fun supportsDynamicIsf() = true //: Boolean = preferences.get(BooleanKey.ApsUseAutoIsf)
+    override fun supportsDynamicIsf() = false //: Boolean = preferences.get(BooleanKey.ApsUseAutoIsf)
 
     override fun getIsfMgdl(profile: Profile, caller: String): Double? {
         val start = dateUtil.now()
@@ -303,7 +303,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         // End of check, start gathering data
 
-        val autoIsfMode = supportsDynamicIsf()  // preferences.get(BooleanKey.ApsUseAutoIsf)
+        val autoIsfMode = true  //supportsDynamicIsf()  // preferences.get(BooleanKey.ApsUseAutoIsf)
         val smbEnabled = preferences.get(BooleanKey.ApsUseSmb)
         val advancedFiltering = constraintsChecker.isAdvancedFilteringEnabled().also { inputConstraints.copyReasons(it) }.value()
 
@@ -779,7 +779,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             sensitivityRatio = autosensResult.ratio
             // consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
-        if (!supportsDynamicIsf() || !autoIsfWeights || glucose_status == null) {
+        //if (!supportsDynamicIsf() || !autoIsfWeights || glucose_status == null) {
+        if ( !autoIsfWeights || glucose_status == null) {
             consoleError.add("autoISF weights disabled in Preferences")
             consoleError.add("----------------------------------")
             consoleError.add("end AutoISF")
@@ -809,7 +810,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         // calculate acce_ISF from bg acceleration and adapt ISF accordingly
         val fit_corr: Double = glucose_status.corrSqu
         val bg_acce: Double = glucose_status.bgAcceleration
-        consoleError.add("Parabola fit results were acceleration:${round(bg_acce, 2)}, correlation:$fit_corr, duration:${glucose_status.parabolaMinutes}m")
+        //consoleError.add("Parabola fit results were acceleration:${round(bg_acce, 2)}, correlation:$fit_corr, duration:${glucose_status.parabolaMinutes}m")
         if (glucose_status.a2 != 0.0 && fit_corr >= 0.9) {
             var minmax_delta: Double = -glucose_status.a1 / 2 / glucose_status.a2 * 5      // back from 5min block to 1 min
             var minmax_value: Double = round(glucose_status.a0 - minmax_delta * minmax_delta / 25 * glucose_status.a2, 1)
