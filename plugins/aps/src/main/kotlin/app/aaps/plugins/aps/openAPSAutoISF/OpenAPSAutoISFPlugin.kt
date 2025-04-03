@@ -15,6 +15,7 @@ import androidx.preference.SwitchPreference
 import app.aaps.core.data.aps.SMBDefaults
 import app.aaps.core.data.configuration.Constants
 import app.aaps.core.data.model.GlucoseUnit
+import app.aaps.core.data.model.SC
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.aps.APS
@@ -77,6 +78,8 @@ import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
 import app.aaps.plugins.aps.openAPSSMB.StepService
 import dagger.android.HasAndroidInjector
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.plusAssign
 import org.json.JSONObject
 import java.util.Locale
 import javax.inject.Inject
@@ -158,8 +161,10 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val recentSteps15Minutes; get() = StepService.getRecentStepCount15Min()
     private val recentSteps30Minutes; get() = StepService.getRecentStepCount30Min()
     private val recentSteps60Minutes; get() = StepService.getRecentStepCount60Min()
+    //private val recentSteps180Minutes; get() = StepService.getRecentStepCount180Min()
     private val phone_moved; get() = PhoneMovementDetector.phoneMoved()
     private val calendar = Calendar.getInstance()
+    private val disposable = CompositeDisposable()
 
 
     override fun onStart() {
@@ -624,6 +629,22 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         // val recentSteps15Minutes = StepService.getRecentStepCount15Min()
         // val recentSteps30Minutes = StepService.getRecentStepCount30Min()
         // val recentSteps60Minutes = StepService.getRecentStepCount60Min()
+        if (preferences.get(BooleanKey.ActivityMonitorShowStepsFromSmartphone)) {
+            val nowMillis = System.currentTimeMillis()
+            val stepsCount = SC(
+                duration = 0,
+                timestamp = nowMillis,
+                steps5min = recentSteps5Minutes,
+                steps10min = recentSteps5Minutes + recentSteps10Minutes,
+                steps15min = recentSteps5Minutes + recentSteps10Minutes + recentSteps15Minutes,
+                steps30min = recentSteps30Minutes,
+                steps60min = recentSteps60Minutes,
+                steps180min = StepService.getRecentStepCount180Min(),
+                device = "Smartphone"
+            )
+            disposable += persistenceLayer.insertOrUpdateStepsCount(stepsCount).subscribe()
+        }
+
         val phoneMoved = PhoneMovementDetector.phoneMoved()
         val lastAppStart = preferences.get(LongKey.AppStart)
         //val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart) / 60000
@@ -1187,6 +1208,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ActivityMonitorOvernight, summary = R.string.ignore_inactivity_overnight_summary, title = R.string.ignore_inactivity_overnight_title))
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.ActivityMonitorIdleStart, summary = R.string.inactivity_idle_start_summary, title = R.string.inactivity_idle_start_title ))
                 addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.ActivityMonitorIdleEnd, summary = R.string.inactivity_idle_end_summary, title = R.string.inactivity_idle_end_title ))
+                addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ActivityMonitorShowStepsFromSmartphone, summary = R.string.steps_graph_from_smartphone_summary, title = R.string.steps_graph_from_smartphone_title))
             })
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
                 key = "auto_isf_settings"

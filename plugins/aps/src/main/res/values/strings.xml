@@ -189,6 +189,8 @@
     <!-- activity mode -->
     <string name="activity_mode_title">"Activity modifies sensitivity"</string>
     <string name="activity_mode_summary">"If activity is detected in form of steps, sensitivity and basal are reduced up to 30%; in case of inactivity, both are increased by up to 20%. \nA TempTarget disables this."</string>
+    <string name="steps_graph_from_smartphone_title">Steps graph from smartphone sensor</string>
+    <string name="steps_graph_from_smartphone_summary">Default: true\notherwise from watch sensor</string>
 
     <!--    autoISF -->
     <string name="half_basal_exercise_target_title">Half basal exercise target</string>
