@@ -135,7 +135,7 @@ class XdripSourcePlugin @Inject constructor(
             val sourceCGM = bundle.getString(Intents.XDRIP_DATA_SOURCE) ?: ""
             if (extraRaw == 0.0 && sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3") {
                 extraRaw = extraBgEstimate
-                extraBgEstimate = extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0)
+                extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
                 val maxGap = preferences.get(IntKey.FslMaxSmoothGap)
                 val effectiveAlpha =  min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-1.0) /(maxGap-1.0)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
                 if (lastSmooth > 0.0) {
