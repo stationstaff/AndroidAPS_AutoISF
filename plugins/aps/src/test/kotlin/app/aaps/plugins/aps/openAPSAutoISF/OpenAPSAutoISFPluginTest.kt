@@ -1,6 +1,5 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
-import android.content.SharedPreferences
 import android.icu.util.Calendar
 import app.aaps.core.data.aps.SMBDefaults
 import app.aaps.core.interfaces.aps.OapsProfileAutoIsf
@@ -34,41 +33,10 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
     @Mock lateinit var persistenceLayer: PersistenceLayer
     @Mock lateinit var glucoseStatusProvider: GlucoseStatusProvider
     @Mock lateinit var determineBasalSMB: DetermineBasalAutoISF
-    @Mock lateinit var sharedPrefs: SharedPreferences
     @Mock lateinit var bgQualityCheck: BgQualityCheck
     @Mock lateinit var profiler: Profiler
     @Mock lateinit var uiInteraction: UiInteraction
     private lateinit var openAPSAutoISFPlugin: OpenAPSAutoISFPlugin
-
-    init {
-        addInjector {
-            if (it is AdaptiveDoublePreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveIntPreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-                it.config = config
-            }
-            if (it is AdaptiveIntentPreference) {
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveUnitPreference) {
-                it.profileUtil = profileUtil
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-            }
-            if (it is AdaptiveSwitchPreference) {
-                it.preferences = preferences
-                it.sharedPrefs = sharedPrefs
-                it.config = config
-            }
-        }
-    }
 
     @BeforeEach fun prepare() {
         openAPSAutoISFPlugin = OpenAPSAutoISFPlugin(
@@ -232,8 +200,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             autosens_max = preferences.get(DoubleKey.AutosensMax),
             out_units = "mg/dl",
             variable_sens = 111.1,
-            autoISF_version = "3.0.3",
-            enable_autoISF = true,
+            autoISF_version = "3.1.0",
             autoISF_max = 1.5,
             autoISF_min = 0.7,
             bgAccel_ISF_weight = 0.0,
@@ -328,7 +295,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             autosens_max = preferences.get(DoubleKey.AutosensMax),
             out_units = "mg/dl",
             variable_sens = 47.11,
-            autoISF_version = "3.0.3",
+            autoISF_version = "3.1.0",
             enable_autoISF = false,
             autoISF_max = 1.5,
             autoISF_min = 0.7,

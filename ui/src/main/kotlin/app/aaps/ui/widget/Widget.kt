@@ -30,11 +30,13 @@ import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.resources.ResourceHelper
-import app.aaps.core.interfaces.sharedPreferences.SP
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.core.interfaces.utils.TrendCalculator
+import app.aaps.core.keys.BooleanComposedKey
+import app.aaps.core.keys.IntComposedKey
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.objects.extensions.directionToIcon
 import app.aaps.core.objects.extensions.displayText
 import app.aaps.core.objects.extensions.round
@@ -67,7 +69,7 @@ class Widget : AppWidgetProvider() {
     @Inject lateinit var processedTbrEbData: ProcessedTbrEbData
     @Inject lateinit var loop: Loop
     @Inject lateinit var config: Config
-    @Inject lateinit var sp: SP
+    @Inject lateinit var preferences: Preferences
     @Inject lateinit var constraintChecker: ConstraintsChecker
     @Inject lateinit var decimalFormatter: DecimalFormatter
     @Inject lateinit var persistenceLayer: PersistenceLayer
@@ -113,8 +115,8 @@ class Widget : AppWidgetProvider() {
 
     private fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
         val views = RemoteViews(context.packageName, R.layout.widget_layout)
-        val alpha = sp.getInt(WidgetConfigureActivity.PREF_PREFIX_KEY + appWidgetId, WidgetConfigureActivity.DEFAULT_OPACITY)
-        val useBlack = sp.getBoolean(WidgetConfigureActivity.PREF_PREFIX_KEY + "use_black_$appWidgetId", false)
+        val alpha = preferences.get(IntComposedKey.WidgetOpacity, appWidgetId)
+        val useBlack = preferences.get(BooleanComposedKey.WidgetUseBlack, appWidgetId)
 
         // Create an Intent to launch MainActivity when clicked
         val intent = Intent(context, uiInteraction.mainActivity).also { it.action = intentAction }
@@ -290,7 +292,7 @@ class Widget : AppWidgetProvider() {
                     when {
                         it > 100.0 -> app.aaps.core.objects.R.drawable.ic_as_above
                         it < 100.0 -> app.aaps.core.objects.R.drawable.ic_as_below
-                        else     -> app.aaps.core.objects.R.drawable.ic_swap_vert_black_48dp_green
+                        else       -> app.aaps.core.objects.R.drawable.ic_swap_vert_black_48dp_green
                     }
                 }
                     ?: app.aaps.core.objects.R.drawable.ic_swap_vert_black_48dp_green
@@ -302,7 +304,7 @@ class Widget : AppWidgetProvider() {
                     when {
                         it > 100.0 -> app.aaps.core.objects.R.drawable.ic_x_as_above
                         it < 100.0 -> app.aaps.core.objects.R.drawable.ic_x_as_below
-                        else     -> app.aaps.core.objects.R.drawable.ic_x_swap_vert
+                        else       -> app.aaps.core.objects.R.drawable.ic_x_swap_vert
                     }
                 }
                     ?: app.aaps.core.objects.R.drawable.ic_x_swap_vert
