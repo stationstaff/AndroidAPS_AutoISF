@@ -1,7 +1,7 @@
 package app.aaps.core.keys
 
-import app.aaps.core.keys.BooleanPreferenceKey
-import app.aaps.core.keys.LongPreferenceKey
+import app.aaps.core.keys.interfaces.BooleanPreferenceKey
+import app.aaps.core.keys.interfaces.LongPreferenceKey
 
 enum class LongKey(
     override val key: String,
@@ -16,7 +16,8 @@ enum class LongKey(
     override val showInPumpControlMode: Boolean = true,
     override val dependency: BooleanPreferenceKey? = null,
     override val negativeDependency: BooleanPreferenceKey? = null,
-    override val hideParentScreenIfHidden: Boolean = false
+    override val hideParentScreenIfHidden: Boolean = false,
+    override val exportable: Boolean = true
 ) : LongPreferenceKey {
 
     FslSmoothLastTimeRaw("fsl_last_time_raw", -1, -1, defaultedBySM = true),

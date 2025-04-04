@@ -14,7 +14,7 @@ import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
 import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.Preferences
+import app.aaps.core.keys.interfaces.Preferences
 import java.text.DecimalFormat
 import java.time.Instant
 import java.time.ZoneId
@@ -186,7 +186,7 @@ class DetermineBasalAutoISF @Inject constructor(
         } else {
             //TODO check always false condition in the following condition
             if (/* false &&*/  time_since_start!! < 60 && recentSteps60Minutes!! <= 200 ) {
-                consoleError.add("Activity monitor initialising for ${60-time_since_start!!} more minutes: inactivity detection disabled")
+                consoleError.add("Activity monitor initialising for ${60-time_since_start} more minutes: inactivity detection disabled")
             } else if ( ( inactivity_idle_start>inactivity_idle_end && ( now>=inactivity_idle_start || now<inactivity_idle_end ) )  // includes midnight
                 || ( now>=inactivity_idle_start && now<inactivity_idle_end)                                                         // excludes midnight
                 && recentSteps60Minutes!! <= 200 && ignore_inactivity_overnight ) {
@@ -329,10 +329,10 @@ class DetermineBasalAutoISF @Inject constructor(
                 }
                 consoleError.add("Sensitivity ratio set to $sensitivityRatio based on temp target of $target_bg; ")
             } else if ( stepActivityDetected ) {
-                sensitivityRatio = activityRatio;
+                sensitivityRatio = activityRatio
                 // origin_sens = "from activity detection";
             } else if ( stepInactivityDetected ) {
-                sensitivityRatio = activityRatio;
+                sensitivityRatio = activityRatio
                 // origin_sens = "from inactivity detection";
             }
         } else {

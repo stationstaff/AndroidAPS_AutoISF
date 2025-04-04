@@ -1,5 +1,7 @@
 package app.aaps.implementation.iob
 
+//import app.aaps.implementation.R
+//import app.aaps.core.keys.DoubleKey
 import app.aaps.core.interfaces.aps.GlucoseStatus
 import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.core.interfaces.iob.IobCobCalculator
@@ -7,6 +9,8 @@ import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
+import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.implementation.extensions.asRounded
 import app.aaps.implementation.extensions.log
 import dagger.Reusable
@@ -14,12 +18,6 @@ import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.math.roundToLong
-//import app.aaps.implementation.R
-import app.aaps.core.interfaces.sharedPreferences.SP
-//import app.aaps.core.keys.DoubleKey
-import app.aaps.core.keys.IntKey
-import app.aaps.core.keys.Preferences
-
 
 @Reusable
 class GlucoseStatusProviderImpl @Inject constructor(
@@ -28,7 +26,6 @@ class GlucoseStatusProviderImpl @Inject constructor(
     private val dateUtil: DateUtil,
     private val decimalFormatter: DecimalFormatter
 ) : GlucoseStatusProvider {
-    @Inject lateinit var sp: SP
     @Inject lateinit var preferences: Preferences
 
 
