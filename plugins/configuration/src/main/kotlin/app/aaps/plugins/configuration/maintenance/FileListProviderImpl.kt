@@ -50,12 +50,13 @@ class FileListProviderImpl @Inject constructor(
 
     private val documentsPath get() = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "AAPS")
     override val resultPath get() = File(documentsPath, File.separator + "results")
+    override val aapsLogsPath get() = File(documentsPath, File.separator + "aapsLogs")
 
     val preferencesPath = "preferences"
     val exportsPath = "exports"
     val tempPath = "temp"
     val extraPath = "extra"
-    val aapsLogsPath = "logs"
+//    val aapsLogsPath = "aapsLogs"
 
     companion object {
 
@@ -172,6 +173,13 @@ class FileListProviderImpl @Inject constructor(
         return resultPath
     }
 
+    override fun ensureAapsLogsDirExists(): File {
+        if (!aapsLogsPath.exists()) {
+            aapsLogsPath.mkdirs()
+        }
+        return resultPath
+    }
+/*
     override fun ensureAapsLogsDirExists(): DocumentFile? {
         val prefUri = preferences.get().getIfExists(StringKey.AapsDirectoryUri) ?: return null
         val uri = Uri.parse(prefUri)
@@ -179,7 +187,7 @@ class FileListProviderImpl @Inject constructor(
         val files = baseDir?.listFiles()
         return files?.firstOrNull { it.name == aapsLogsPath } ?: baseDir?.createDirectory(aapsLogsPath)
     }
-
+*/
     override fun newPreferenceFile(): DocumentFile? {
         val timeLocal = LocalDateTime.now().toString(DateTimeFormat.forPattern("yyyy-MM-dd'_'HHmmss"))
         val dir = ensurePreferenceDirExists()
@@ -201,6 +209,12 @@ class FileListProviderImpl @Inject constructor(
     override fun newResultFile(): File {
         val timeLocal = LocalDateTime.now().toString(DateTimeFormat.forPattern("yyyy-MM-dd'_'HHmmss"))
         return File(resultPath, "$timeLocal.json")
+    }
+
+    override fun newAapsLogsFile(): File {
+        //todo: make this usable somehow
+        val timeLocal = LocalDateTime.now().toString(DateTimeFormat.forPattern("yyyy-MM-dd'_'HHmmss"))
+        return File(aapsLogsPath, "$timeLocal.json")
     }
 
     // check metadata for known issues, change their status and add info with explanations

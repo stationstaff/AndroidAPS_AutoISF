@@ -327,6 +327,7 @@ class MainActivity : DaggerAppCompatActivityWithResult() {
                 action = { maintenancePlugin.selectAapsDirectory(this) },
                 validityCheck = { preferences.getIfExists(StringKey.AapsDirectoryUri).isNullOrEmpty() }
             )
+
     }
 
     private fun startWizard(): Boolean =
