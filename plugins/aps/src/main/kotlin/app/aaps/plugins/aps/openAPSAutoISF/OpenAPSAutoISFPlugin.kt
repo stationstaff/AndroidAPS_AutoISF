@@ -349,7 +349,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         consoleLog.clear()
         // Time - not used without sleep window
         //val calendar = Calendar.getInstance()
-        val hour = min(1, Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
+        val hour = max(1, Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
         //if (hour < 1) {
         //   hour = 1
         //}
