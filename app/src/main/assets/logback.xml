@@ -4,17 +4,11 @@
     <appender name="file" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${EXT_FILES_DIR}/AndroidAPS.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover. Make sure the path matches the one in the file element or else
+            <!-- hourly rollover. Make sure the path matches the one in the file element or else
              the rollover logs are placed in the working directory. -->
-            <fileNamePattern>${EXT_FILES_DIR}/AndroidAPS._%d{yyyy-MM-dd}_%d{HH-mm-ss, aux}_.%i.zip
-            </fileNamePattern>
-
-            <timeBasedFileNamingAndTriggeringPolicy
-                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>5MB</maxFileSize>
-            </timeBasedFileNamingAndTriggeringPolicy>
-            <!-- keep 100 days' worth of history -->
-            <maxHistory>100</maxHistory>
+            <fileNamePattern>${EXT_FILES_DIR}/AndroidAPS._%d{yyyy-MM-dd_HH}.zip</fileNamePattern>
+            <!-- keep 30 days (hourly archives) worth of history -->
+            <maxHistory>720</maxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %.-1level/%logger: %msg%n</pattern>
