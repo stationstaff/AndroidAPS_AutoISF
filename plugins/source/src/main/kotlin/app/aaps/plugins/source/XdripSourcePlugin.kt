@@ -131,11 +131,12 @@ class XdripSourcePlugin @Inject constructor(
             val elapsedMinutes = (thisTimeRaw - lastTimeRaw) / 60000.0
             var smooth = extraBgEstimate
             val sourceCGM = bundle.getString(Intents.XDRIP_DATA_SOURCE) ?: ""
-            if (extraRaw == 0.0 && sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3") {
+            if (extraRaw == 0.0 && sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3" || sourceCGM=="G7") {
                 extraRaw = extraBgEstimate
                 extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
                 val maxGap = preferences.get(IntKey.FslMaxSmoothGap)
-                val effectiveAlpha =  min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-1.0) /(maxGap-1.0)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
+                val cgmDelta = if (sourceCGM =="G7") 5.0 else 1.0
+                val effectiveAlpha =  min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
                 if (lastSmooth > 0.0) {
                     // exponential smoothing, see https://en.wikipedia.org/wiki/Exponential_smoothing
                     // y'[t]=y'[t-1] + (a*(y-y'[t-1])) = a*y+(1-a)*y'[t-1]
