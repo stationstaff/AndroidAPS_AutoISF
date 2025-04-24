@@ -12,7 +12,7 @@ interface AutomationStateInterface {
      * @return true if the state has the specified value, false otherwise
      */
     fun inState(stateName: String, state: String): Boolean
-    
+
     /**
      * Set a state to a specific value
      * @param stateName The name of the state to set
@@ -21,7 +21,14 @@ interface AutomationStateInterface {
      * @throws IllegalStateException if the value is not valid for the state
      */
     fun setState(stateName: String, state: String)
-    
+
+    /**
+     * Get current value of a specific state
+     * @param stateName The name of the state
+     * @throws IllegalStateException if the state doesn't exist
+     */
+    fun getState(stateName: String): String
+
     /**
      * Get all states and their current values
      * @return List of pairs containing state names and their values

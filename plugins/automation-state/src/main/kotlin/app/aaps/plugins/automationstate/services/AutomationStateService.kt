@@ -40,19 +40,30 @@ class AutomationStateService  @Inject constructor(
         return false
     }
 
-   override fun setState(stateName: String, state: String) {
+    override fun setState(stateName: String, state: String) {
         val trimmedName = stateName.trim()
         val trimmedState = state.trim()
-        
+
         // Validate that the state value is in the allowed list
-       require(stateValues.containsKey(trimmedName) ) { "Invalid state name: $trimmedName" }
-       require(stateValues[trimmedName]!!.contains(trimmedState)) { "Invalid state value: $trimmedState" }
-        
+        require(stateValues.containsKey(trimmedName) ) { "Invalid state name: $trimmedName" }
+        require(stateValues[trimmedName]!!.contains(trimmedState)) { "Invalid state value: $trimmedState" }
+
         automationStates[trimmedName] = trimmedState
         sp.putString(spKey, Json.encodeToString(automationStates))
     }
 
-   override fun getAllStates(): List<Pair<String, String>> {
+    override fun getState(stateName: String):String {
+        val trimmedName = stateName.trim()
+        // Validate that the state value is in the allowed list
+        require(stateValues.containsKey(trimmedName) ) { "Invalid state name: $trimmedName" }
+        try {
+            return automationStates[trimmedName]!!
+        } catch (e: Exception) {
+            return ""
+        }
+    }
+
+    override fun getAllStates(): List<Pair<String, String>> {
         return automationStates.toList()
     }
 
