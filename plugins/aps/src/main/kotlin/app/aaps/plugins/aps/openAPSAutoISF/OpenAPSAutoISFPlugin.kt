@@ -665,25 +665,12 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         val existSleepState = automationStateService.hasStateValues("Sleeping")
         val useSleepState = automationStateService.inState("Sleeping", "True")
-        if (automationStateService.inState("Sleeping", "False")) {
-            aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"False\"}")
-        } else if (automationStateService.inState("Sleeping", "True")) {
-            aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"True\"}")
-        } else {
-            aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"\"}")
-        }
+        aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"${automationStateService.getState("Sleeping")}\"}")
         // really still sleeping?
         if (useSleepState && (recentSteps5Minutes>20 && recentSteps15Minutes>20) && now>=inactivity_idle_end) {
             automationStateService.setState("query_got_up", "query_it")
         }
-        if (automationStateService.inState("query_got_up", "ignore")) {
-            aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"ignore\"}")
-        } else if (automationStateService.inState("query_got_up", "query_it")) {
-            aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"query_it\"}")
-        } else {
-            aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"\"}")
-        }
-
+        aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"${automationStateService.getState("query_got_up")}\"}")
 
         if ( !activityDetection ) {
             consoleLog.add("Activity monitor disabled in settings")
@@ -793,15 +780,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             // consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
         //if (!supportsDynamicIsf() || !autoIsfWeights || glucose_status == null) {
-        if (automationStateService.inState("Calibration", "done")) {
-            aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"done\"}")
-        } else if (automationStateService.inState("Calibration", "start")) {
-            aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"start\"}")
-        } else if (automationStateService.inState("Calibration", "ongoing")) {
-            aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"ongoing\"}")
-        } else {
-            aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"\"}")
-        }
+        aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"${automationStateService.getState("Calibration")}\"}")
         var skipWeights = false
         if (automationStateService.inState("Calibration", "ongoing")) {
             consoleError.add("autoISF weights disabled while calibrating")
@@ -1097,15 +1076,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             return "AAPS"                                                 // see message in enable_smb
         }
 
-        if (automationStateService.inState("Calibration", "done")) {
-            aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"done\"}")
-        } else if (automationStateService.inState("Calibration", "start")) {
-            aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"start\"}")
-        } else if (automationStateService.inState("Calibration", "ongoing")) {
-            aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"ongoing\"}")
-        } else {
-            aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"\"}")
-        }
+        aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"${automationStateService.getState(" Calibration")}\"}")
         if (automationStateService.inState("Calibration", "ongoing")) {
             consoleLog.add("SMB disabled while calibrating")
             return "blocked"
