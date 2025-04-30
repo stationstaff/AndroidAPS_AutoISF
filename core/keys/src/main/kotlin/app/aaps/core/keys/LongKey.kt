@@ -21,6 +21,7 @@ enum class LongKey(
 ) : LongPreferenceKey {
 
     FslSmoothLastTimeRaw("fsl_last_time_raw", -1, -1, defaultedBySM = true),
+    FslCalibrationStart("fsl_cal_start_time", -1, -1, defaultedBySM = true),
     AppStart("app_start_time", 0, defaultedBySM = true),
 
 }

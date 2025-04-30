@@ -780,6 +780,19 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             // consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
         //if (!supportsDynamicIsf() || !autoIsfWeights || glucose_status == null) {
+        var calibrationState = automationStateService.getState("Calibration")
+        if (calibrationState == "start") {
+            calibrationState = "ongoing"
+            preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
+            automationStateService.setState("Calibration", calibrationState)
+        } else if (calibrationState == "ongoing") {
+            val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+            if (calibrationMinutes > 3) {
+                automationStateService.setState("Calibration", "done")
+            } else {
+                aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${3-calibrationMinutes}m")
+            }
+        }
         aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"${automationStateService.getState("Calibration")}\"}")
         var skipWeights = false
         if (automationStateService.inState("Calibration", "ongoing")) {
@@ -1078,7 +1091,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"${automationStateService.getState(" Calibration")}\"}")
         if (automationStateService.inState("Calibration", "ongoing")) {
-            consoleLog.add("SMB disabled while calibrating")
+            val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+            consoleLog.add("SMB disabled while calibrating for another ${20-calibrationMinutes}m")
             return "blocked"
         } else if (enableSMB_EvenOn_OddOff_always) {
             //TODO: cleaner conversion back to original mmol/L if applicable
