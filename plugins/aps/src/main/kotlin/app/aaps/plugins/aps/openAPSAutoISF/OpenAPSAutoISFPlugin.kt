@@ -780,27 +780,29 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             // consoleError.add("Autosens ratio: $sensitivityRatio; ")
         }
         //if (!supportsDynamicIsf() || !autoIsfWeights || glucose_status == null) {
-        var calibrationState = automationStateService.getState("Calibration")
-        if (calibrationState == "start") {
-            calibrationState = "ongoing"
-            preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
-            automationStateService.setState("Calibration", calibrationState)
-        } else if (calibrationState == "ongoing") {
-            val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
-            if (calibrationMinutes > 3) {
-                automationStateService.setState("Calibration", "done")
-            } else {
-                aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${3-calibrationMinutes}m")
-            }
-        }
-        aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"${automationStateService.getState("Calibration")}\"}")
+        //var calibrationState = automationStateService.getState("Calibration")
+        //if (calibrationState == "start") {
+        //    calibrationState = "ongoing"
+        //    preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
+        //    automationStateService.setState("Calibration", calibrationState)
+        //} else if (calibrationState == "ongoing") {
+        //    val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        //    if (calibrationMinutes > 3) {
+        //        automationStateService.setState("Calibration", "done")
+        //    } else {
+        //        aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${3-calibrationMinutes}m")
+        //    }
+        //}
+        //aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"${automationStateService.getState("Calibration")}\"}")
         var skipWeights = false
-        if (automationStateService.inState("Calibration", "ongoing")) {
-            consoleError.add("autoISF weights disabled while calibrating")
+        //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
+        val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
+        if (calibrationStopsSMB) {
+            consoleError.add("AutoISF weights disabled while calibrating")
             skipWeights = true
-
         } else if ( !autoIsfWeights || glucose_status == null) {
-            consoleError.add("autoISF weights disabled in Preferences")
+            consoleError.add("AutoISF weights disabled in Preferences")
             skipWeights = true
         }
         if (skipWeights) {
@@ -1089,10 +1091,20 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             return "AAPS"                                                 // see message in enable_smb
         }
 
-        aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"${automationStateService.getState(" Calibration")}\"}")
-        if (automationStateService.inState("Calibration", "ongoing")) {
-            val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
-            consoleLog.add("SMB disabled while calibrating for another ${20-calibrationMinutes}m")
+        //aapsLogger.debug(LTag.APS, "State json for SMB suppression: {\"Calibration\":\"${automationStateService.getState(" Calibration")}\"}")
+        if (preferences.get(BooleanKey.FslCalibrationTrigger)) {
+            preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
+            preferences.put(BooleanKey.FslCalibrationTrigger, false)
+            preferences.put(BooleanKey.FslCalibrationEnd, false)
+        }
+        //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
+        val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
+        var CalibrationMsg = "Calibration json: {\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
+        CalibrationMsg += ",\"calibrationDuration\":${preferences.get(IntKey.FslCalibrationDuration)}}"
+        aapsLogger.debug(LTag.APS, CalibrationMsg)
+        if (calibrationStopsSMB) {
+            consoleLog.add("SMB disabled while calibrating for another ${calibrationMinutes}m")
             return "blocked"
         } else if (enableSMB_EvenOn_OddOff_always) {
             //TODO: cleaner conversion back to original mmol/L if applicable
@@ -1245,13 +1257,14 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 summary = rh.gs(R.string.autoISF_settings_summary)
                 addPreference(preferenceManager.createPreferenceScreen(context).apply {
                     key = "Libre_special_settings"
-                    title = "Libre special test settings"  //rh.gs(R.string.smb_delivery_settings_title)
-                    summary = "Calibrating Juggluco raw data"  //rh.gs(R.string.smb_delivery_settings_summary)
+                    title = "Libre special settings"  //rh.gs(R.string.smb_delivery_settings_title)
+                    summary = "Calibrate and smooth Juggluco raw data"  //rh.gs(R.string.smb_delivery_settings_summary)
+                    addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.FslCalibrationTrigger, summary = R.string.calibration_stops_smb_summary, title = R.string.calibration_stops_smb_title))
+                    addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.FslCalibrationEnd, summary = R.string.calibration_enable_smb_summary, title = R.string.calibration_enable_smb_title))
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslCalOffset, dialogMessage = R.string.fslCal_Offset_summary, title = R.string.fslCal_Offset_title))
-                    //addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.FslCalOffset, dialogMessage = R.string.fslCal_Offset_summary, title = R.string.fslCal_Offset_title))  // assumed input was always in mmol
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslCalSlope, dialogMessage = R.string.fslCal_Slope_summary, title = R.string.fslCal_Slope_title))
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslSmoothAlpha, dialogMessage = R.string.fsl_exp1_factor_summary, title = R.string.fsl_exp1_factor_title))
-                    addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslSmoothCorrection, dialogMessage = R.string.fsl_exp1_correction_summary, title = R.string.fsl_exp1_correction_title))
+                    //addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslSmoothCorrection, dialogMessage = R.string.fsl_exp1_correction_summary, title = R.string.fsl_exp1_correction_title))
                     addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.FslMaxSmoothGap, dialogMessage = R.string.fsl_exp1_max_smooth_gap_summary, title = R.string.fsl_exp1_max_smooth_gap_title))
                     addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.FslMinFitMinutes, dialogMessage = R.string.fslMinFitMinutes_summary, title = R.string.fslMinFitMinutes_title))
                 })

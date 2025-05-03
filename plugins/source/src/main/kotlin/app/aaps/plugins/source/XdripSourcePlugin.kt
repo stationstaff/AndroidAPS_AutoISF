@@ -126,25 +126,26 @@ class XdripSourcePlugin @Inject constructor(
             val offset = preferences.get(DoubleKey.FslCalOffset)
             val slope = preferences.get(DoubleKey.FslCalSlope)
             val factor = preferences.get(DoubleKey.FslSmoothAlpha)
-            val correction = preferences.get(DoubleKey.FslSmoothCorrection)
-            val lastRaw = preferences.get(DoubleKey.FslLastRaw)
+            // val correction = preferences.get(DoubleKey.FslSmoothCorrection)
+            // val lastRaw = preferences.get(DoubleKey.FslLastRaw)
             val lastSmooth = preferences.get(DoubleKey.FslLastSmooth)
             val lastTimeRaw = preferences.get(LongKey.FslSmoothLastTimeRaw)  // sp.getLong(app.aaps.database.impl.R.string.key_fsl_last_timeRaw, 0L)
             val thisTimeRaw = bundle.getLong(Intents.EXTRA_TIMESTAMP, 0)
             val elapsedMinutes = (thisTimeRaw - lastTimeRaw) / 60000.0
             var smooth = extraBgEstimate
-            var calibrationState = automationStateService.getState("Calibration")
-            if (calibrationState == "start") {
-                calibrationState = "ongoing"
+            // var calibrationState = automationStateService.getState("Calibration")
+            // if (calibrationState == "start") {
+            // } else if (calibrationState == "ongoing") {
+            if (preferences.get(BooleanKey.FslCalibrationTrigger)) {
                 preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
-                automationStateService.setState("Calibration", calibrationState)
-            } else if (calibrationState == "ongoing") {
-                val calibrationMinutes = (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
-                if (calibrationMinutes > 3) {
-                    automationStateService.setState("Calibration", "done")
-                } else {
-                    aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${3-calibrationMinutes}m")
-                }
+                preferences.put(BooleanKey.FslCalibrationTrigger, false)
+                preferences.put(BooleanKey.FslCalibrationEnd, false)
+            }
+            //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
+            val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+            val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
+            if (calibrationStopsSMB) {
+                 aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${calibrationMinutes}m")
             }
             val sourceCGM = bundle.getString(Intents.XDRIP_DATA_SOURCE) ?: ""
             if (extraRaw == 0.0 && sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3" || sourceCGM=="G7") {
@@ -152,26 +153,25 @@ class XdripSourcePlugin @Inject constructor(
                 extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
                 val maxGap = preferences.get(IntKey.FslMaxSmoothGap)
                 val cgmDelta = if (sourceCGM =="G7") 5.0 else 1.0
-                val effectiveAlpha =  min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
+                aapsLogger.debug(LTag.BGSOURCE, "Applied no smooth when ${preferences.get(IntKey.FslCalibrationDuration) - calibrationMinutes}m <2")
+                val effectiveAlpha =  if (preferences.get(IntKey.FslCalibrationDuration) - calibrationMinutes < 2 && !preferences.get(BooleanKey.FslCalibrationEnd)) 1.0 else min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
                 if (lastSmooth > 0.0) {
-                    // exponential smoothing, see https://en.wikipedia.org/wiki/Exponential_smoothing
-                    // y'[t]=y'[t-1] + (a*(y-y'[t-1])) = a*y+(1-a)*y'[t-1]
-                    // factor is a, value is y, lastSmooth y'[t-1], smooth y'
-                    // factor between 0 and 1, default 0.3
-                    // factor = 0: always last smooth (constant)
-                    // factor = 1: no smoothing
+                    // exponential smoothing, see https://en.wikipedia.org/wiki/Exponential_s
                     smooth = lastSmooth + effectiveAlpha * (extraBgEstimate - lastSmooth)
 
                     // correction: average of delta between raw and smooth value, added to smooth with correction factor
                     // correction between 0 and 1, default 0.5
                     // correction = 0: no correction, full smoothing
                     // correction > 0: less smoothing
-                    smooth += correction * ((lastRaw - lastSmooth) + (extraBgEstimate - smooth)) / 2.0
+                    // smooth += correction * ((lastRaw - lastSmooth) + (extraBgEstimate - smooth)) / 2.0
                 }
                 preferences.put(DoubleKey.FslLastRaw, extraBgEstimate)
                 preferences.put(DoubleKey.FslLastSmooth, smooth)
                 preferences.put(LongKey.FslSmoothLastTimeRaw, thisTimeRaw)
-                aapsLogger.debug(LTag.BGSOURCE, "Applied Libre 1 minute calibration and smoothing: offset=$offset, slope=$slope, smoothFactor=$factor, effectiveAlpha=$effectiveAlpha, smoothCorrection=$correction")
+                var CalibrationMsg = "Calibration json: {\"offset\":$offset,\"slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
+                CalibrationMsg += ",\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
+                CalibrationMsg += ",\"calibrationDuration\":${preferences.get(IntKey.FslCalibrationDuration)}}"
+                aapsLogger.debug(LTag.BGSOURCE, CalibrationMsg)
             }
             glucoseValues += GV(
                 timestamp = thisTimeRaw,        // bundle.getLong(Intents.EXTRA_TIMESTAMP, 0),
