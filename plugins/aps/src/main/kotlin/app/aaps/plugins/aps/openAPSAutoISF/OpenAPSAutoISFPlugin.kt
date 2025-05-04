@@ -667,7 +667,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val useSleepState = automationStateService.inState("Sleeping", "True")
         aapsLogger.debug(LTag.APS, "State json for Sleep mode: {\"Sleeping\":\"${automationStateService.getState("Sleeping")}\"}")
         // really still sleeping?
-        if (useSleepState && (recentSteps5Minutes>20 && recentSteps15Minutes>20) && now>=inactivity_idle_end) {
+            if (useSleepState && (recentSteps5Minutes+recentSteps10Minutes+recentSteps15Minutes < recentSteps30Minutes) && recentSteps30Minutes>50 && now>=inactivity_idle_end) {
             automationStateService.setState("query_got_up", "query_it")
         }
         aapsLogger.debug(LTag.APS, "State json for got up query: {\"query_got_up\":\"${automationStateService.getState("query_got_up")}\"}")
