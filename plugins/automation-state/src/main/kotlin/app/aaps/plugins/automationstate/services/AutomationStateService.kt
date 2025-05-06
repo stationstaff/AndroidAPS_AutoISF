@@ -55,7 +55,7 @@ class AutomationStateService  @Inject constructor(
     override fun getState(stateName: String):String {
         val trimmedName = stateName.trim()
         // Validate that the state value is in the allowed list
-        require(stateValues.containsKey(trimmedName) ) { "Invalid state name: $trimmedName" }
+        //require(stateValues.containsKey(trimmedName) ) { "Invalid state name: $trimmedName" }
         try {
             return automationStates[trimmedName]!!
         } catch (e: Exception) {
