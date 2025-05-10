@@ -57,7 +57,7 @@ class GlucoseStatusProviderImpl @Inject constructor(
         val fslValue = fsl.raw
         val fslRaw = fsl.noise
         val fslSmooth = fsl.value
-        var fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"
+        var fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3" || cgm.text=="G7"
         //fslReally = true    // "RANDOM" while testing with virtual phone in AS or until xDrip/Juggluco label=="Libre2/3" is implemented
         var fslMinDur = 15  // default for 5m CGM
         var change: Double
