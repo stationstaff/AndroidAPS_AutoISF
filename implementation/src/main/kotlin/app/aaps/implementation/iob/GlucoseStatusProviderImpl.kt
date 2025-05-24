@@ -178,7 +178,7 @@ class GlucoseStatusProviderImpl @Inject constructor(
                 if ( orig[0].timestamp - orig[2].timestamp < 3 * 60000 ) {
                     use1MinuteRaw = true
                     sizeRecords = orig.size
-                    fslMinDur = preferences.get(IntKey.FslMinFitMinutes)
+                    fslMinDur = 10      //preferences.get(IntKey.FslMinFitMinutes)
                 }
             }
         }

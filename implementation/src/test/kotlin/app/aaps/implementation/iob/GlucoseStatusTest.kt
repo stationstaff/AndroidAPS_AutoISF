@@ -1,12 +1,15 @@
 package app.aaps.implementation.iob
 
 import app.aaps.core.data.iob.InMemoryGlucoseValue
+import app.aaps.core.data.model.GV
 import app.aaps.core.data.model.SourceSensor
 import app.aaps.core.data.model.TrendArrow
 import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.aps.AutosensDataStore
 import app.aaps.core.interfaces.aps.GlucoseStatus
 import app.aaps.core.interfaces.iob.IobCobCalculator
+import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.implementation.extensions.asRounded
 import app.aaps.implementation.extensions.log
 import app.aaps.shared.tests.TestBaseWithProfile
@@ -23,6 +26,7 @@ class GlucoseStatusTest : TestBaseWithProfile() {
 
     @Mock lateinit var iobCobCalculatorPlugin: IobCobCalculator
     @Mock lateinit var autosensDataStore: AutosensDataStore
+    //@Mock lateinit var preferences: Preferences
 
     @BeforeEach
     fun prepare() {
@@ -41,6 +45,7 @@ class GlucoseStatusTest : TestBaseWithProfile() {
 
     @Test fun calculateValidGlucoseStatus() {
         Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgData())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
         val glucoseStatus = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).glucoseStatusData!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(-2.0)
@@ -50,15 +55,73 @@ class GlucoseStatusTest : TestBaseWithProfile() {
 
         assertThat(glucoseStatus.duraISFminutes).isEqualTo(35.0) // plateau size records in minutes
         assertThat(glucoseStatus.duraISFaverage).isWithin(0.1).of(221.5) // average during above time window
-        assertThat(glucoseStatus.parabolaMinutes).isWithin(0.1).of(15.0) // parabola size records in minutes
-        assertThat(glucoseStatus.deltaPl).isWithin(0.1).of(-2.0) // last delta
-        assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(-1.0) // next delta
-        assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(1.0) // glucose acceleration
+        assertThat(glucoseStatus.parabolaMinutes).isWithin(0.1).of(35.0) // parabola size records in minutes
+        assertThat(glucoseStatus.deltaPl).isWithin(0.1).of(-2.56) // last delta
+        assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(-2.77) // next delta
+        assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(-0.21) // glucose acceleration
         assertThat(glucoseStatus.a0).isWithin(0.1).of(214.0) //
-        assertThat(glucoseStatus.a1).isWithin(0.0001).of(-1.5) //
-        assertThat(glucoseStatus.a2).isWithin(0.0001).of(0.5) //
+        assertThat(glucoseStatus.a1).isWithin(0.01).of(-2.68) //
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.11) //
         assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(1.0) // parabola fit quality
     }
+
+    @Test fun calculateValidGlucoseStatusWith10mGap() {
+        Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgDataWith10mGap())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
+        val glucoseStatus = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).glucoseStatusData!!
+
+        assertThat(glucoseStatus.duraISFminutes).isEqualTo(35.0) // plateau size records in minutes
+        assertThat(glucoseStatus.duraISFaverage).isWithin(0.1).of(221.9) // average during above time window
+        assertThat(glucoseStatus.parabolaMinutes).isWithin(0.1).of(35.0) // parabola size records in minutes
+        assertThat(glucoseStatus.deltaPl).isWithin(0.1).of(-2.56) // last delta
+        assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(-2.77) // next delta
+        assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(-0.21) // glucose acceleration
+        assertThat(glucoseStatus.a0).isWithin(0.1).of(214.0) //
+        assertThat(glucoseStatus.a1).isWithin(0.0001).of(-2.67) //
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.11) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(1.0) // parabola fit quality
+    }
+
+    @Test fun calculateValidGlucoseStatusWith15mGap() {
+        Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgDataWith15mGap())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
+        val glucoseStatus = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).glucoseStatusData!!
+
+        assertThat(glucoseStatus.duraISFminutes).isEqualTo(5.0) // plateau size records in minutes
+        assertThat(glucoseStatus.duraISFaverage).isWithin(0.1).of(215.0) // average during above time window
+        //assertThat(glucoseStatus.parabolaMinutes).isWithin(0.1).of(0.0) // parabola size records in minutes
+        assertThat(glucoseStatus.deltaPl).isWithin(0.1).of(0.0) // last delta
+        assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(0.0) // next delta
+        assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(0.0) // glucose acceleration
+        assertThat(glucoseStatus.a0).isWithin(0.1).of(0.0) //
+        assertThat(glucoseStatus.a1).isWithin(0.0001).of(0.0) //
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(0.0) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(0.0) // parabola fit quality
+    }
+
+    @Test fun calculateValidGlucoseStatusLibre() {
+        Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateDummyBgData())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateValidLibreData())
+        //Mockito.`when`(preferences.get(IntKey.FslMinFitMinutes)).thenReturn(10)
+        val glucoseStatus = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).glucoseStatusData!!
+        assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
+        assertThat(glucoseStatus.delta).isWithin(0.001).of(-2.0)
+        assertThat(glucoseStatus.shortAvgDelta).isWithin(0.001).of(-2.5) // -2 -2.5 -3 deltas are relative to current value
+        assertThat(glucoseStatus.longAvgDelta).isWithin(0.001).of(-2.0) // -2 -2 -2 -2
+        assertThat(glucoseStatus.date).isEqualTo(1514766900000L) // latest date
+
+        assertThat(glucoseStatus.duraISFminutes).isEqualTo(35.0) // plateau size records in minutes
+        assertThat(glucoseStatus.duraISFaverage).isWithin(0.1).of(221.5) // average during above time window
+        assertThat(glucoseStatus.parabolaMinutes).isWithin(0.1).of(12.0) // parabola size records in minutes
+        assertThat(glucoseStatus.deltaPl).isWithin(0.1).of(-1.49) // last delta
+        assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(1.13) // next delta
+        assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(2.62) // glucose acceleration
+        assertThat(glucoseStatus.a0).isWithin(0.1).of(114.0) //
+        assertThat(glucoseStatus.a1).isWithin(0.01).of(-0.18) //
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(1.31) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(0.997) // parabola fit quality
+    }
+
     /*
         Not testing anymore, not valid for bucketed data
 
@@ -83,6 +146,7 @@ class GlucoseStatusTest : TestBaseWithProfile() {
 
     @Test fun oneRecordShouldProduceZeroDeltas() {
         Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateOneCurrentRecordBgData())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
         val glucoseStatus: GlucoseStatus = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).glucoseStatusData!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(0.0)
@@ -112,6 +176,7 @@ class GlucoseStatusTest : TestBaseWithProfile() {
 
     @Test fun returnOldDataIfAllowed() {
         Mockito.`when`(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateOldBgData())
+        Mockito.`when`(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
         val glucoseStatus: GlucoseStatus? = GlucoseStatusProviderImpl(aapsLogger, iobCobCalculatorPlugin, dateUtil, decimalFormatter).getGlucoseStatusData(true)
         assertThat(glucoseStatus).isNotNull()
     }
@@ -168,6 +233,72 @@ class GlucoseStatusTest : TestBaseWithProfile() {
         list.add(InMemoryGlucoseValue(value = 226.0, timestamp = 1514765100000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
         list.add(InMemoryGlucoseValue(value = 228.0, timestamp = 1514764800000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
         return list
+    }
+
+    private fun generateValidBgDataWith10mGap(): MutableList<InMemoryGlucoseValue> {
+        val list: MutableList<InMemoryGlucoseValue> = ArrayList()
+        list.add(InMemoryGlucoseValue(value = 214.0, timestamp = 1514766900000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 216.0, timestamp = 1514766600000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        //st.add(InMemoryGlucoseValue(value = 219.0, timestamp = 1514766300000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 223.0, timestamp = 1514766000000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 222.0, timestamp = 1514765700000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 224.0, timestamp = 1514765400000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 226.0, timestamp = 1514765100000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 228.0, timestamp = 1514764800000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        return list
+    }
+
+    private fun generateValidBgDataWith15mGap(): MutableList<InMemoryGlucoseValue> {
+        val list: MutableList<InMemoryGlucoseValue> = ArrayList()
+        list.add(InMemoryGlucoseValue(value = 214.0, timestamp = 1514766900000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 216.0, timestamp = 1514766600000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        //st.add(InMemoryGlucoseValue(value = 219.0, timestamp = 1514766300000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        //st.add(InMemoryGlucoseValue(value = 223.0, timestamp = 1514766000000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 222.0, timestamp = 1514765700000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 224.0, timestamp = 1514765400000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 226.0, timestamp = 1514765100000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        list.add(InMemoryGlucoseValue(value = 228.0, timestamp = 1514764800000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        return list
+    }
+
+    private fun generateDummyBgData(): MutableList<InMemoryGlucoseValue> {
+        val list: MutableList<InMemoryGlucoseValue> = ArrayList()
+        list.add(InMemoryGlucoseValue(value = 214.0, timestamp = 1514766900000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 216.0, timestamp = 1514766600000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 219.0, timestamp = 1514766300000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 223.0, timestamp = 1514766000000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 222.0, timestamp = 1514765700000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 224.0, timestamp = 1514765400000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 226.0, timestamp = 1514765100000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        list.add(InMemoryGlucoseValue(value = 228.0, timestamp = 1514764800000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        return list
+    }
+
+    private fun generateValidLibreData(): MutableList<GV> {
+        val origData: MutableList<GV> = ArrayList()
+        origData.add(GV(value = 114.0, timestamp = 1514766900000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 113.0, timestamp = 1514766840000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 114.0, timestamp = 1514766780000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 116.0, timestamp = 1514766720000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 114.0, timestamp = 1514766660000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 116.0, timestamp = 1514766600000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 116.0, timestamp = 1514766540000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 117.0, timestamp = 1514766480000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 118.0, timestamp = 1514766420000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 117.0, timestamp = 1514766360000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 119.0, timestamp = 1514766300000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 120.0, timestamp = 1514766240000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 123.0, timestamp = 1514766180000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 122.0, timestamp = 1514766120000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 124.0, timestamp = 1514766060000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        origData.add(GV(value = 123.0, timestamp = 1514766000000, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
+        return origData
+    }
+
+    private fun generateDummyLibreData(): MutableList<GV> {
+        val origData: MutableList<GV> = ArrayList()
+        origData.add(GV(timestamp = 1514766900000, value = 214.0, raw = 0.0, noise = 0.0, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
+        return origData
     }
 
     private fun generateInsufficientBgData(): MutableList<InMemoryGlucoseValue> {
