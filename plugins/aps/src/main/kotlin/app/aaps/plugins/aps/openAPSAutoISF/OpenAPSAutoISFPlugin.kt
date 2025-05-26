@@ -1265,7 +1265,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslCalSlope, dialogMessage = R.string.fslCal_Slope_summary, title = R.string.fslCal_Slope_title))
                     addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslSmoothAlpha, dialogMessage = R.string.fsl_exp1_factor_summary, title = R.string.fsl_exp1_factor_title))
                     //addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.FslSmoothCorrection, dialogMessage = R.string.fsl_exp1_correction_summary, title = R.string.fsl_exp1_correction_title))
-                    addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.FslMaxSmoothGap, dialogMessage = R.string.fsl_exp1_max_smooth_gap_summary, title = R.string.fsl_exp1_max_smooth_gap_title))
+                    //addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.FslMaxSmoothGap, dialogMessage = R.string.fsl_exp1_max_smooth_gap_summary, title = R.string.fsl_exp1_max_smooth_gap_title))
                     //addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.FslMinFitMinutes, dialogMessage = R.string.fslMinFitMinutes_summary, title = R.string.fslMinFitMinutes_title))
                 })
                 addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsUseAutoIsfWeights, summary = R.string.openapsama_enable_autoISF, title = R.string.openapsama_enable_autoISF))
