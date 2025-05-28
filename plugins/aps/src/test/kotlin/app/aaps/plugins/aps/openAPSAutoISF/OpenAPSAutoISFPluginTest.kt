@@ -3,6 +3,7 @@ package app.aaps.plugins.aps.openAPSAutoISF
 import android.icu.util.Calendar
 import app.aaps.core.data.aps.SMBDefaults
 import app.aaps.core.interfaces.aps.OapsProfileAutoIsf
+import app.aaps.core.interfaces.automation.AutomationStateInterface
 import app.aaps.core.interfaces.bgQualityCheck.BgQualityCheck
 import app.aaps.core.interfaces.constraints.ConstraintsChecker
 import app.aaps.core.interfaces.db.PersistenceLayer
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import javax.inject.Inject
 
 class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
 
@@ -31,6 +33,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
     @Mock lateinit var bgQualityCheck: BgQualityCheck
     @Mock lateinit var profiler: Profiler
     @Mock lateinit var uiInteraction: UiInteraction
+    @Mock lateinit var automationStateService: AutomationStateInterface
     private lateinit var openAPSAutoISFPlugin: OpenAPSAutoISFPlugin
 
     @BeforeEach fun prepare() {
@@ -102,16 +105,16 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         val stepInactivityDetected = false
         `when`(preferences.get(BooleanKey.ApsActivityDetection)).thenReturn(false)
 
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(1.7, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(1.2) // upper limit
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.7) // lower limit
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(1.7, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(1.2) // upper limit
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.7) // lower limit
         sens = 1.5  // from Autosens
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(1.7, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(1.5) // autosens 1.5 wins
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(1.7, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(1.5) // autosens 1.5 wins
         sens = 0.5  // from Autosens
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.5) // autosens 0.5 wins
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.5) // autosens 0.5 wins
         exerciseModeActive = true
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.35) // exercise mode
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.35) // exercise mode
         stepActivityDetected = true
-        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, originSens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.35) // Activity mode
+        assertThat(openAPSAutoISFPlugin.withinISFlimits(0.5, autoIsfMin, autoIsfMax, sens, exerciseModeActive, resistanceModeActive, stepActivityDetected, stepInactivityDetected)).isEqualTo(0.35) // Activity mode
     }
 
     @Test
@@ -196,6 +199,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             out_units = "mg/dl",
             variable_sens = 111.1,
             autoISF_version = "3.1.0",
+            enable_autoISF = false,
             autoISF_max = 1.5,
             autoISF_min = 0.7,
             bgAccel_ISF_weight = 0.0,
