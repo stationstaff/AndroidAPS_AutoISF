@@ -97,7 +97,7 @@ class MainApp : DaggerApplication() {
     @Inject lateinit var persistenceLayer: PersistenceLayer
     @Inject lateinit var dateUtil: DateUtil
     @Inject lateinit var uiInteraction: UiInteraction
-    @Inject lateinit var notificationStore: NotificationStore
+    //@Inject lateinit var notificationStore: NotificationStore
     @Inject lateinit var processLifecycleListener: Provider<ProcessLifecycleListener>
     @Inject lateinit var themeSwitcherPlugin: ThemeSwitcherPlugin
     @Inject lateinit var localAlertUtils: LocalAlertUtils
@@ -172,25 +172,23 @@ class MainApp : DaggerApplication() {
         localAlertUtils.shortenSnoozeInterval()
         localAlertUtils.preSnoozeAlarms()
 
-            // Activity Monitor
-            // Save AAPS start time
-            preferences.put(LongKey.AppStart, dateUtil.now())
-            // activate sensor
-            val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
-            val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
-            val phoneMovementDetector = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
-            sensorManager.registerListener(app.aaps.plugins.aps.openAPSSMB.StepService, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
-            sensorManager.registerListener(app.aaps.plugins.aps.openAPSSMB.PhoneMovementDetector, phoneMovementDetector, SensorManager.SENSOR_DELAY_NORMAL)
-
-            //  schedule widget update
-            refreshWidget = Runnable {
+        // Activity Monitor
+        // Save AAPS start time
+        preferences.put(LongKey.AppStart, dateUtil.now())
+        // activate sensor
+        val sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        val stepSensor = sensorManager.getDefaultSensor(Sensor.TYPE_STEP_COUNTER)
+        val phoneMovementDetector = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
+        sensorManager.registerListener(app.aaps.plugins.aps.openAPSSMB.StepService, stepSensor, SensorManager.SENSOR_DELAY_NORMAL)
+        sensorManager.registerListener(app.aaps.plugins.aps.openAPSSMB.PhoneMovementDetector, phoneMovementDetector, SensorManager.SENSOR_DELAY_NORMAL)
+        //  schedule widget update
+        refreshWidget = Runnable {
                 handler.postDelayed(refreshWidget, 60000)
                 Widget.updateWidget(this@MainApp, "ScheduleEveryMin")
-            }
-            handler.postDelayed(refreshWidget, 60000)
-            config.appInitialized = true
-            aapsLogger.debug("doInit end")
         }
+        handler.postDelayed(refreshWidget, 60000)
+        config.appInitialized = true
+        aapsLogger.debug("doInit end")
     }
 
     private fun setRxErrorHandler() {
