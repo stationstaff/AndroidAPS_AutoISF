@@ -109,59 +109,68 @@ class MainApp : DaggerApplication() {
 
     override fun onCreate() {
         super.onCreate()
+
+        // Here should be everything injected
         aapsLogger.debug("onCreate")
         ProcessLifecycleOwner.get().lifecycle.addObserver(processLifecycleListener.get())
-        scope.launch {
-            RxDogTag.install()
-            setRxErrorHandler()
-            LocaleHelper.update(this@MainApp)
 
-            var gitRemote: String? = config.REMOTE
-            var commitHash: String? = BuildConfig.HEAD
-            if (gitRemote?.contains("NoGitSystemAvailable") == true) {
-                gitRemote = null
-                commitHash = null
-            }
-            disposable += compatDBHelper.dbChangeDisposable()
-            registerActivityLifecycleCallbacks(activityMonitor)
-            runOnUiThread { themeSwitcherPlugin.setThemeMode() }
-            aapsLogger.debug("Version: " + config.VERSION_NAME)
-            aapsLogger.debug("BuildVersion: " + config.BUILD_VERSION)
-            aapsLogger.debug("Remote: " + config.REMOTE)
-            registerLocalBroadcastReceiver()
-            setupRemoteConfig()
+        // Do necessary migrations
+        doMigrations()
 
-            // trigger here to see the new version on app start after an update
-            handler.postDelayed({ versionCheckersUtils.triggerCheckVersion() }, 30000)
+        // Register and initialize plugins
+        pluginStore.plugins = plugins
+        configBuilder.initialize()
 
-            doMigrations()
+        // Do initializations in another thread
+        scope.launch { doInit() }
+    }
 
-            // Register all tabs in app here
-            pluginStore.plugins = plugins
-            configBuilder.initialize()
+    private fun doInit() {
+        aapsLogger.debug("doInit")
+        RxDogTag.install()
+        setRxErrorHandler()
+        LocaleHelper.update(this@MainApp)
 
-            // delayed actions to make rh context updated for translations
-            handler.postDelayed(
-                {
-                    // log version
-                    disposable += persistenceLayer.insertVersionChangeIfChanged(config.VERSION_NAME, BuildConfig.VERSION_CODE, gitRemote, commitHash).subscribe()
-                    // log app start
-                    if (preferences.get(BooleanKey.NsClientLogAppStart))
-                        disposable += persistenceLayer.insertPumpTherapyEventIfNewByTimestamp(
-                            therapyEvent = TE(
-                                timestamp = dateUtil.now(),
-                                type = TE.Type.NOTE,
-                                note = rh.get().gs(app.aaps.core.ui.R.string.androidaps_start) + " - " + Build.MANUFACTURER + " " + Build.MODEL,
-                                glucoseUnit = GlucoseUnit.MGDL
-                            ),
-                            action = Action.START_AAPS,
-                            source = Sources.Aaps, note = "", listValues = listOf()
-                        ).subscribe()
-                }, 10000
-            )
-            KeepAliveWorker.schedule(this@MainApp)
-            localAlertUtils.shortenSnoozeInterval()
-            localAlertUtils.preSnoozeAlarms()
+        var gitRemote: String? = config.REMOTE
+        var commitHash: String? = BuildConfig.HEAD
+        if (gitRemote?.contains("NoGitSystemAvailable") == true) {
+            gitRemote = null
+            commitHash = null
+        }
+        disposable += compatDBHelper.dbChangeDisposable()
+        registerActivityLifecycleCallbacks(activityMonitor)
+        runOnUiThread { themeSwitcherPlugin.setThemeMode() }
+        aapsLogger.debug("Version: " + config.VERSION_NAME)
+        aapsLogger.debug("BuildVersion: " + config.BUILD_VERSION)
+        aapsLogger.debug("Remote: " + config.REMOTE)
+        registerLocalBroadcastReceiver()
+        setupRemoteConfig()
+
+        // trigger here to see the new version on app start after an update
+        handler.postDelayed({ versionCheckersUtils.triggerCheckVersion() }, 30000)
+
+        // delayed actions to make rh context updated for translations
+        handler.postDelayed(
+            {
+                // log version
+                disposable += persistenceLayer.insertVersionChangeIfChanged(config.VERSION_NAME, BuildConfig.VERSION_CODE, gitRemote, commitHash).subscribe()
+                // log app start
+                if (preferences.get(BooleanKey.NsClientLogAppStart))
+                    disposable += persistenceLayer.insertPumpTherapyEventIfNewByTimestamp(
+                        therapyEvent = TE(
+                            timestamp = dateUtil.now(),
+                            type = TE.Type.NOTE,
+                            note = rh.get().gs(app.aaps.core.ui.R.string.androidaps_start) + " - " + Build.MANUFACTURER + " " + Build.MODEL,
+                            glucoseUnit = GlucoseUnit.MGDL
+                        ),
+                        action = Action.START_AAPS,
+                        source = Sources.Aaps, note = "", listValues = listOf()
+                    ).subscribe()
+            }, 10000
+        )
+        KeepAliveWorker.schedule(this@MainApp)
+        localAlertUtils.shortenSnoozeInterval()
+        localAlertUtils.preSnoozeAlarms()
 
             // Activity Monitor
             // Save AAPS start time
@@ -180,6 +189,7 @@ class MainApp : DaggerApplication() {
             }
             handler.postDelayed(refreshWidget, 60000)
             config.appInitialized = true
+            aapsLogger.debug("doInit end")
         }
     }
 
