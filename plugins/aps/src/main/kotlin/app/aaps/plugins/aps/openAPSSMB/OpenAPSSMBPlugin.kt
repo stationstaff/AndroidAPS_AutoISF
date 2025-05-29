@@ -416,7 +416,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
         }
 
         @Suppress("KotlinConstantConditions")
-        val iobArray = iobCobCalculator.calculateIobArrayForSMB(autosensResult, SMBDefaults.exercise_mode, SMBDefaults.half_basal_exercise_target, isTempTarget)
+        val iobArray = iobCobCalculator.calculateIobArrayForSMB(autosensResult, preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens), preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget), isTempTarget)
         val mealData = iobCobCalculator.getMealDataWithWaitingForCalculationFinish()
 
         val calendar = Calendar.getInstance()
@@ -451,7 +451,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
             // exercise_mode = SMBDefaults.exercise_mode,
             // half_basal_exercise_target = SMBDefaults.half_basal_exercise_target,
             exercise_mode = preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens),
-            half_basal_exercise_target = preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget),
+            half_basal_exercise_target = preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget),
             // mod finish
             // mod activity mode
             activity_detection = preferences.get(BooleanKey.ApsActivityDetection),
@@ -624,7 +624,7 @@ open class OpenAPSSMBPlugin @Inject constructor(
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsResistanceLowersTarget, summary = R.string.resistance_lowers_target_summary, title = R.string.resistance_lowers_target_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsAutoIsfHighTtRaisesSens, summary = R.string.high_temptarget_raises_sensitivity_summary, title = R.string.high_temptarget_raises_sensitivity_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsAutoIsfLowTtLowersSens, summary = R.string.low_temptarget_lowers_sensitivity_summary, title = R.string.low_temptarget_lowers_sensitivity_title))
-            addPreference(AdaptiveIntPreference(ctx = context, intKey = IntKey.ApsAutoIsfHalfBasalExerciseTarget, dialogMessage = R.string.half_basal_exercise_target_summary, title = R.string.half_basal_exercise_target_title))
+            addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget, dialogMessage = R.string.half_basal_exercise_target_summary, title = R.string.half_basal_exercise_target_title))
             addPreference(preferenceManager.createPreferenceScreen(context).apply {
                 key = "activity_modifies _sensitivity"
                 title = rh.gs(R.string.activity_mode_title)

@@ -212,7 +212,7 @@ class OpenAPSAMAPlugin @Inject constructor(
             resistance_lowers_target = false, // not used
             adv_target_adjustments = false, // not used
             exercise_mode = false, // not used
-            half_basal_exercise_target = 0, // not used
+            half_basal_exercise_target = 160.0, // not used
             activity_detection = preferences.get(BooleanKey.ApsActivityDetection), // not used
             recent_steps_5_minutes = StepService.getRecentStepCount5Min(), // not used
             recent_steps_10_minutes = StepService.getRecentStepCount10Min(),

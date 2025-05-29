@@ -25,7 +25,7 @@ data class OapsProfile(
     var resistance_lowers_target: Boolean,
     var adv_target_adjustments: Boolean,
     var exercise_mode: Boolean,
-    var half_basal_exercise_target: Int,
+    var half_basal_exercise_target: Double = 160.0,
     // Activity monitor
     val activity_detection: Boolean? = false,
     val recent_steps_5_minutes: Int? = 0,

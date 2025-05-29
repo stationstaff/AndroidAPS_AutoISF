@@ -75,7 +75,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         `when`(preferences.get(IntKey.ActivityMonitorIdleStart)).thenReturn(22)
         `when`(preferences.get(IntKey.ActivityMonitorIdleEnd)).thenReturn(6)
         `when`(preferences.get(BooleanKey.ApsActivityDetection)).thenReturn(false)
-
+#
         assertThat(openAPSAutoISFPlugin.activityMonitor(true, 80.0, 90.0, 2)).isEqualTo(1.0) // not selected in preferences
 
         `when`(preferences.get(BooleanKey.ApsActivityDetection)).thenReturn(true)
@@ -168,7 +168,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             resistance_lowers_target = preferences.get(BooleanKey.ApsResistanceLowersTarget),
             adv_target_adjustments = SMBDefaults.adv_target_adjustments,
             exercise_mode = SMBDefaults.exercise_mode,
-            half_basal_exercise_target = preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget),
+            half_basal_exercise_target = preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget),
             activity_detection = preferences.get(BooleanKey.ApsActivityDetection),
             recent_steps_5_minutes  = 5,
             recent_steps_10_minutes = 10,
@@ -264,7 +264,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
             resistance_lowers_target = preferences.get(BooleanKey.ApsResistanceLowersTarget),
             adv_target_adjustments = SMBDefaults.adv_target_adjustments,
             exercise_mode = SMBDefaults.exercise_mode,
-            half_basal_exercise_target = preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget),
+            half_basal_exercise_target = preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget),
             activity_detection = preferences.get(BooleanKey.ApsActivityDetection),
             recent_steps_5_minutes  = 5,
             recent_steps_10_minutes = 10,
