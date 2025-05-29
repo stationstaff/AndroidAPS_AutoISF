@@ -47,7 +47,6 @@ import app.aaps.implementation.plugin.PluginStore
 import app.aaps.implementation.receivers.NetworkChangeReceiver
 import app.aaps.plugins.configuration.keys.ConfigurationBooleanComposedKey
 import app.aaps.plugins.constraints.objectives.keys.ObjectivesLongComposedKey
-import app.aaps.plugins.main.general.overview.notifications.NotificationStore
 import app.aaps.plugins.main.general.themes.ThemeSwitcherPlugin
 import app.aaps.plugins.main.profile.keys.ProfileComposedBooleanKey
 import app.aaps.plugins.main.profile.keys.ProfileComposedDoubleKey
@@ -97,7 +96,6 @@ class MainApp : DaggerApplication() {
     @Inject lateinit var persistenceLayer: PersistenceLayer
     @Inject lateinit var dateUtil: DateUtil
     @Inject lateinit var uiInteraction: UiInteraction
-    //@Inject lateinit var notificationStore: NotificationStore
     @Inject lateinit var processLifecycleListener: Provider<ProcessLifecycleListener>
     @Inject lateinit var themeSwitcherPlugin: ThemeSwitcherPlugin
     @Inject lateinit var localAlertUtils: LocalAlertUtils
