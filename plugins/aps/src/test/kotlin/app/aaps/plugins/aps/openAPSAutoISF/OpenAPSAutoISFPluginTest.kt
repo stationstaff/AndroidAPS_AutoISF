@@ -75,7 +75,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         `when`(preferences.get(IntKey.ActivityMonitorIdleStart)).thenReturn(22)
         `when`(preferences.get(IntKey.ActivityMonitorIdleEnd)).thenReturn(6)
         `when`(preferences.get(BooleanKey.ApsActivityDetection)).thenReturn(false)
-#
+
         assertThat(openAPSAutoISFPlugin.activityMonitor(true, 80.0, 90.0, 2)).isEqualTo(1.0) // not selected in preferences
 
         `when`(preferences.get(BooleanKey.ApsActivityDetection)).thenReturn(true)
@@ -319,7 +319,7 @@ class OpenAPSAutoISFPluginTest : TestBaseWithProfile() {
         `when`(glucoseStatus.corrSqu).thenReturn(0.4711)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11)                             // bad parabola
         `when`(preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)).thenReturn(true)
-        `when`(preferences.get(IntKey.ApsAutoIsfHalfBasalExerciseTarget)).thenReturn(160)
+        `when`(preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget)).thenReturn(160.0)
         assertThat(openAPSAutoISFPlugin.autoISF(now, profile)).isEqualTo(47.11 * 2.0)                       // exercise mode w/o AutoISF
         `when`(glucoseStatus.corrSqu).thenReturn(0.95)
         `when`(glucoseStatus.glucose).thenReturn(90.0)
