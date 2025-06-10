@@ -268,5 +268,7 @@
     <string name="key_fsl_exp1_max_smooth_gap" translatable="false">fslExp1SmoothGap</string>
     <string name="fsl_exp1_max_smooth_gap_title">max. minutes of gap to smooth</string>
     <string name="fsl_exp1_max_smooth_gap_summary">The longer the gap the less smoothing effect; uses last value before the gap if longer than this</string>
+    <string name="MaintenanceCleanupDays_title">How many days to keep on DB cleanup</string>
+    <string name="MaintenanceCleanupDays_summary">When using Libre 1 minute CGM define a shorter period for DB cleanup like 15 days or even less to improve performance.\nNote that AAPS standard is 93 days</string>
 
 </resources>
