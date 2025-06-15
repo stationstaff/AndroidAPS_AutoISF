@@ -12,7 +12,7 @@ import app.aaps.plugins.automation.actions.ActionAutoisfEnable
 import app.aaps.plugins.automation.actions.ActionCarePortalEvent
 import app.aaps.plugins.automation.actions.ActionDummy
 import app.aaps.plugins.automation.actions.ActionLoopDisable
-import app.aaps.plugins.automation.actions.ActionLoopEnable
+import app.aaps.plugins.automation.actions.ActionLoopClosed
 import app.aaps.plugins.automation.actions.ActionLoopResume
 import app.aaps.plugins.automation.actions.ActionLoopSuspend
 import app.aaps.plugins.automation.actions.ActionNotification
@@ -125,7 +125,7 @@ abstract class AutomationModule {
     @ContributesAndroidInjector abstract fun actionInjector(): Action
     @ContributesAndroidInjector abstract fun actionStopProcessingInjector(): ActionStopProcessing
     @ContributesAndroidInjector abstract fun actionLoopDisableInjector(): ActionLoopDisable
-    @ContributesAndroidInjector abstract fun actionLoopEnableInjector(): ActionLoopEnable
+    @ContributesAndroidInjector abstract fun actionLoopEnableInjector(): ActionLoopClosed
     @ContributesAndroidInjector abstract fun actionLoopResumeInjector(): ActionLoopResume
     @ContributesAndroidInjector abstract fun actionLoopSuspendInjector(): ActionLoopSuspend
     @ContributesAndroidInjector abstract fun actionNotificationInjector(): ActionNotification
