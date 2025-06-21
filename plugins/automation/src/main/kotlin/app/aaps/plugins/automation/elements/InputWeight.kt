@@ -17,7 +17,7 @@ class InputWeight() : Element {
     override fun addToLayout(root: LinearLayout) {
         root.addView(
             NumberPicker(root.context, null).also {
-                it.setParams(value, 0.0, 2.0, 0.05, DecimalFormat("0.00"), true, root.findViewById(app.aaps.core.ui.R.id.ok))
+                it.setParams(value, 0.0, 1.0, 0.05, DecimalFormat("0.00"), true, root.findViewById(app.aaps.core.ui.R.id.ok))
                 it.setOnValueChangedListener { v: Double -> value = v }
                 it.gravity = Gravity.CENTER_HORIZONTAL
             })
