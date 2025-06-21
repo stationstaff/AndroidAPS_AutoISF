@@ -29,7 +29,9 @@ import app.aaps.core.interfaces.rx.events.EventPreferenceChange
 import app.aaps.core.interfaces.sync.DataSyncSelectorXdrip
 import app.aaps.core.interfaces.ui.UiInteraction
 import app.aaps.core.interfaces.utils.fabric.FabricPrivacy
+import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.StringKey
+import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.ui.dialogs.OKDialog
 import app.aaps.core.ui.extensions.runOnUiThread
 import app.aaps.core.ui.extensions.toVisibility
@@ -64,6 +66,7 @@ class MaintenanceFragment : DaggerFragment() {
     @Inject lateinit var uiInteraction: UiInteraction
     @Inject lateinit var activePlugin: ActivePlugin
     @Inject lateinit var fileListProvider: FileListProvider
+    @Inject lateinit var preferences: Preferences
 
     private val disposable = CompositeDisposable()
     private var inMenu = false
@@ -137,8 +140,9 @@ class MaintenanceFragment : DaggerFragment() {
         binding.cleanupDb.setOnClickListener {
             activity?.let { activity ->
                 var result = ""
-                OKDialog.showConfirmation(activity, rh.gs(R.string.maintenance), rh.gs(app.aaps.core.ui.R.string.cleanup_db_confirm), Runnable {
-                    disposable += Completable.fromAction { result = persistenceLayer.cleanupDatabase(93, deleteTrackedChanges = true) }
+                val keepDays = preferences.get(IntKey.MaintenanceCleanupDays)
+                OKDialog.showConfirmation(activity, rh.gs(R.string.maintenance), "Do you really want to delete entries older than $keepDays days from the db?", Runnable {
+                    disposable += Completable.fromAction { result = persistenceLayer.cleanupDatabase(keepDays.toLong(), deleteTrackedChanges = true) }
                         .subscribeOn(aapsSchedulers.io)
                         .observeOn(aapsSchedulers.main)
                         .subscribeBy(
