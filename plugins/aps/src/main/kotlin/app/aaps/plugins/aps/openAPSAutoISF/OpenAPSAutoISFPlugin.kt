@@ -355,7 +355,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         //if (hour < 1) {
         //   hour = 1
         //}
-        var activityRatio = activityMonitor(isTempTarget, glucoseStatus.glucose, targetBg, hour)
+        val activityRatio = activityMonitor(isTempTarget, glucoseStatus.glucose, targetBg, hour)
         val activityLog = if (consoleLog.size==0) "Activity Monitor skipped" else consoleLog[0]
         consoleLog.clear()
         //activityRatio = 0.5 // while testing
@@ -456,7 +456,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 // e.g.: Sensitivity ratio set to 0.8 based on temp target of 120; Adjusting basal from 1.65 to 1.35; ISF from 58.9 to 73.6
                 //sensitivityRatio = 2/(2+(target_bg-normalTarget)/40);
                 val resistanceMax = min(1.5, preferences.get(DoubleKey.AutosensMax))  // additional safety limit
-                val c = (mgdlHalfBasalExerciseTarget - normalTarget).toDouble()
+                val c = (mgdlHalfBasalExerciseTarget - normalTarget)
                 if (c * (c + target_bg - normalTarget) <= 0.0) {
                     sensitivityRatio = resistanceMax
                 } else {
@@ -748,7 +748,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 //sensitivityRatio = 2/(2+(target_bg-normalTarget)/40);
                 val resistanceMax = min(1.5, preferences.get(DoubleKey.AutosensMax))  // additional safety limit
                 //val mgdlHalfBasalExerciseTarget = preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget) * if (profile.out_units=="mmol/L") GlucoseUnit.MMOLL_TO_MGDL else 1.0
-                val c = (mgdlHalfBasalExerciseTarget - normalTarget).toDouble()
+                val c = (mgdlHalfBasalExerciseTarget - normalTarget)
                 if (c * (c + target_bg - normalTarget) <= 0.0) {
                     sensitivityRatio = resistanceMax
                     // consoleError.add("Sensitivity decrease for temp target of $target_bg limited by Autosens_max; ")
@@ -839,7 +839,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         //consoleError.add("Parabola fit results were acceleration:${round(bg_acce, 2)}, correlation:$fit_corr, duration:${glucose_status.parabolaMinutes}m")
         if (glucose_status.a2 != 0.0 && fit_corr >= 0.9) {
             var minmax_delta: Double = -glucose_status.a1 / 2 / glucose_status.a2 * 5      // back from 5min block to 1 min
-            var minmax_value: Double = round(glucose_status.a0 - minmax_delta * minmax_delta / 25 * glucose_status.a2, 1)
+            val minmax_value: Double = round(glucose_status.a0 - minmax_delta * minmax_delta / 25 * glucose_status.a2, 1)
             minmax_delta = round(minmax_delta, 1)
             if (minmax_delta > 0 && bg_acce < 0) {
                 consoleError.add("Parabolic fit extrapolates a maximum of ${convert_bg(minmax_value)} in about $minmax_delta minutes")
@@ -883,7 +883,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val bg_ISF = 1 + interpolate(100 - bg_off)
         consoleError.add("bg_ISF adaptation is ${round(bg_ISF, 2)}")
         var liftISF: Double
-        var final_ISF: Double
+        val final_ISF: Double
         if (bg_ISF < 1.0) {
             liftISF = min(bg_ISF, acce_ISF)
             if (acce_ISF > 1.0) {
@@ -1030,7 +1030,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             consoleError.add("strongest autoISF factor ${round(liftISF, 2)} limited by autoISF_max $maxISFReduction")
             liftISFlimited = maxISFReduction
         }
-        var finalISF = 1.0
+        val finalISF: Double
         var originSens = ""
         when {
             exerciseModeActive          -> {
@@ -1077,7 +1077,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
                 iobThPercent = 0.0
                 consoleLog.add("User setting iobTH disabled in LGS mode")
             } else {
-                iobThPercent = round(iobThEffective/profile.max_iob*100.0, 0);
+                iobThPercent = round(iobThEffective/profile.max_iob*100.0, 0)
             }
             if (iobThPercent == iobThUser.toDouble()) {
                 consoleLog.add("User setting iobTH=$iobThUser% not modulated")

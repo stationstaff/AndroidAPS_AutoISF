@@ -244,9 +244,9 @@
     <string name="inactivity_idle_end_summary">End hour of sleep when inactivity monitoring is re-enabled again\nDefault in 24h notation is 6</string>
 
     <!-- Libre special    -->
-    <string name="calibration_stops_smb_title" translatable="false">Disable SBM and AutoISF weights for 20m after fresh calibration</string>
+    <string name="calibration_stops_smb_title" translatable="false">Disable SMB and AutoISF weights for 20m after fresh calibration</string>
     <string name="calibration_stops_smb_summary" translatable="false">Trigger this once before changing calibration settings</string>
-    <string name="calibration_enable_smb_title" translatable="false">Re-enable SBM and AutoISF weights earlier anyway</string>
+    <string name="calibration_enable_smb_title" translatable="false">Re-enable SMB and AutoISF weights earlier anyway</string>
     <string name="calibration_enable_smb_summary" translatable="false">Activate this when suppressing is no longer required because calibration transition was smooth</string>
     <string name="fslCal_Offset_title">Offset of Libre calibration versus finger like in xDrip</string>
     <string name="fslCal_Offset_summary">OFFSET value as in calibration formula\nLibre_calibrated = OFFSET + slope * Libre_raw</string>
