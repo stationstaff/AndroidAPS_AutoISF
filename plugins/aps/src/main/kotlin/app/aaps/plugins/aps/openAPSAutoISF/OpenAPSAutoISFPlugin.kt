@@ -155,6 +155,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val highTemptargetRaisesSensitivity; get() = preferences.get(BooleanKey.ApsAutoIsfHighTtRaisesSens)
     val mgdlHalfBasalExerciseTarget = preferences.get(UnitDoubleKey.ApsAutoIsfHalfBasalExerciseTarget) * if (profileFunction.getUnits() == GlucoseUnit.MMOL) GlucoseUnit.MMOLL_TO_MGDL else 1.0
     val normalTarget = 100
+    val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
     private val minutesClass; get() = if (preferences.get(IntKey.ApsMaxSmbFrequency) == 1) 6L else 30L  // ga-zelle: later get correct 1 min CGM flag from glucoseStatus ? ... or from apsResults?
     // Activity detection (steps)
     private val recentSteps5Minutes ; get() = StepService.getRecentStepCount5Min()
@@ -797,7 +798,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         //aapsLogger.debug(LTag.APS, "State json for AutoISF weights: {\"Calibration\":\"${automationStateService.getState("Calibration")}\"}")
         var skipWeights = false
         //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
-        val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        val calibrationMinutes = calibrationDuration - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
         val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
         if (calibrationStopsSMB) {
             consoleError.add("AutoISF weights disabled while calibrating")
@@ -1099,10 +1100,10 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             preferences.put(BooleanKey.FslCalibrationEnd, false)
         }
         //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
-        val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        val calibrationMinutes = calibrationDuration - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
         val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
         var CalibrationMsg = "Calibration json: {\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
-        CalibrationMsg += ",\"calibrationDuration\":${preferences.get(IntKey.FslCalibrationDuration)}}"
+        CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
         aapsLogger.debug(LTag.APS, CalibrationMsg)
         if (calibrationStopsSMB) {
             consoleLog.add("SMB disabled while calibrating for another ${calibrationMinutes}m")

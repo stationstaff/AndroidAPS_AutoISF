@@ -55,7 +55,7 @@ enum class IntKey(
     ApsAutoIsfIobThPercent("iob_threshold_percent", 100, 10, 100, defaultedBySM = true),
     FslMinFitMinutes("fslMinMinutes", 20, 3, 20, defaultedBySM = true),
     FslMaxSmoothGap("Exp1SmoothGap", 20, 10, 60, defaultedBySM = true),
-    FslCalibrationDuration("Exp1SmoothGap", 20, 10, 60, defaultedBySM = true),
+    FslCalibrationDuration("Calibration_Duration", 20, 20, 20, defaultedBySM = true),   // effectively frozen
 
     ActivityMonitorIdleStart("inactivity_idle_start", 22, 0, 23, defaultedBySM=true, dependency = BooleanKey.ActivityMonitorOvernight),
     ActivityMonitorIdleEnd("inactivity_idle_end", 6, 0, 23, defaultedBySM=true, dependency = BooleanKey.ActivityMonitorOvernight),

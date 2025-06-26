@@ -141,8 +141,8 @@ class XdripSourcePlugin @Inject constructor(
                 preferences.put(BooleanKey.FslCalibrationTrigger, false)
                 preferences.put(BooleanKey.FslCalibrationEnd, false)
             }
-            //val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
-            val calibrationMinutes = preferences.get(IntKey.FslCalibrationDuration) - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+            val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
+            val calibrationMinutes = calibrationDuration - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
             val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
             if (calibrationStopsSMB) {
                  aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${calibrationMinutes}m")
@@ -153,8 +153,8 @@ class XdripSourcePlugin @Inject constructor(
                 extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
                 val maxGap = 20     //preferences.get(IntKey.FslMaxSmoothGap)
                 val cgmDelta = if (sourceCGM =="G7") 5.0 else 1.0
-                aapsLogger.debug(LTag.BGSOURCE, "Applied no smooth when ${preferences.get(IntKey.FslCalibrationDuration) - calibrationMinutes}m <2")
-                val effectiveAlpha =  if (preferences.get(IntKey.FslCalibrationDuration) - calibrationMinutes < 2 && !preferences.get(BooleanKey.FslCalibrationEnd)) 1.0 else min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
+                aapsLogger.debug(LTag.BGSOURCE, "Applied no smooth when ${calibrationDuration - calibrationMinutes}m <2")
+                val effectiveAlpha =  if (calibrationDuration - calibrationMinutes < 2 && !preferences.get(BooleanKey.FslCalibrationEnd)) 1.0 else min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
                 if (lastSmooth > 0.0) {
                     // exponential smoothing, see https://en.wikipedia.org/wiki/Exponential_s
                     smooth = lastSmooth + effectiveAlpha * (extraBgEstimate - lastSmooth)
@@ -170,7 +170,7 @@ class XdripSourcePlugin @Inject constructor(
                 preferences.put(LongKey.FslSmoothLastTimeRaw, thisTimeRaw)
                 var CalibrationMsg = "Calibration json: {\"offset\":$offset,\"slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
                 CalibrationMsg += ",\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
-                CalibrationMsg += ",\"calibrationDuration\":${preferences.get(IntKey.FslCalibrationDuration)}}"
+                CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
                 aapsLogger.debug(LTag.BGSOURCE, CalibrationMsg)
             }
             glucoseValues += GV(
