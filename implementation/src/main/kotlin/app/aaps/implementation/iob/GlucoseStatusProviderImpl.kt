@@ -57,7 +57,7 @@ class GlucoseStatusProviderImpl @Inject constructor(
         val fslValue = fsl.raw
         val fslRaw = fsl.noise
         val fslSmooth = fsl.value
-        var fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3" || cgm.text=="G7"
+        var fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"   // || cgm.text=="G7"
         //fslReally = true    // "RANDOM" while testing with virtual phone in AS or until xDrip/Juggluco label=="Libre2/3" is implemented
         var fslMinDur = 15  // default for 5m CGM
         var change: Double
@@ -100,7 +100,7 @@ class GlucoseStatusProviderImpl @Inject constructor(
                 // multiply by 5 to get the same units as delta, i.e. mg/dL/5m
                 change = now.recalculated - then.recalculated
                 val avgDel = change / minutesAgo * 5
-                aapsLogger.debug(LTag.GLUCOSE, "$then Bucketed=$minutesAgo valueAgo=$valueAgo recalcAgo=$bgAgo smooth=$smoothAgo filled=$filledAgo avgDelta=$avgDel")
+                //aapsLogger.debug(LTag.GLUCOSE, "$then Bucketed=$minutesAgo valueAgo=$valueAgo recalcAgo=$bgAgo smooth=$smoothAgo filled=$filledAgo avgDelta=$avgDel")
 
                 // use the average of all data points in the last 2.5m for all further "now" calculations
                 // if (0 < minutesAgo && minutesAgo < 2.5) {
