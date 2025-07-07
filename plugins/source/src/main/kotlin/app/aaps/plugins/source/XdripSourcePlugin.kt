@@ -171,6 +171,7 @@ class XdripSourcePlugin @Inject constructor(
                 var CalibrationMsg = "Calibration json: {\"offset\":$offset,\"slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
                 CalibrationMsg += ",\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
                 //CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
+                CalibrationMsg += "}"
                 aapsLogger.debug(LTag.BGSOURCE, CalibrationMsg)
             }
             glucoseValues += GV(

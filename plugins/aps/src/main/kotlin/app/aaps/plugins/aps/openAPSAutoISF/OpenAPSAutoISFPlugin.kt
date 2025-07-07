@@ -1103,7 +1103,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val calibrationMinutes = calibrationDuration - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
         val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
         var CalibrationMsg = "Calibration json: {\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
-        CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
+        //CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
+        CalibrationMsg += "}"
         aapsLogger.debug(LTag.APS, CalibrationMsg)
         if (calibrationStopsSMB) {
             consoleLog.add("SMB disabled while calibrating for another ${calibrationMinutes}m")
