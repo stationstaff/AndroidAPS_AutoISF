@@ -148,7 +148,7 @@ class XdripSourcePlugin @Inject constructor(
                  aapsLogger.debug(LTag.BGSOURCE, "Sensor calibrating for another ${calibrationMinutes}m")
             }
             val sourceCGM = bundle.getString(Intents.XDRIP_DATA_SOURCE) ?: ""
-            if (extraRaw == 0.0 && sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3" || sourceCGM=="G7") {
+            if (extraRaw == 0.0 && (sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3" || sourceCGM=="G7")) {
                 extraRaw = extraBgEstimate
                 extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
                 val maxGap = 20     //preferences.get(IntKey.FslMaxSmoothGap)
