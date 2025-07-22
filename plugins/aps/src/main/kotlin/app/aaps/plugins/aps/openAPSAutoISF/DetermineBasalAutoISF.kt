@@ -1,6 +1,5 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
-import android.icu.util.Calendar
 import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.interfaces.aps.APSResult
 import app.aaps.core.interfaces.aps.AutosensResult
@@ -14,7 +13,6 @@ import app.aaps.core.interfaces.aps.RT
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.DoubleKey
-import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
 import java.text.DecimalFormat
 import java.time.Instant
@@ -153,71 +151,6 @@ class DetermineBasalAutoISF @Inject constructor(
         }
     }
 
-    fun inactivityMonitor(profile: OapsProfileAutoIsf, bg: Double, target_bg: Double): Double
-    {
-        // Time - not used without sleep window
-        val calendar = Calendar.getInstance()
-        var now = calendar.get(Calendar.HOUR_OF_DAY)
-        if (now < 1) {
-            now = 1
-        }
-
-        // Activity detection (steps)
-        val activityDetection = profile.activity_detection
-        val recentSteps5Minutes = profile.recent_steps_5_minutes
-        val recentSteps10Minutes = profile.recent_steps_10_minutes
-        val recentSteps15Minutes = profile.recent_steps_15_minutes
-        val recentSteps30Minutes = profile.recent_steps_30_minutes
-        val recentSteps60Minutes = profile.recent_steps_60_minutes
-        val phoneMoved = profile.phone_moved
-        val time_since_start = profile.time_since_start
-        val activity_scale_factor = preferences.get(DoubleKey.ActivityScaleFactor)              // profile. .activity_scale_factor;
-        val inactivity_scale_factor = preferences.get(DoubleKey.InactivityScaleFactor)          // profile.inactivity_scale_factor;
-        var activityRatio = 1.0
-        val ignore_inactivity_overnight = preferences.get(BooleanKey.ActivityMonitorOvernight)  // profile.ignore_inactivity_overnight;
-        val inactivity_idle_start =  preferences.get(IntKey.ActivityMonitorIdleStart)           // profile.inactivity_idle_start;
-        val inactivity_idle_end = preferences.get(IntKey.ActivityMonitorIdleEnd)                // profile.inactivity_idle_end;
-
-        if ( activityDetection == false ) {
-            consoleError.add("Activity monitor disabled in settings")
-        } else if ( profile.temptargetSet ) {
-            consoleError.add("Activity monitor disabled: tempTarget")
-        //} else if ( !phoneMoved ) {
-        //    consoleError.add("Activity monitor disabled: Phone seems not to be carried for the last 15m")
-        } else {
-            //TODO check always false condition in the following condition
-            if (/* false &&*/  time_since_start!! < 60 && recentSteps60Minutes!! <= 200 ) {
-                consoleError.add("Activity monitor initialising for ${60-time_since_start} more minutes: inactivity detection disabled")
-            } else if ( ( inactivity_idle_start>inactivity_idle_end && ( now>=inactivity_idle_start || now<inactivity_idle_end ) )  // includes midnight
-                || ( now>=inactivity_idle_start && now<inactivity_idle_end)                                                         // excludes midnight
-                && recentSteps60Minutes!! <= 200 && ignore_inactivity_overnight ) {
-                consoleError.add("Activity monitor disabled inactivity detection: sleeping hours")
-            } else if ( recentSteps5Minutes!! > 300 || recentSteps10Minutes!! > 300  || recentSteps15Minutes!! > 300  || recentSteps30Minutes!! > 1500 || recentSteps60Minutes!! > 2500 ) {
-                //stepActivityDetected = true;
-                activityRatio = 1 - 0.3 * activity_scale_factor
-                consoleError.add("Activity monitor detected activity, sensitivity ratio: $activityRatio")
-            } else if ( recentSteps5Minutes > 200 || recentSteps10Minutes > 200  || recentSteps15Minutes > 200
-                || recentSteps30Minutes > 500 || recentSteps60Minutes > 800 ) {
-                //stepActivityDetected = true;
-                activityRatio = 1 - 0.15 * activity_scale_factor
-                consoleError.add("Activity monitor detected partial activity, sensitivity ratio: $activityRatio")
-            } else if ( bg < target_bg && recentSteps60Minutes <= 200 ) {
-                consoleError.add("Activity monitor disabled inactivity detection: bg < target")
-            } else if ( recentSteps60Minutes < 50 ) {
-                //stepInactivityDetected = true;
-                activityRatio = 1 + 0.2 * inactivity_scale_factor
-                consoleError.add("Activity monitor detected inactivity, sensitivity ratio: $activityRatio")
-            } else if ( recentSteps60Minutes <= 200 ) {
-                //stepInactivityDetected = true;
-                activityRatio = 1 + 0.1 * inactivity_scale_factor
-                consoleError.add("Activity monitor detected partial inactivity, sensitivity ratio: $activityRatio")
-            } else {
-                consoleError.add("Activity monitor detected neutral state, sensitivity ratio unchanged: $activityRatio")
-            }
-        }
-        preferences.put(DoubleKey.ActivityMonitorRatio, activityRatio)
-        return activityRatio
-    }
 
     fun determine_basal(
         glucose_status: GlucoseStatus, currenttemp: CurrentTemp, iob_data_array: Array<IobTotal>, profile: OapsProfileAutoIsf, autosens_data: AutosensResult, meal_data: MealData,
@@ -226,8 +159,6 @@ class DetermineBasalAutoISF @Inject constructor(
     ): RT {
         consoleError.clear()
         consoleError.add(activity_consoleLog)
-        //consoleError.addAll(auto_isf_consoleError)      // the activity Monitor message
-        //auto_isf_consoleError.clear()
         consoleLog.clear()
         var rT = RT(
             algorithm = APSResult.Algorithm.AUTO_ISF,
@@ -293,29 +224,18 @@ class DetermineBasalAutoISF @Inject constructor(
         var max_bg = profile.max_bg
 
         val activityRatio = preferences.get(DoubleKey.ActivityMonitorRatio)    // activityMonitor(profile, bg, target_bg)
-        // activityRatio = 0.5     //while testing
-        // var stepActivityDetected = false
-        // var stepInactivityDetected = false
-        // if (activityRatio < 1) {
-        //     stepActivityDetected = true
-        //* } else if (activityRatio>1)   { stepInactivityDetected = true}
         val stepActivityDetected = preferences.get(BooleanKey.ActivityMonitorStepsActive)
         val stepInactivityDetected = preferences.get(BooleanKey.ActivityMonitorStepsInactive)
-        //consoleError.add("Activity Monitor found step counts ${profile.recent_steps_5_minutes}, ${profile.recent_steps_10_minutes}, ${profile.recent_steps_15_minutes}, ${profile.recent_steps_30_minutes}, ${profile.recent_steps_60_minutes}")
         var sensitivityRatio = 1.0
         val normalTarget = 100 // evaluate high/low temptarget against 100, not scheduled target (which might change)
-        // var origin_sens = ""
-        // var exercise_ratio = 1.0
         val exerciseModeActive = (profile.exercise_mode || profile.high_temptarget_raises_sensitivity) && profile.temptargetSet && target_bg > normalTarget
         val resistanceModeActive = profile.low_temptarget_lowers_sensitivity && profile.temptargetSet && target_bg < normalTarget
-        //val high_temptarget_raises_sensitivity = profile.exercise_mode || profile.high_temptarget_raises_sensitivity
-         // when temptarget is 160 mg/dL, run 50% basal (120 = 75%; 140 = 60%),  80 mg/dL with low_temptarget_lowers_sensitivity would give 1.5x basal, but is limited to autosens_max (1.2x by default)
+        // when temptarget is 160 mg/dL, run 50% basal (120 = 75%; 140 = 60%),  80 mg/dL with low_temptarget_lowers_sensitivity would give 1.5x basal, but is limited to autosens_max (1.2x by default)
         val mgdlHalfBasalTarget = profile.half_basal_exercise_target * if (profile.out_units == "mmol/L") GlucoseUnit.MMOLL_TO_MGDL else 1.0
         if ( exerciseModeActive || resistanceModeActive || stepActivityDetected || stepInactivityDetected ) {
             if ( exerciseModeActive || resistanceModeActive ) {
                 // w/ target 100, temp target 110 = .89, 120 = 0.8, 140 = 0.67, 160 = .57, and 200 = .44
                 // e.g.: Sensitivity ratio set to 0.8 based on temp target of 120; Adjusting basal from 1.65 to 1.35; ISF from 58.9 to 73.6
-                //sensitivityRatio = 2/(2+(target_bg-normalTarget)/40);
                 val resistanceMax = min(1.5, profile.autosens_max)  // additional safety limit
                 val c = (mgdlHalfBasalTarget - normalTarget).toDouble()
                 if (c * (c + target_bg - normalTarget) <= 0.0) {
@@ -325,16 +245,12 @@ class DetermineBasalAutoISF @Inject constructor(
                     // limit sensitivityRatio to profile.autosens_max (1.2x by default)
                     sensitivityRatio = min(sensitivityRatio, resistanceMax)
                     sensitivityRatio = round(sensitivityRatio, 2)
-                    // exercise_ratio = sensitivityRatio
-                    // origin_sens = "from TT modifier"
                 }
                 consoleError.add("Sensitivity ratio set to $sensitivityRatio based on temp target of $target_bg; ")
             } else if ( stepActivityDetected ) {
                 sensitivityRatio = activityRatio
-                // origin_sens = "from activity detection";
             } else if ( stepInactivityDetected ) {
                 sensitivityRatio = activityRatio
-                // origin_sens = "from inactivity detection";
             }
         } else {
             consoleError.add("Sensitivity ratio unchanged: 1.0")
@@ -483,15 +399,7 @@ class DetermineBasalAutoISF @Inject constructor(
         val expectedDelta = calculate_expected_delta(target_bg, eventualBG, bgi)
 
         // min_bg of 90 -> threshold of 65, 100 -> 70 110 -> 75, and 130 -> 85
-        var threshold = min_bg - 0.5 * (min_bg - 40)
-        // if (profile.lgsThreshold != null) {
-        //     val lgsThreshold = profile.lgsThreshold ?: error("lgsThreshold missing")
-        //     if (lgsThreshold > threshold) {
-        //         consoleError.add("Threshold set from ${convert_bg(threshold)} to ${convert_bg(lgsThreshold.toDouble())}; ")
-        //         threshold = lgsThreshold.toDouble()
-        //     }
-        // }
-
+        val threshold = min_bg - 0.5 * (min_bg - 40)
         //console.error(reservoir_data);
 
         rT = RT(

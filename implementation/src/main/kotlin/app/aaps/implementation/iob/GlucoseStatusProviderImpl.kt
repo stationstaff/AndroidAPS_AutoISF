@@ -1,7 +1,5 @@
 package app.aaps.implementation.iob
 
-//import app.aaps.implementation.R
-//import app.aaps.core.keys.DoubleKey
 import app.aaps.core.interfaces.aps.GlucoseStatus
 import app.aaps.core.interfaces.iob.GlucoseStatusProvider
 import app.aaps.core.interfaces.iob.IobCobCalculator
@@ -9,7 +7,6 @@ import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.DecimalFormatter
-import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.implementation.extensions.asRounded
 import app.aaps.implementation.extensions.log
@@ -57,9 +54,8 @@ class GlucoseStatusProviderImpl @Inject constructor(
         val fslValue = fsl.raw
         val fslRaw = fsl.noise
         val fslSmooth = fsl.value
-        var fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"   // || cgm.text=="G7"
-        //fslReally = true    // "RANDOM" while testing with virtual phone in AS or until xDrip/Juggluco label=="Libre2/3" is implemented
-        var fslMinDur = 15  // default for 5m CGM
+        val fslReally = cgm.text=="Libre2" || cgm.text=="Libre2 Native" || cgm.text=="Libre3"   // || cgm.text=="G7"
+        var fslMinDur = 15
         var change: Double
         if (sizeRecords == 1) {
             aapsLogger.debug(LTag.GLUCOSE, "sizeRecords==1")
@@ -173,12 +169,11 @@ class GlucoseStatusProviderImpl @Inject constructor(
         //var b = 0.0
         var use1MinuteRaw = false
         if ( fslReally ) {
-            // original FSL 1-minute cgm data from Juggluco direct to AAPS although not smoothed
             if ( orig.size>2 ) {
                 if ( orig[0].timestamp - orig[2].timestamp < 3 * 60000 ) {
                     use1MinuteRaw = true
                     sizeRecords = orig.size
-                    fslMinDur = 10      //preferences.get(IntKey.FslMinFitMinutes)
+                    fslMinDur = 10
                 }
             }
         }
@@ -199,7 +194,6 @@ class GlucoseStatusProviderImpl @Inject constructor(
             val scaleTime = 300.0 // in 5m; values are  0, -1, -2, -3, -4, ...
             val scaleBg = 50.0 // TIR range is now 1.4 - 3.6
 
-            // if (data[i].recalculated > 38) {  } // not checked in past 1.5 years
             n = 0
             for (i in 0 until sizeRecords) {
                 val noGap = if (use1MinuteRaw) true else !data[i].filledGap
@@ -282,7 +276,6 @@ class GlucoseStatusProviderImpl @Inject constructor(
                             }
                             if (rSqu >= corrMax) {
                                 corrMax = rSqu
-                                // double delta_t = (then_date - time_0) / 1000;
                                 duraP = -ti * scaleTime / 60.0 // remember we are going backwards in time
                                 val delta5Min = 5 * 60 / scaleTime
                                 deltaPl = -scaleBg * (a * (-delta5Min).pow(2.0) - b * delta5Min)    // 5 minute slope from last fitted bg ending at this bg, i.e. t=0

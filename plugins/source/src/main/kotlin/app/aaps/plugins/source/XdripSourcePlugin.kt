@@ -40,7 +40,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
-import kotlin.math.round
 
 @Singleton
 class XdripSourcePlugin @Inject constructor(
@@ -126,16 +125,11 @@ class XdripSourcePlugin @Inject constructor(
             val offset = preferences.get(DoubleKey.FslCalOffset)
             val slope = preferences.get(DoubleKey.FslCalSlope)
             val factor = preferences.get(DoubleKey.FslSmoothAlpha)
-            // val correction = preferences.get(DoubleKey.FslSmoothCorrection)
-            // val lastRaw = preferences.get(DoubleKey.FslLastRaw)
             val lastSmooth = preferences.get(DoubleKey.FslLastSmooth)
-            val lastTimeRaw = preferences.get(LongKey.FslSmoothLastTimeRaw)  // sp.getLong(app.aaps.database.impl.R.string.key_fsl_last_timeRaw, 0L)
+            val lastTimeRaw = preferences.get(LongKey.FslSmoothLastTimeRaw)
             val thisTimeRaw = bundle.getLong(Intents.EXTRA_TIMESTAMP, 0)
             val elapsedMinutes = (thisTimeRaw - lastTimeRaw) / 60000.0
             var smooth = extraBgEstimate
-            // var calibrationState = automationStateService.getState("Calibration")
-            // if (calibrationState == "start") {
-            // } else if (calibrationState == "ongoing") {
             if (preferences.get(BooleanKey.FslCalibrationTrigger)) {
                 preferences.put(LongKey.FslCalibrationStart, dateUtil.now())
                 preferences.put(BooleanKey.FslCalibrationTrigger, false)
@@ -151,26 +145,18 @@ class XdripSourcePlugin @Inject constructor(
             if (extraRaw == 0.0 && (sourceCGM=="Libre2" || sourceCGM=="Libre2 Native" || sourceCGM=="Libre3" || sourceCGM=="G7")) {
                 extraRaw = extraBgEstimate
                 extraBgEstimate = max(40.0, extraRaw * slope + offset * ( if (profileUtil.units == GlucoseUnit.MMOL) Constants.MMOLL_TO_MGDL else 1.0))
-                val maxGap = 20     //preferences.get(IntKey.FslMaxSmoothGap)
+                val maxGap = 20
                 val cgmDelta = if (sourceCGM =="G7") 5.0 else 1.0
-                //aapsLogger.debug(LTag.BGSOURCE, "No smoothing while ${calibrationDuration - calibrationMinutes}m <2m")
                 val effectiveAlpha =  if (calibrationDuration - calibrationMinutes < 2 && !preferences.get(BooleanKey.FslCalibrationEnd)) 1.0 else min(1.0, factor + (1.0-factor) * ((max(0.0, elapsedMinutes-cgmDelta) /(maxGap-cgmDelta)).pow(2.0)) )   // limit smoothing to alpha=1, i.e. no smoothing for longer gaps
                 if (lastSmooth > 0.0) {
                     // exponential smoothing, see https://en.wikipedia.org/wiki/Exponential_s
                     smooth = lastSmooth + effectiveAlpha * (extraBgEstimate - lastSmooth)
-
-                    // correction: average of delta between raw and smooth value, added to smooth with correction factor
-                    // correction between 0 and 1, default 0.5
-                    // correction = 0: no correction, full smoothing
-                    // correction > 0: less smoothing
-                    // smooth += correction * ((lastRaw - lastSmooth) + (extraBgEstimate - smooth)) / 2.0
                 }
                 preferences.put(DoubleKey.FslLastRaw, extraBgEstimate)
                 preferences.put(DoubleKey.FslLastSmooth, smooth)
                 preferences.put(LongKey.FslSmoothLastTimeRaw, thisTimeRaw)
                 var CalibrationMsg = "Calibration json: {\"offset\":$offset,\"slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
                 CalibrationMsg += ",\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
-                //CalibrationMsg += ",\"calibrationDuration\":${calibrationDuration}}"
                 CalibrationMsg += "}"
                 aapsLogger.debug(LTag.BGSOURCE, CalibrationMsg)
             }
