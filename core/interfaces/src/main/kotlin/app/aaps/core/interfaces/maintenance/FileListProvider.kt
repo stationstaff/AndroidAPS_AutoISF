@@ -12,7 +12,7 @@ interface FileListProvider {
     fun ensureExportDirExists(): DocumentFile?
     fun ensureTempDirExists(): DocumentFile?
     fun ensureExtraDirExists(): DocumentFile?
-//    fun ensureAapsLogsDirExists(): DocumentFile?
+
     fun newPreferenceFile(): DocumentFile?
     fun newExportCsvFile(): DocumentFile?
     fun newCwfFile(filename: String, withDate: Boolean = true): DocumentFile?
