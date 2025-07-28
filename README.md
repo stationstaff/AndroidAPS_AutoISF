@@ -16,8 +16,8 @@ However, it is important to start with well-tested basal rate and settings for i
 * The vast majority of the AutoISF design and development effort was done by [ga-zelle](https://github.com/ga-zelle) with support from
   [swissalpine](https://github.com/swissalpine), [claudi](https://github.com/lutzlukesch),
   [BerNie](https://github.com/bherpichb), [mountrcg](https://github.com/mountrcg),
-  [Bjr](https://github.com/blaqone), [Gohtraw](https://github.com/Gohtraw)
-  and [myself](https://github.com/T-o-b-i-a-s).
+  [Bjr](https://github.com/blaqone), [Gohtraw](https://github.com/Gohtraw),
+  [Koelewij](https://github.com/koelewij) and [myself](https://github.com/T-o-b-i-a-s).
 * This repository here was created to provide a stable version of AndroidAPS with the current autoISF extensions
   already integrated to simplify the build process.
 * This branch https://github.com/T-o-b-i-a-s/AndroidAPS/tree/3.3.3.0-dev-a_ai3.1.0 uses
