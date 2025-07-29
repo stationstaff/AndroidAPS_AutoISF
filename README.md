@@ -8,8 +8,8 @@ accelerating/decelerating BG, BG plateau). autoISF has many different settings t
 However, it is important to start with well-tested basal rate and settings for insulin sensitivity and carb ratios.
 
 ## Where to find documentation about autoISF
-* Please visit ga-zelle’s repository [GitHub - ga-zelle/autoISF](https://github.com/ga-zelle/autoISF/tree/A3.3.3.0-dev-a_ai3.1.0).
-  The [**Quick Guide (bzw. Kurzanleitung)**](https://github.com/ga-zelle/autoISF/blob/A3.3.3.0-dev-a_ai3.1.0/autoISF3.1.0_Quick_Guide.pdf) provides an overview of autoISF and its features
+* Please visit ga-zelle’s repository [GitHub - ga-zelle/autoISF](https://github.com/ga-zelle/autoISF/tree/A3.3.3.a%2Baisf3.1.0).
+  The [**Quick Guide (bzw. Kurzanleitung)**](https://github.com/ga-zelle/autoISF/blob/A3.3.3.a%2Baisf3.1.0/autoISF3.1.0_Quick_Guide.pdf) provides an overview of autoISF and its features
 
 
 ## Why do I get AutoISF here and not at ga-zelle's Repo?
@@ -20,7 +20,7 @@ However, it is important to start with well-tested basal rate and settings for i
   [Koelewij](https://github.com/koelewij) and [myself](https://github.com/T-o-b-i-a-s).
 * This repository here was created to provide a stable version of AndroidAPS with the current autoISF extensions
   already integrated to simplify the build process.
-* This branch https://github.com/T-o-b-i-a-s/AndroidAPS/tree/3.3.3.0-dev-a_ai3.1.0 uses
+* This branch https://github.com/T-o-b-i-a-s/AndroidAPS/tree/3.3.3.a+aisf3.1.0 uses
   AndroidAPS 3.3.3-dev-a from the official [Nightscout AndroidAPS]
   (https://github.com/nightscout/AndroidAPS)
   repo as a base and adds autoISF 3.1.0 to it.
@@ -49,7 +49,7 @@ However, it is important to start with well-tested basal rate and settings for i
 * Usually this will be `master`, which contains an out-dated version of AndroidAPS, do **not** use the `master` branch
 * If it is not already selected, switch to the branch you want to build by clicking on the branch name,
   choosing "show more" under "Remote branches" and look for the name of
-  the branch with an "origin/" prefix: e.g. `origin/3.3.3.0-dev-a_ai3.1.0`. Left-click that name and
+  the branch with an "origin/" prefix: e.g. `origin/3.3.3.a+aisf3.1.0`. Left-click that name and
   select "Checkout". 
 7. The system will now create a local branch with the same name as the remote branch and switch to that branch, which is indicated by the name of
    the branch being shown in the upper right corner
