@@ -1,5 +1,6 @@
 package app.aaps.database.persistence
 
+import app.aaps.core.data.model.AIV
 import android.os.SystemClock
 import app.aaps.core.data.model.BCR
 import app.aaps.core.data.model.BS
@@ -53,6 +54,7 @@ import app.aaps.database.transactions.InsertOrUpdateHeartRateTransaction
 import app.aaps.database.transactions.InsertOrUpdateProfileSwitch
 import app.aaps.database.transactions.InsertOrUpdateRunningMode
 import app.aaps.database.transactions.InsertOrUpdateStepsCountTransaction
+import app.aaps.database.transactions.InsertOrUpdateAutoIsfValuesTransaction
 import app.aaps.database.transactions.InsertTemporaryBasalWithTempIdTransaction
 import app.aaps.database.transactions.InvalidateBolusCalculatorResultTransaction
 import app.aaps.database.transactions.InvalidateBolusTransaction
@@ -1889,6 +1891,22 @@ class PersistenceLayerImpl @Inject constructor(
                 }
                 result.updated.forEach {
                     aapsLogger.debug(LTag.DATABASE, "Updated StepsCount $it")
+                    transactionResult.updated.add(it.fromDb())
+                }
+                transactionResult
+            }
+    // AIV
+    override fun insertOrUpdateAutoIsfValues(autoIsfValues: AIV): Single<PersistenceLayer.TransactionResult<AIV>> =
+        repository.runTransactionForResult(InsertOrUpdateAutoIsfValuesTransaction( autoIsfValues.toDb()))
+            .doOnError { aapsLogger.error(LTag.DATABASE, "Error while saving AutoIsfValues $it") }
+            .map { result ->
+                val transactionResult = PersistenceLayer.TransactionResult<AIV>()
+                result.inserted.forEach {
+                    aapsLogger.debug(LTag.DATABASE, "Inserted AutoIsfValues $it")
+                    transactionResult.inserted.add(it.fromDb())
+                }
+                result.updated.forEach {
+                    aapsLogger.debug(LTag.DATABASE, "Updated AutoIsfValues $it")
                     transactionResult.updated.add(it.fromDb())
                 }
                 transactionResult

@@ -17,6 +17,7 @@ import app.aaps.database.daos.PreferenceChangeDao
 import app.aaps.database.daos.ProfileSwitchDao
 import app.aaps.database.daos.RunningModeDao
 import app.aaps.database.daos.StepsCountDao
+import app.aaps.database.daos.AutoIsfValuesDao
 import app.aaps.database.daos.TemporaryBasalDao
 import app.aaps.database.daos.TemporaryTargetDao
 import app.aaps.database.daos.TherapyEventDao
@@ -36,6 +37,7 @@ import app.aaps.database.entities.PreferenceChange
 import app.aaps.database.entities.ProfileSwitch
 import app.aaps.database.entities.RunningMode
 import app.aaps.database.entities.StepsCount
+import app.aaps.database.entities.AutoIsfValues
 import app.aaps.database.entities.TemporaryBasal
 import app.aaps.database.entities.TemporaryTarget
 import app.aaps.database.entities.TherapyEvent
@@ -51,7 +53,7 @@ const val DATABASE_VERSION = 30
         EffectiveProfileSwitch::class, ExtendedBolus::class, GlucoseValue::class, ProfileSwitch::class,
         TemporaryBasal::class, TemporaryTarget::class, TherapyEvent::class, TotalDailyDose::class,
         PreferenceChange::class, VersionChange::class, UserEntry::class,
-        Food::class, DeviceStatus::class, RunningMode::class, HeartRate::class, StepsCount::class],
+        Food::class, DeviceStatus::class, RunningMode::class, HeartRate::class, StepsCount::class, AutoIsfValues::class],
     exportSchema = true
 )
 @TypeConverters(Converters::class)
@@ -96,4 +98,6 @@ internal abstract class AppDatabase : RoomDatabase() {
     abstract val heartRateDao: HeartRateDao
 
     abstract val stepsCountDao: StepsCountDao
+
+    abstract val autoIsfValuesDao: AutoIsfValuesDao
 }
