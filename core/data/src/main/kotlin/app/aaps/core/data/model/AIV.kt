@@ -11,7 +11,7 @@ data class AIV(
     var acceIsf: Double,
     var bgIsf: Double,
     var ppIsf: Double,
-    val duraIsf: Double,
+    var duraIsf: Double,
     var finalIsf: Double,
     var effIobTh:Double,
     var utcOffset: Long = TimeZone.getDefault().getOffset(timestamp).toLong(),
