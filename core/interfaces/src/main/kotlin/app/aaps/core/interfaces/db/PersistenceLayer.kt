@@ -1363,6 +1363,15 @@ interface PersistenceLayer {
     fun insertOrUpdateStepsCount(stepsCount: SC): Single<TransactionResult<SC>>
 
     // AutoISF key values
+
+    /**
+     * Get autoisf values records from time
+     *
+     * @param from time
+     * @return list of autoisf values records
+     */
+    fun getAutoIsfValuesFromTime(from: Long): List<AIV>
+
     /**
      * Insert or update if exists record
      *

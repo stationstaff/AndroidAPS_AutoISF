@@ -13,6 +13,7 @@ import app.aaps.database.entities.HeartRate
 import app.aaps.database.entities.ProfileSwitch
 import app.aaps.database.entities.RunningMode
 import app.aaps.database.entities.StepsCount
+import app.aaps.database.entities.AutoIsfValues
 import app.aaps.database.entities.TemporaryBasal
 import app.aaps.database.entities.TemporaryTarget
 import app.aaps.database.entities.TherapyEvent
@@ -105,6 +106,7 @@ class AppRepository @Inject internal constructor(
         removed.add(Pair("RunningMode", database.runningModeDao.deleteOlderThan(than)))
         removed.add(Pair("HeartRate", database.heartRateDao.deleteOlderThan(than)))
         removed.add(Pair("StepsCount", database.stepsCountDao.deleteOlderThan(than)))
+        removed.add(Pair("AutoIsfValues", database.autoIsfValuesDao.deleteOlderThan(than)))
 
         if (deleteTrackedChanges) {
             removed.add(Pair("CHANGES APSResult", database.apsResultDao.deleteTrackedChanges()))
@@ -124,6 +126,7 @@ class AppRepository @Inject internal constructor(
             removed.add(Pair("CHANGES RunningMode", database.runningModeDao.deleteTrackedChanges()))
             removed.add(Pair("CHANGES HeartRate", database.heartRateDao.deleteTrackedChanges()))
             removed.add(Pair("CHANGES StepsCount", database.stepsCountDao.deleteTrackedChanges()))
+            removed.add(Pair("CHANGES AutoIsfValues", database.autoIsfValuesDao.deleteTrackedChanges()))
         }
         val ret = StringBuilder()
         removed
@@ -792,6 +795,10 @@ class AppRepository @Inject internal constructor(
     fun getLastStepsCountFromTimeToTime(startMillis: Long, endMillis: Long) =
         database.stepsCountDao.getLastStepsCountFromTimeToTime(startMillis, endMillis)
 
+    fun getAutoIsfValuesFromTime(timeMillis: Long): Single<List<AutoIsfValues>> =
+        database.autoIsfValuesDao.getFromTime(timeMillis)
+            .subscribeOn(Schedulers.io())
+
     fun collectNewEntriesSince(since: Long, until: Long, limit: Int, offset: Int) = NewEntries(
         apsResults = database.apsResultDao.getNewEntriesSince(since, until, limit, offset),
         bolusCalculatorResults = database.bolusCalculatorResultDao.getNewEntriesSince(since, until, limit, offset),
@@ -810,6 +817,7 @@ class AppRepository @Inject internal constructor(
         versionChanges = database.versionChangeDao.getNewEntriesSince(since, until, limit, offset),
         heartRates = database.heartRateDao.getNewEntriesSince(since, until, limit, offset),
         stepsCount = database.stepsCountDao.getNewEntriesSince(since, until, limit, offset),
+        //autoIsfValues = database.autoIsfValuesDao.getNewEntriesSince(since, until, limit, offset),
     )
 
     fun getApsResultCloseTo(timestamp: Long): Maybe<APSResult> =
