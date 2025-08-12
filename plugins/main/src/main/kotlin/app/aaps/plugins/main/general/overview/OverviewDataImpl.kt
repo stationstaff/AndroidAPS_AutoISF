@@ -99,6 +99,10 @@ class OverviewDataImpl @Inject constructor(
         maxVarSensValueFound = 200.0
         minVarSensValueFound = 50.0
         varSensSeries = LineGraphSeries<ScaledDataPoint>()
+        // AutoISF interim results
+        maxAcceIsfValueFound = 1.0
+        minAcceIsfValueFound = 1.0
+        acceIsfSeries = LineGraphSeries<ScaledDataPoint>()
     }
 
     override fun initRange() {
@@ -247,6 +251,12 @@ class OverviewDataImpl @Inject constructor(
     override var heartRateGraphSeries: SeriesData = PointsWithLabelGraphSeries<DataPointWithLabelInterface>()
     override var stepsForScale = Scale()
     override var stepsCountGraphSeries: SeriesData = PointsWithLabelGraphSeries<DataPointWithLabelInterface>()
+
+
+    override var maxAcceIsfValueFound = 1.0
+    override var minAcceIsfValueFound = 1.0
+    override val acceIsfScale = Scale()
+    override var acceIsfSeries: SeriesData = LineGraphSeries<ScaledDataPoint>()
 
     override var maxVarSensValueFound = 200.0
     override var minVarSensValueFound = 50.0

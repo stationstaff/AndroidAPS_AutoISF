@@ -309,4 +309,15 @@ import kotlin.math.max
         addSeries(overviewData.stepsCountGraphSeries as PointsWithLabelGraphSeries<DataPointWithLabelInterface>)
         overviewData.stepsForScale.multiplier = maxY * scale / maxSteps
     }
+
+    // AutoISF interim data
+    fun addAcceIsf(useForScale: Boolean, scale: Double) {
+        if (useForScale) {
+            maxY = overviewData.maxAcceIsfValueFound
+            minY = overviewData.minAcceIsfValueFound
+        }
+        overviewData.acceIsfScale.multiplier = maxY * scale / overviewData.maxAcceIsfValueFound
+        addSeries(overviewData.varSensSeries as LineGraphSeries<ScaledDataPoint>)
+    }
+
 }

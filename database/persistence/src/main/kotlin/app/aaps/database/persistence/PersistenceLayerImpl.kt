@@ -1899,6 +1899,9 @@ class PersistenceLayerImpl @Inject constructor(
     override fun getAutoIsfValuesFromTime(from: Long): List<AIV> =
         repository.getAutoIsfValuesFromTime(from).map { list -> list.asSequence().map { it.fromDb() }.toList() }.blockingGet()
 
+    override fun getAutoIsfValuesFromTimeToTime(startTime: Long, endTime: Long): List<AIV> =
+        repository.getAutoIsfValuesFromTimeToTime(startTime, endTime).map { list -> list.asSequence().map { it.fromDb() }.toList() }.blockingGet()
+
     override fun insertOrUpdateAutoIsfValues(autoIsfValues: AIV): Single<PersistenceLayer.TransactionResult<AIV>> =
         repository.runTransactionForResult(InsertOrUpdateAutoIsfValuesTransaction( autoIsfValues.toDb()))
             .doOnError { aapsLogger.error(LTag.DATABASE, "Error while saving AutoIsfValues $it") }

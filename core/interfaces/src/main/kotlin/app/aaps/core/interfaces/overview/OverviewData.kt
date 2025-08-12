@@ -116,4 +116,10 @@ interface OverviewData {
     var stepsForScale: Scale
     var stepsCountGraphSeries: SeriesData
 
+    // AutoISF interim results
+    var maxAcceIsfValueFound: Double
+    var minAcceIsfValueFound: Double
+    val acceIsfScale: Scale
+    var acceIsfSeries: SeriesData
+
 }

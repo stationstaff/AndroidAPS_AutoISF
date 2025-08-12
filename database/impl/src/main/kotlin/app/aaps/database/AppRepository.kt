@@ -799,6 +799,10 @@ class AppRepository @Inject internal constructor(
         database.autoIsfValuesDao.getFromTime(timeMillis)
             .subscribeOn(Schedulers.io())
 
+    fun getAutoIsfValuesFromTimeToTime(startMillis: Long, endMillis: Long): Single<List<AutoIsfValues>> =
+        database.autoIsfValuesDao.getFromTimeToTime(startMillis, endMillis)
+
+
     fun collectNewEntriesSince(since: Long, until: Long, limit: Int, offset: Int) = NewEntries(
         apsResults = database.apsResultDao.getNewEntriesSince(since, until, limit, offset),
         bolusCalculatorResults = database.bolusCalculatorResultDao.getNewEntriesSince(since, until, limit, offset),

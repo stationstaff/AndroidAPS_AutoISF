@@ -1373,6 +1373,15 @@ interface PersistenceLayer {
     fun getAutoIsfValuesFromTime(from: Long): List<AIV>
 
     /**
+     * Get autoisf values records from interval
+     *
+     * @param startTime from
+     * @param endTime to
+     * @return list of autoisf values records
+     */
+    fun getAutoIsfValuesFromTimeToTime(startTime: Long, endTime: Long): List<AIV>
+
+    /**
      * Insert or update if exists record
      *
      * @param autoIsfValues record
