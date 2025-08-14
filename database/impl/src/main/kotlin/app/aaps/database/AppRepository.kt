@@ -1,6 +1,7 @@
 package app.aaps.database
 
 import app.aaps.database.entities.APSResult
+import app.aaps.database.entities.AutoIsfValues
 import app.aaps.database.entities.Bolus
 import app.aaps.database.entities.BolusCalculatorResult
 import app.aaps.database.entities.Carbs
@@ -13,7 +14,6 @@ import app.aaps.database.entities.HeartRate
 import app.aaps.database.entities.ProfileSwitch
 import app.aaps.database.entities.RunningMode
 import app.aaps.database.entities.StepsCount
-import app.aaps.database.entities.AutoIsfValues
 import app.aaps.database.entities.TemporaryBasal
 import app.aaps.database.entities.TemporaryTarget
 import app.aaps.database.entities.TherapyEvent
@@ -821,7 +821,7 @@ class AppRepository @Inject internal constructor(
         versionChanges = database.versionChangeDao.getNewEntriesSince(since, until, limit, offset),
         heartRates = database.heartRateDao.getNewEntriesSince(since, until, limit, offset),
         stepsCount = database.stepsCountDao.getNewEntriesSince(since, until, limit, offset),
-        //autoIsfValues = database.autoIsfValuesDao.getNewEntriesSince(since, until, limit, offset),
+        autoIsfValues = database.autoIsfValuesDao.getNewEntriesSince(since, until, limit, offset),
     )
 
     fun getApsResultCloseTo(timestamp: Long): Maybe<APSResult> =

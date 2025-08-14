@@ -100,8 +100,8 @@ class OverviewDataImpl @Inject constructor(
         minVarSensValueFound = 50.0
         varSensSeries = LineGraphSeries<ScaledDataPoint>()
         // AutoISF interim results
-        maxAcceIsfValueFound = 1.0
-        minAcceIsfValueFound = 1.0
+        maxAcceIsfValueFound = 1.5
+        minAcceIsfValueFound = 0.5
         acceIsfSeries = LineGraphSeries<ScaledDataPoint>()
     }
 
@@ -253,8 +253,8 @@ class OverviewDataImpl @Inject constructor(
     override var stepsCountGraphSeries: SeriesData = PointsWithLabelGraphSeries<DataPointWithLabelInterface>()
 
 
-    override var maxAcceIsfValueFound = 1.0
-    override var minAcceIsfValueFound = 1.0
+    override var maxAcceIsfValueFound = 1.5
+    override var minAcceIsfValueFound = 0.5
     override val acceIsfScale = Scale()
     override var acceIsfSeries: SeriesData = LineGraphSeries<ScaledDataPoint>()
 

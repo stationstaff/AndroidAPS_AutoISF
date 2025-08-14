@@ -313,11 +313,11 @@ import kotlin.math.max
     // AutoISF interim data
     fun addAcceIsf(useForScale: Boolean, scale: Double) {
         if (useForScale) {
-            maxY = overviewData.maxAcceIsfValueFound
-            minY = overviewData.minAcceIsfValueFound
+            maxY = max(overviewData.maxAcceIsfValueFound, 1.5)
+            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minAcceIsfValueFound
         }
         overviewData.acceIsfScale.multiplier = maxY * scale / overviewData.maxAcceIsfValueFound
-        addSeries(overviewData.varSensSeries as LineGraphSeries<ScaledDataPoint>)
+        addSeries(overviewData.acceIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 
 }

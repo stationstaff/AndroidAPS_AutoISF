@@ -46,6 +46,7 @@ import app.aaps.database.transactions.InsertEffectiveProfileSwitch
 import app.aaps.database.transactions.InsertIfNewByTimestampCarbsTransaction
 import app.aaps.database.transactions.InsertIfNewByTimestampTherapyEventTransaction
 import app.aaps.database.transactions.InsertOrUpdateApsResultTransaction
+import app.aaps.database.transactions.InsertOrUpdateAutoIsfValuesTransaction
 import app.aaps.database.transactions.InsertOrUpdateBolusCalculatorResultTransaction
 import app.aaps.database.transactions.InsertOrUpdateBolusTransaction
 import app.aaps.database.transactions.InsertOrUpdateCachedTotalDailyDoseTransaction
@@ -54,7 +55,6 @@ import app.aaps.database.transactions.InsertOrUpdateHeartRateTransaction
 import app.aaps.database.transactions.InsertOrUpdateProfileSwitch
 import app.aaps.database.transactions.InsertOrUpdateRunningMode
 import app.aaps.database.transactions.InsertOrUpdateStepsCountTransaction
-import app.aaps.database.transactions.InsertOrUpdateAutoIsfValuesTransaction
 import app.aaps.database.transactions.InsertTemporaryBasalWithTempIdTransaction
 import app.aaps.database.transactions.InvalidateBolusCalculatorResultTransaction
 import app.aaps.database.transactions.InvalidateBolusTransaction

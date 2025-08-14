@@ -8,11 +8,11 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import app.aaps.database.AppDatabase
 import app.aaps.database.entities.TABLE_APS_RESULTS
+import app.aaps.database.entities.TABLE_AUTOISF_VALUES
 import app.aaps.database.entities.TABLE_HEART_RATE
 import app.aaps.database.entities.TABLE_PREFERENCE_CHANGES
 import app.aaps.database.entities.TABLE_RUNNING_MODE
 import app.aaps.database.entities.TABLE_STEPS_COUNT
-import app.aaps.database.entities.TABLE_AUTOISF_VALUES
 import app.aaps.database.entities.TABLE_USER_ENTRY
 import dagger.Module
 import dagger.Provides

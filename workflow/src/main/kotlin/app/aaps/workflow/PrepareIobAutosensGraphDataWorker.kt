@@ -339,6 +339,25 @@ class PrepareIobAutosensGraphDataWorker(
             it.thickness = 3
         }
 
+        // ACCE_ISF
+        val acceIsfArray: MutableList<ScaledDataPoint> = ArrayList()
+        data.overviewData.maxAcceIsfValueFound = Double.MIN_VALUE
+        data.overviewData.minAcceIsfValueFound = Double.MAX_VALUE
+        val autoIsfResults = persistenceLayer.getAutoIsfValuesFromTimeToTime(fromTime, endTime)
+        autoIsfResults.forEach {
+            it.acceIsf?.let { acceIsf ->
+                //val varSens = profileUtil.fromMgdlToUnits(variableSens)
+                acceIsfArray.add(ScaledDataPoint(it.timestamp, acceIsf, data.overviewData.acceIsfScale))
+                data.overviewData.maxAcceIsfValueFound = max(data.overviewData.maxAcceIsfValueFound, acceIsf)
+                data.overviewData.minAcceIsfValueFound = min(data.overviewData.minAcceIsfValueFound, acceIsf)
+            }
+        }
+        aapsLogger.debug(LTag.APS, "acce_ISF min/max range is ${data.overviewData.minAcceIsfValueFound} to ${data.overviewData.maxAcceIsfValueFound}")
+        data.overviewData.acceIsfSeries = LineGraphSeries(Array(acceIsfArray.size) { i -> acceIsfArray[i] }).also {
+            it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.acceIsfColor)
+            it.thickness = 3
+        }
+
         rxBus.send(EventIobCalculationProgress(CalculationWorkflow.ProgressData.PREPARE_IOB_AUTOSENS_DATA, 100, null))
         return Result.success()
     }
