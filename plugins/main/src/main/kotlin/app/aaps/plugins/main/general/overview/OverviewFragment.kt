@@ -1082,19 +1082,27 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             var useBGIForScale = false
             var useHRForScale = false
             var useSTEPSForScale = false
+            var useFINAL_ISFForScale = false
             var useACCE_ISFForScale = false
+            var useBG_ISFForScale = false
+            var usePP_ISFForScale = false
+            var useDURA_ISFForScale = false
             when {
-                menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]      -> useABSForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]      -> useIobForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal]      -> useCobForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal]      -> useDevForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]      -> useBGIForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.SEN.ordinal]      -> useRatioForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.VAR_SEN.ordinal]  -> useVarSensForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] -> useDSForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.HR.ordinal]       -> useHRForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.STEPS.ordinal]    -> useSTEPSForScale = true
-                menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal]  -> useACCE_ISFForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]        -> useABSForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]        -> useIobForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal]        -> useCobForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal]        -> useDevForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]        -> useBGIForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.SEN.ordinal]        -> useRatioForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.VAR_SEN.ordinal]    -> useVarSensForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal]   -> useDSForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.HR.ordinal]         -> useHRForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.STEPS.ordinal]      -> useSTEPSForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal]    -> useFINAL_ISFForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal]    -> useACCE_ISFForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal]     -> useBG_ISFForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal]     -> usePP_ISFForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal]    -> useDURA_ISFForScale = true
             }
             val alignDevBgiScale = menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal] && menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]
 
@@ -1105,7 +1113,11 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             if (menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]) secondGraphData.addMinusBGI(useBGIForScale, if (alignDevBgiScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.SEN.ordinal]) secondGraphData.addRatio(useRatioForScale, if (useRatioForScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.VAR_SEN.ordinal]) secondGraphData.addVarSens(useVarSensForScale, if (useVarSensForScale) 1.0 else 0.8)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal] && config.isDev()) secondGraphData.addFinalIsf(useFINAL_ISFForScale, if (useFINAL_ISFForScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] && config.isDev()) secondGraphData.addAcceIsf(useACCE_ISFForScale, if (useACCE_ISFForScale) 1.0 else 0.8)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] && config.isDev()) secondGraphData.addBgIsf(useBG_ISFForScale, if (useBG_ISFForScale) 1.0 else 0.8)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] && config.isDev()) secondGraphData.addPpIsf(usePP_ISFForScale, if (usePP_ISFForScale) 1.0 else 0.8)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal] && config.isDev()) secondGraphData.addDuraIsf(useDURA_ISFForScale, if (useDURA_ISFForScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] && config.isDev()) secondGraphData.addDeviationSlope(
                 useDSForScale,
                 if (useDSForScale) 1.0 else 0.8,
@@ -1132,7 +1144,11 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                     menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] ||
                     menuChartSettings[g + 1][OverviewMenus.CharType.HR.ordinal] ||
                     menuChartSettings[g + 1][OverviewMenus.CharType.STEPS.ordinal] ||
-                    menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal]
+                    menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal]||
+                    menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] ||
+                    menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] ||
+                    menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] ||
+                    menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal]
                 ).toVisibility()
             secondaryGraphsData[g].performUpdate()
         }

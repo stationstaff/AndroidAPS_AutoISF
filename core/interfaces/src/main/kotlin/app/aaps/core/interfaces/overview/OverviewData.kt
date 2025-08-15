@@ -121,5 +121,23 @@ interface OverviewData {
     var minAcceIsfValueFound: Double
     val acceIsfScale: Scale
     var acceIsfSeries: SeriesData
-
+    var maxBgIsfValueFound: Double
+    var minBgIsfValueFound: Double
+    val bgIsfScale: Scale
+    var bgIsfSeries: SeriesData
+    var maxPpIsfValueFound: Double
+    var minPpIsfValueFound: Double
+    val ppIsfScale: Scale
+    var ppIsfSeries: SeriesData
+    var maxDuraIsfValueFound: Double
+    var minDuraIsfValueFound: Double
+    val duraIsfScale: Scale
+    var duraIsfSeries: SeriesData
+    var maxFinalIsfValueFound: Double
+    var minFinalIsfValueFound: Double
+    val finalIsfScale: Scale
+    var finalIsfSeries: SeriesData
+    var maxAutoIsfValueFound: Double
+    var minAutoIsfValueFound: Double
+    val autoIsfScale: Scale
 }
