@@ -697,6 +697,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
 
         val bg_ISF = 1 + interpolate(100 - bg_off)
         consoleError.add("bg_ISF adaptation is ${round(bg_ISF, 2)}")
+        autoIsfValues.bgIsf = bg_ISF
         var liftISF: Double
         var final_ISF: Double
         if (bg_ISF < 1.0) {
@@ -710,7 +711,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         } else if (bg_ISF > 1.0) {
             sens_modified = true
         }
-        autoIsfValues.bgIsf = bg_ISF
 
         val bg_delta = glucose_status.delta
         val deltaType = "pp"
