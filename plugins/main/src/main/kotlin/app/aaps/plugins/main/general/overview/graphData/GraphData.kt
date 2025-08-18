@@ -138,6 +138,12 @@ import kotlin.math.max
         overviewData.actScale.multiplier = maxY * scale / overviewData.maxIAValue
     }
 
+    fun addBgParabola(scale: Double) {
+        addSeries(overviewData.bgParabolaSeries as FixedLineGraphSeries<ScaledDataPoint>)
+        addSeries(overviewData.bgParabolaPredictionSeries as FixedLineGraphSeries<ScaledDataPoint>)
+        overviewData.bgParabolaScale.multiplier = maxY * scale / overviewData.maxBgValue
+    }
+
     //Function below show -BGI to be able to compare curves with deviations
     fun addMinusBGI(useForScale: Boolean, scale: Double) {
         if (useForScale) {
