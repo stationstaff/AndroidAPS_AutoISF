@@ -138,9 +138,9 @@ import kotlin.math.max
         overviewData.actScale.multiplier = maxY * scale / overviewData.maxIAValue
     }
 
-    fun addBgParabola(scale: Double) {
+    fun addBgParabola(addPredictions: Boolean, scale: Double) {
         addSeries(overviewData.bgParabolaSeries as FixedLineGraphSeries<ScaledDataPoint>)
-        addSeries(overviewData.bgParabolaPredictionSeries as FixedLineGraphSeries<ScaledDataPoint>)
+        if (addPredictions) addSeries(overviewData.bgParabolaPredictionSeries as FixedLineGraphSeries<ScaledDataPoint>)
         overviewData.bgParabolaScale.multiplier = maxY * scale / overviewData.maxBgValue
     }
 

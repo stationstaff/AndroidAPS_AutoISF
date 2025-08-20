@@ -148,6 +148,7 @@ class OverviewMenusImpl @Inject constructor(
                 config.AAPSCLIENT -> true
                 else              -> false
             }
+            val runningAutoisf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
             val popup = PopupWindow(v.context)
             popup.setBackgroundDrawable(ColorDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground)))
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
@@ -164,6 +165,7 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.PRE) insert = predictionsAvailable
+                else if (m == CharTypeData.BG_PARAB) insert = runningAutoisf
                 if (insert && m.primary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, true)
                     itemRow++
