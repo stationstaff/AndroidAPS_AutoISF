@@ -25,7 +25,7 @@ data class AutoIsfValues(
     var ppIsf: Double,
     val duraIsf: Double,
     var finalIsf: Double,
-    var effIobTh:Double,
+    var iobThEffective: Double,
     override var utcOffset: Long = TimeZone.getDefault().getOffset(timestamp).toLong(),
     override var version: Int = 0,
     override var dateCreated: Long = -1,

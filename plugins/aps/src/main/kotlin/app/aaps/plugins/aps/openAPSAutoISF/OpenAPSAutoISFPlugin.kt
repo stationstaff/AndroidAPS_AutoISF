@@ -167,7 +167,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         ppIsf = 1.0,
         duraIsf = 1.0,
         finalIsf = 1.0,
-        effIobTh = 0.0
+        iobThEffective = 0.0
     )
     // Activity detection (steps)
     private val recentSteps5Minutes ; get() = StepService.getRecentStepCount5Min()
@@ -342,7 +342,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             ppIsf = 1.0,
             duraIsf = 1.0,
             finalIsf = 1.0,
-            effIobTh = 0.0
+            iobThEffective = 0.0
         )
 
         var autosensResult = AutosensResult()
@@ -1052,7 +1052,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         } else {
             consoleLog.add("User setting iobTH=100% disables iobTH method")
         }
-        autoIsfValues.effIobTh = if (useIobTh) iobThEffective else profile.max_iob
+        autoIsfValues.iobThEffective = if (useIobTh) iobThEffective else profile.max_iob
 
         if (!microBolusAllowed) {
             return "AAPS"                                                 // see message in enable_smb

@@ -13,7 +13,7 @@ data class AIV(
     var ppIsf: Double,
     var duraIsf: Double,
     var finalIsf: Double,
-    var effIobTh:Double,
+    var iobThEffective: Double,
     var utcOffset: Long = TimeZone.getDefault().getOffset(timestamp).toLong(),
     override var version: Int = 0,
     override var dateCreated: Long = -1,
@@ -30,7 +30,7 @@ data class AIV(
                 ppIsf == other.ppIsf &&
                 duraIsf == other.duraIsf &&
                 finalIsf == other.finalIsf &&
-                effIobTh == other.effIobTh &&
+                iobThEffective == other.iobThEffective &&
                 isValid == other.isValid)
     }
 }

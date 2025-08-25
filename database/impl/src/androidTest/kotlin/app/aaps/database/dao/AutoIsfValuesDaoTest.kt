@@ -48,7 +48,7 @@ class AutoIsfValuesDaoTest {
                 ppIsf == other.ppIsf &&
                 duraIsf == other.duraIsf &&
                 finalIsf == other.finalIsf &&
-                effIobTh == other.effIobTh &&
+                iobThEffective == other.iobThEffective &&
                 isValid == other.isValid)
     }
 
@@ -109,7 +109,7 @@ class AutoIsfValuesDaoTest {
                 ppIsf = isf+0.2,
                 duraIsf = isf+0.3,
                 finalIsf= isf+0.4,
-                effIobTh = isf+0.5
+                iobThEffective = isf+0.5
             )
 
     }

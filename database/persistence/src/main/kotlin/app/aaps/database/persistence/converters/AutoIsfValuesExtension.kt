@@ -17,7 +17,7 @@ fun AutoIsfValues.fromDb(): AIV =
         ppIsf = this.ppIsf,
         duraIsf = this.duraIsf,
         finalIsf = this.finalIsf,
-        effIobTh = this.effIobTh,
+        iobThEffective = this.iobThEffective,
         ids = this.interfaceIDs.fromDb()
     )
 
@@ -35,6 +35,6 @@ fun AIV.toDb(): AutoIsfValues =
         ppIsf = this.ppIsf,
         duraIsf = this.duraIsf,
         finalIsf = this.finalIsf,
-        effIobTh = this.effIobTh,
+        iobThEffective = this.iobThEffective,
         interfaceIDs_backing = this.ids.toDb()
     )
