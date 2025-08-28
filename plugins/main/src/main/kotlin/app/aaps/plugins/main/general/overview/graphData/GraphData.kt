@@ -156,6 +156,17 @@ import kotlin.math.max
     }
 
     // scale in % of vertical size (like 0.3)
+    fun addIobTh(useForScale: Boolean, scale: Double) {
+        if (useForScale) {
+            maxY = overviewData.maxIobThValueFound
+            minY = -overviewData.maxIobThValueFound
+        }
+        overviewData.iobThScale.multiplier = maxY * scale / overviewData.maxIobThValueFound
+        addSeries(overviewData.iobThSeries as LineGraphSeries<ScaledDataPoint>)
+        //addSeries(overviewData.iobPredictions2Series)
+    }
+
+    // scale in % of vertical size (like 0.3)
     fun addIob(useForScale: Boolean, scale: Double) {
         if (useForScale) {
             maxY = overviewData.maxIobValueFound

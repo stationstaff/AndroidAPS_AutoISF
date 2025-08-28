@@ -10,6 +10,7 @@ interface OverviewMenus {
         TREAT,
         BAS,
         ABS,
+        IOB_TH,
         IOB,
         COB,
         DEV,

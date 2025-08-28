@@ -105,6 +105,7 @@
     <color name="ppIsfColor">#00FF00</color>
     <color name="duraIsfColor">#FF8800</color>
     <color name="finalIsfColor">#00FFFF</color>
+    <color name="iobThColor">#BBFFFF</color>
 
     <color name="ribbonDefault">#5a595b</color>
     <color name="daySelected">#D000FF00</color>

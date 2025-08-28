@@ -237,6 +237,28 @@ class PrepareIobAutosensGraphDataWorker(
 
             time += 5 * 60 * 1000L
         }
+        // IOB_TH
+        val iobThArray: MutableList<ScaledDataPoint> = ArrayList()
+        data.overviewData.maxIobThValueFound = Double.MIN_VALUE
+        data.overviewData.minIobThValueFound = Double.MAX_VALUE
+        val autoIsfResults = persistenceLayer.getAutoIsfValuesFromTimeToTime(fromTime, endTime)
+        autoIsfResults.forEach {
+            it.iobThEffective.let { iobThEffective ->
+                iobThArray.add(ScaledDataPoint(it.timestamp, iobThEffective, data.overviewData.iobThScale))
+                data.overviewData.maxIobThValueFound = max(data.overviewData.maxIobThValueFound, iobThEffective)
+                data.overviewData.minIobThValueFound = min(data.overviewData.minIobThValueFound, iobThEffective)
+            }
+        }
+        aapsLogger.debug(LTag.APS, "iob_TH min/max range is ${data.overviewData.minIobThValueFound} to ${data.overviewData.maxIobThValueFound}")
+        data.overviewData.iobThSeries = LineGraphSeries(Array(iobThArray.size) { i -> iobThArray[i] }).also {
+            it.setCustomPaint(Paint().also { paint ->
+                paint.style = Paint.Style.STROKE
+                paint.strokeWidth = 3f
+                paint.pathEffect = DashPathEffect(floatArrayOf(8f, 8f), 0f)
+                paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.iobThColor)
+            })
+        }
+
         // IOB
         data.overviewData.iobSeries = FixedLineGraphSeries(Array(iobArray.size) { i -> iobArray[i] }).also {
             it.isDrawBackground = true
@@ -261,6 +283,11 @@ class PrepareIobAutosensGraphDataWorker(
                 iobPrediction.add(IobTotalDataPoint(i).setColor(rh.gac(ctx, app.aaps.core.ui.R.attr.iobPredASColor)))
                 data.overviewData.maxIobValueFound = max(data.overviewData.maxIobValueFound, abs(i.iob))
             }
+            if (overviewMenus.setting[0][OverviewMenus.CharType.IOB_TH.ordinal]) {
+                data.overviewData.maxIobValueFound = max(data.overviewData.maxIobValueFound, abs(data.overviewData.maxIobValueFound))
+                data.overviewData.maxIobThValueFound = data.overviewData.maxIobValueFound
+            }
+
             data.overviewData.iobPredictions1Series = PointsWithLabelGraphSeries(Array(iobPrediction.size) { i -> iobPrediction[i] })
             aapsLogger.debug(LTag.AUTOSENS, "IOB prediction for AS=" + decimalFormatter.to2Decimal(lastAutosensResult.ratio) + ": " + data.iobCobCalculator.iobArrayToString(iobPredictionArray))
         } else {
@@ -382,7 +409,7 @@ class PrepareIobAutosensGraphDataWorker(
             it.thickness = 3
         }
 
-        // ACCE_ISF
+        // AUTO_ISF
         val acceIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val bgIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val ppIsfArray: MutableList<ScaledDataPoint> = ArrayList()
@@ -390,7 +417,7 @@ class PrepareIobAutosensGraphDataWorker(
         val finalIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         data.overviewData.maxAcceIsfValueFound = Double.MIN_VALUE
         data.overviewData.minAcceIsfValueFound = Double.MAX_VALUE
-        val autoIsfResults = persistenceLayer.getAutoIsfValuesFromTimeToTime(fromTime, endTime)
+        //val autoIsfResults = persistenceLayer.getAutoIsfValuesFromTimeToTime(fromTime, endTime)
         autoIsfResults.forEach {
             it.acceIsf.let { acceIsf ->
                 acceIsfArray.add(ScaledDataPoint(it.timestamp, acceIsf, data.overviewData.acceIsfScale))

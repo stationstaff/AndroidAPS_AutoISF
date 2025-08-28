@@ -1109,6 +1109,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         for (g in 0 until min(secondaryGraphs.size, menuChartSettings.size - 1)) {
             val secondGraphData = GraphData(injector, secondaryGraphs[g], overviewData)
             var useABSForScale = false
+            var useIobThForScale = false
             var useIobForScale = false
             var useCobForScale = false
             var useDevForScale = false
@@ -1125,6 +1126,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             var useDURA_ISFForScale = false
             when {
                 menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]        -> useABSForScale = true
+                menuChartSettings[g + 1][OverviewMenus.CharType.IOB_TH.ordinal]     -> useIobThForScale = true
                 menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]        -> useIobForScale = true
                 menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal]        -> useCobForScale = true
                 menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal]        -> useDevForScale = true
@@ -1141,10 +1143,12 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                 menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal]    -> useDURA_ISFForScale = true
             }
             val alignDevBgiScale = menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal] && menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]
+            val alignIobThScale = menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal] && menuChartSettings[g + 1][OverviewMenus.CharType.IOB_TH.ordinal]
 
             if (menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]) secondGraphData.addAbsIob(useABSForScale, 1.0)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]) secondGraphData.addIob(useIobForScale, 1.0)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]) secondGraphData.addIob( if (alignIobThScale) useIobThForScale else useIobForScale, 1.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal]) secondGraphData.addCob(useCobForScale, if (useCobForScale) 1.0 else 0.5)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.IOB_TH.ordinal]) secondGraphData.addIobTh(useIobThForScale, 1.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal]) secondGraphData.addDeviations(useDevForScale, 1.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]) secondGraphData.addMinusBGI(useBGIForScale, if (alignDevBgiScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.SEN.ordinal]) secondGraphData.addRatio(useRatioForScale, if (useRatioForScale) 1.0 else 0.8)
@@ -1171,6 +1175,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             secondaryGraphsLabel[g].text = overviewMenus.enabledTypes(g + 1)
             secondaryGraphs[g].visibility = (
                 menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal] ||
+                    menuChartSettings[g + 1][OverviewMenus.CharType.IOB_TH.ordinal] ||
                     menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal] ||
                     menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal] ||
                     menuChartSettings[g + 1][OverviewMenus.CharType.DEV.ordinal] ||
