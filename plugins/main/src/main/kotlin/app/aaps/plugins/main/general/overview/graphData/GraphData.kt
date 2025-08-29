@@ -156,35 +156,44 @@ import kotlin.math.max
     }
 
     // scale in % of vertical size (like 0.3)
-    fun addIobTh(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = overviewData.maxIobThValueFound
-            minY = -overviewData.maxIobThValueFound
+    fun addIobTh(useForScale: Boolean, scale: Double, maxCommonIob: Double) {
+        if (maxCommonIob>0.0) {
+            maxY = maxCommonIob
+            minY = -maxY
+        } else if (useForScale) {
+            maxY =max(overviewData.maxIobThValueFound, maxCommonIob)
+            minY = -maxY    //overviewData.maxIobThValueFound
         }
-        overviewData.iobThScale.multiplier = maxY * scale / overviewData.maxIobThValueFound
+        overviewData.iobThScale.multiplier = maxY * scale / max(overviewData.maxIobThValueFound, maxCommonIob)
         addSeries(overviewData.iobThSeries as LineGraphSeries<ScaledDataPoint>)
         //addSeries(overviewData.iobPredictions2Series)
     }
 
     // scale in % of vertical size (like 0.3)
-    fun addIob(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = overviewData.maxIobValueFound
-            minY = -overviewData.maxIobValueFound
+    fun addIob(useForScale: Boolean, scale: Double, maxCommonIob: Double) {
+        if (maxCommonIob>0.0) {
+            maxY = maxCommonIob
+            minY = -maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxIobValueFound, maxCommonIob)
+            minY = -maxY    //overviewData.maxIobValueFound
         }
-        overviewData.iobScale.multiplier = maxY * scale / overviewData.maxIobValueFound
+        overviewData.iobScale.multiplier = maxY * scale / max(overviewData.maxIobValueFound, maxCommonIob)      //overviewData.maxIobValueFound
         addSeries(overviewData.iobSeries as FixedLineGraphSeries<ScaledDataPoint>)
         addSeries(overviewData.iobPredictions1Series as PointsWithLabelGraphSeries<DataPointWithLabelInterface>)
         //addSeries(overviewData.iobPredictions2Series)
     }
 
     // scale in % of vertical size (like 0.3)
-    fun addAbsIob(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = overviewData.maxIobValueFound
-            minY = -overviewData.maxIobValueFound
+    fun addAbsIob(useForScale: Boolean, scale: Double, maxCommonIob: Double) {
+        if (maxCommonIob>0.0) {
+            maxY = maxCommonIob
+            minY = -maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxIobValueFound, maxCommonIob)
+            minY = -maxY    //overviewData.maxIobValueFound
         }
-        overviewData.iobScale.multiplier = maxY * scale / overviewData.maxIobValueFound
+        overviewData.iobScale.multiplier = maxY * scale / max(overviewData.maxIobValueFound, maxCommonIob)
         addSeries(overviewData.absIobSeries as FixedLineGraphSeries<ScaledDataPoint>)
     }
 
