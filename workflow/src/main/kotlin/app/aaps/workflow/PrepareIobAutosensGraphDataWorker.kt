@@ -415,9 +415,16 @@ class PrepareIobAutosensGraphDataWorker(
         val ppIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val duraIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val finalIsfArray: MutableList<ScaledDataPoint> = ArrayList()
-        data.overviewData.maxAcceIsfValueFound = Double.MIN_VALUE
-        data.overviewData.minAcceIsfValueFound = Double.MAX_VALUE
-        //val autoIsfResults = persistenceLayer.getAutoIsfValuesFromTimeToTime(fromTime, endTime)
+        data.overviewData.maxAcceIsfValueFound = 1.0
+        data.overviewData.minAcceIsfValueFound = 1.0
+        data.overviewData.maxBgIsfValueFound = 1.0
+        data.overviewData.minBgIsfValueFound = 1.0
+        data.overviewData.maxPpIsfValueFound = 1.0
+        data.overviewData.minPpIsfValueFound = 1.0
+        data.overviewData.maxDuraIsfValueFound = 1.0
+        data.overviewData.minDuraIsfValueFound = 1.0
+        data.overviewData.maxFinalIsfValueFound = 1.0
+        data.overviewData.minFinalIsfValueFound = 1.0
         autoIsfResults.forEach {
             it.acceIsf.let { acceIsf ->
                 acceIsfArray.add(ScaledDataPoint(it.timestamp, acceIsf, data.overviewData.acceIsfScale))
@@ -429,36 +436,27 @@ class PrepareIobAutosensGraphDataWorker(
                 data.overviewData.maxBgIsfValueFound = max(data.overviewData.maxBgIsfValueFound, bgIsf)
                 data.overviewData.minBgIsfValueFound = min(data.overviewData.minBgIsfValueFound, bgIsf)
             }
-            data.overviewData.maxAutoIsfValueFound = max(data.overviewData.maxBgIsfValueFound, data.overviewData.maxAcceIsfValueFound)
-            data.overviewData.minAutoIsfValueFound = min(data.overviewData.minBgIsfValueFound, data.overviewData.minAcceIsfValueFound)
             it.ppIsf.let { ppIsf ->
                 ppIsfArray.add(ScaledDataPoint(it.timestamp, ppIsf, data.overviewData.ppIsfScale))
                 data.overviewData.maxPpIsfValueFound = max(data.overviewData.maxPpIsfValueFound, ppIsf)
                 data.overviewData.minPpIsfValueFound = min(data.overviewData.minPpIsfValueFound, ppIsf)
             }
-            data.overviewData.maxAutoIsfValueFound = max(data.overviewData.maxPpIsfValueFound, data.overviewData.maxAcceIsfValueFound)
-            data.overviewData.minAutoIsfValueFound = min(data.overviewData.minPpIsfValueFound, data.overviewData.minAcceIsfValueFound)
             it.duraIsf.let { duraIsf ->
                 duraIsfArray.add(ScaledDataPoint(it.timestamp, duraIsf, data.overviewData.duraIsfScale))
                 data.overviewData.maxDuraIsfValueFound = max(data.overviewData.maxDuraIsfValueFound, duraIsf)
                 data.overviewData.minDuraIsfValueFound = min(data.overviewData.minDuraIsfValueFound, duraIsf)
             }
-            data.overviewData.maxAutoIsfValueFound = max(data.overviewData.maxDuraIsfValueFound, data.overviewData.maxAcceIsfValueFound)
-            data.overviewData.minAutoIsfValueFound = min(data.overviewData.minDuraIsfValueFound, data.overviewData.minAcceIsfValueFound)
-            it.finalIsf.let { finalIsf ->
+           it.finalIsf.let { finalIsf ->
                 finalIsfArray.add(ScaledDataPoint(it.timestamp, finalIsf, data.overviewData.finalIsfScale))
                 data.overviewData.maxFinalIsfValueFound = max(data.overviewData.maxFinalIsfValueFound, finalIsf)
                 data.overviewData.minFinalIsfValueFound = min(data.overviewData.minFinalIsfValueFound, finalIsf)
             }
-            data.overviewData.maxAutoIsfValueFound = max(data.overviewData.maxFinalIsfValueFound, data.overviewData.maxAcceIsfValueFound)
-            data.overviewData.minAutoIsfValueFound = min(data.overviewData.minFinalIsfValueFound, data.overviewData.minAcceIsfValueFound)
         }
         aapsLogger.debug(LTag.APS, "acce_ISF min/max range is ${data.overviewData.minAcceIsfValueFound} to ${data.overviewData.maxAcceIsfValueFound}")
         aapsLogger.debug(LTag.APS, "bg_ISF min/max range is ${data.overviewData.minBgIsfValueFound} to ${data.overviewData.maxBgIsfValueFound}")
         aapsLogger.debug(LTag.APS, "pp_ISF min/max range is ${data.overviewData.minPpIsfValueFound} to ${data.overviewData.maxPpIsfValueFound}")
         aapsLogger.debug(LTag.APS, "dura_ISF min/max range is ${data.overviewData.minDuraIsfValueFound} to ${data.overviewData.maxDuraIsfValueFound}")
         aapsLogger.debug(LTag.APS, "final_ISF min/max range is ${data.overviewData.minFinalIsfValueFound} to ${data.overviewData.maxFinalIsfValueFound}")
-        aapsLogger.debug(LTag.APS, "auto_ISF min/max range is ${data.overviewData.minAutoIsfValueFound} to ${data.overviewData.maxAutoIsfValueFound}")
         data.overviewData.acceIsfSeries = LineGraphSeries(Array(acceIsfArray.size) { i -> acceIsfArray[i] }).also {
             it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.acceIsfColor)
             it.thickness = 3
@@ -475,7 +473,7 @@ class PrepareIobAutosensGraphDataWorker(
             it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.duraIsfColor)
             it.thickness = 3
         }
-        data.overviewData.finalIsfSeries = LineGraphSeries(Array(finalIsfArray.size) { i -> finalIsfArray[i] }).also {  // this sequence position is more in the foreground layer than the preceding ones
+        data.overviewData.finalIsfSeries = LineGraphSeries(Array(finalIsfArray.size) { i -> finalIsfArray[i] }).also {
             it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.finalIsfColor)
             it.thickness = 8
         }

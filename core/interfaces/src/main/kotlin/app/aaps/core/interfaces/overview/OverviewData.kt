@@ -146,7 +146,4 @@ interface OverviewData {
     var minFinalIsfValueFound: Double
     val finalIsfScale: Scale
     var finalIsfSeries: SeriesData
-    var maxAutoIsfValueFound: Double
-    var minAutoIsfValueFound: Double
-    val autoIsfScale: Scale
 }

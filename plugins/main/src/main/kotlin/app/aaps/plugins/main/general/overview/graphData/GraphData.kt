@@ -337,44 +337,63 @@ import kotlin.math.max
     }
 
     // AutoISF interim data
-    fun addAcceIsf(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = max(overviewData.maxAutoIsfValueFound, 1.5)
-            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minAcceIsfValueFound
+    fun addAcceIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
+        if (maxCommonFactor > 1.0) {
+            maxY = upperY
+            minY = 2.0 - maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxAcceIsfValueFound, upperY)
+            minY = 2.0 - maxY
         }
-        overviewData.autoIsfScale.multiplier = maxY * scale / overviewData.maxAutoIsfValueFound
+        overviewData.acceIsfScale.multiplier = maxY * scale / max(overviewData.maxAcceIsfValueFound, maxCommonFactor)
         addSeries(overviewData.acceIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
-    fun addBgIsf(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = max(overviewData.maxAutoIsfValueFound, 1.5)
-            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minBgIsfValueFound
+
+    fun addBgIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
+        if (maxCommonFactor > 1.0) {
+            maxY = upperY
+            minY = 2.0 - maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxBgIsfValueFound,  upperY)
+            minY = 2.0 - maxY
         }
-        overviewData.autoIsfScale.multiplier = maxY * scale / overviewData.maxAutoIsfValueFound
+        overviewData.bgIsfScale.multiplier = maxY * scale / max(overviewData.maxBgIsfValueFound ,maxCommonFactor)
         addSeries(overviewData.bgIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
-    fun addPpIsf(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = max(overviewData.maxAutoIsfValueFound, 1.5)
-            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minPbIsfValueFound
+
+    fun addPpIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
+        if (maxCommonFactor > 1.0) {
+            maxY = upperY
+            minY = 2.0 - maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxPpIsfValueFound,  upperY)
+            minY = 2.0 - maxY
         }
-        overviewData.autoIsfScale.multiplier = maxY * scale / overviewData.maxAutoIsfValueFound
+        overviewData.ppIsfScale.multiplier = maxY * scale / max(overviewData.maxPpIsfValueFound, maxCommonFactor)
         addSeries(overviewData.ppIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
-    fun addDuraIsf(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = max(overviewData.maxAutoIsfValueFound, 1.5)
-            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minDuraIsfValueFound
+
+    fun addDuraIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
+        if (maxCommonFactor > 1.0) {
+            maxY = upperY
+            minY = 2.0 - maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxDuraIsfValueFound,  upperY)
+            minY = 2.0 - maxY
         }
-        overviewData.autoIsfScale.multiplier = maxY * scale / overviewData.maxAutoIsfValueFound
+        overviewData.duraIsfScale.multiplier = maxY * scale / max(overviewData.maxDuraIsfValueFound, maxCommonFactor)
         addSeries(overviewData.duraIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
-    fun addFinalIsf(useForScale: Boolean, scale: Double) {
-        if (useForScale) {
-            maxY = max(overviewData.maxAutoIsfValueFound, 1.5)
-            minY = 2.0 - maxY // keep 1 as neutral centre line; was: overviewData.minFinalIsfValueFound
+
+    fun addFinalIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
+        if (maxCommonFactor > 1.0) {
+            maxY = upperY
+            minY = 2.0 - maxY
+        } else if (useForScale) {
+            maxY = max(overviewData.maxFinalIsfValueFound, upperY)
+            minY = 2.0 - maxY
         }
-        overviewData.autoIsfScale.multiplier = maxY * scale / overviewData.maxAutoIsfValueFound
+        overviewData.finalIsfScale.multiplier = maxY * scale / max(overviewData.maxFinalIsfValueFound, maxCommonFactor)
         addSeries(overviewData.finalIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 

@@ -1152,6 +1152,30 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                 alignIobScale -> max(overviewData.maxIobValueFound, overviewData.maxIobThValueFound)
                 else          -> 0.0
             }
+            var maxAutoIsfFactor = 1.0
+            var minAutoIsfFactor = 1.0
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal]) {
+                maxAutoIsfFactor = max(maxAutoIsfFactor, overviewData.maxFinalIsfValueFound)
+                minAutoIsfFactor = min(minAutoIsfFactor, overviewData.minFinalIsfValueFound)
+            }
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal]) {
+                maxAutoIsfFactor = max(maxAutoIsfFactor, overviewData.maxAcceIsfValueFound)
+                minAutoIsfFactor = min(minAutoIsfFactor, overviewData.minAcceIsfValueFound)
+            }
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal]) {
+                maxAutoIsfFactor = max(maxAutoIsfFactor, overviewData.maxBgIsfValueFound)
+                minAutoIsfFactor = min(minAutoIsfFactor, overviewData.minBgIsfValueFound)
+            }
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal]) {
+                maxAutoIsfFactor = max(maxAutoIsfFactor, overviewData.maxPpIsfValueFound)
+                minAutoIsfFactor = min(minAutoIsfFactor, overviewData.minPpIsfValueFound)
+            }
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal]) {
+                maxAutoIsfFactor = max(maxAutoIsfFactor, overviewData.maxDuraIsfValueFound)
+                minAutoIsfFactor = min(minAutoIsfFactor, overviewData.minDuraIsfValueFound)
+            }
+            val useCommonISFForScale = maxAutoIsfFactor > 1.0 || minAutoIsfFactor < 1.0
+            val maxYValueForScale = max(maxAutoIsfFactor, 2.0 - minAutoIsfFactor)       // ensure Y=1 is in the center of the graph
             if (menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]) secondGraphData.addAbsIob(useABSForScale, 1.0, maxCommonIob)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]) secondGraphData.addIob(   useIobForScale,  1.0, maxCommonIob)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.COB.ordinal]) secondGraphData.addCob(useCobForScale, if (useCobForScale) 1.0 else 0.5)
@@ -1160,11 +1184,11 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             if (menuChartSettings[g + 1][OverviewMenus.CharType.BGI.ordinal]) secondGraphData.addMinusBGI(useBGIForScale, if (alignDevBgiScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.SEN.ordinal]) secondGraphData.addRatio(useRatioForScale, if (useRatioForScale) 1.0 else 0.8)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.VAR_SEN.ordinal]) secondGraphData.addVarSens(useVarSensForScale, if (useVarSensForScale) 1.0 else 0.8)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal] && config.isDev()) secondGraphData.addFinalIsf(useFINAL_ISFForScale, if (useFINAL_ISFForScale) 1.0 else 0.8)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] && config.isDev()) secondGraphData.addAcceIsf(useACCE_ISFForScale, if (useACCE_ISFForScale) 1.0 else 0.8)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] && config.isDev()) secondGraphData.addBgIsf(useBG_ISFForScale, if (useBG_ISFForScale) 1.0 else 0.8)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] && config.isDev()) secondGraphData.addPpIsf(usePP_ISFForScale, if (usePP_ISFForScale) 1.0 else 0.8)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal] && config.isDev()) secondGraphData.addDuraIsf(useDURA_ISFForScale, if (useDURA_ISFForScale) 1.0 else 0.8)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal] && config.isDev()) secondGraphData.addFinalIsf(useFINAL_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor, maxYValueForScale)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] && config.isDev()) secondGraphData.addAcceIsf(useACCE_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] && config.isDev()) secondGraphData.addBgIsf(useBG_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] && config.isDev()) secondGraphData.addPpIsf(usePP_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal] && config.isDev()) secondGraphData.addDuraIsf(useDURA_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] && config.isDev()) secondGraphData.addDeviationSlope(
                 useDSForScale,
                 if (useDSForScale) 1.0 else 0.8,

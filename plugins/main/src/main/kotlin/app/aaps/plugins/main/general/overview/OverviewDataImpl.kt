@@ -118,8 +118,6 @@ class OverviewDataImpl @Inject constructor(
         maxFinalIsfValueFound = 1.5
         minFinalIsfValueFound = 0.5
         finalIsfSeries = LineGraphSeries<ScaledDataPoint>()
-        maxAutoIsfValueFound = 1.5
-        minAutoIsfValueFound = 0.5
 
         maxIobThValueFound = 0.0
         minIobThValueFound = 0.0
@@ -304,9 +302,6 @@ class OverviewDataImpl @Inject constructor(
     override var minFinalIsfValueFound = 0.5
     override val finalIsfScale = Scale()
     override var finalIsfSeries: SeriesData = LineGraphSeries<ScaledDataPoint>()
-    override var maxAutoIsfValueFound = 1.5
-    override var minAutoIsfValueFound = 0.5
-    override val autoIsfScale = Scale()
 
     override var maxVarSensValueFound = 200.0
     override var minVarSensValueFound = 50.0
