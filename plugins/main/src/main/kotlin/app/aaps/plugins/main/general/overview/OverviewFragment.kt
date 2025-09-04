@@ -477,14 +477,15 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
                                 runOnUiThread {
                                     protectionCheck.queryProtection(activity, ProtectionCheck.Protection.BOLUS, UIRunnable {
                                         if (isAdded)
-                                            OKDialog.showConfirmation(activity, rh.gs(app.aaps.core.ui.R.string.tempbasal_label), lastRun.constraintsProcessed?.resultAsSpanned()
-                                                ?: "".toSpanned(), {
-                                                                          uel.log(Action.ACCEPTS_TEMP_BASAL, Sources.Overview)
-                                                                          (context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(Constants.notificationID)
-                                                                          rxBus.send(EventMobileToWear(EventData.CancelNotification(dateUtil.now())))
-                                                                          handler.post { loop.acceptChangeRequest() }
-                                                                          binding.buttonsLayout.acceptTempButton.visibility = View.GONE
-                                                                      })
+                                            OKDialog.showConfirmation(
+                                                activity, rh.gs(app.aaps.core.ui.R.string.tempbasal_label), lastRun.constraintsProcessed?.resultAsSpanned()
+                                                    ?: "".toSpanned(), {
+                                                    uel.log(Action.ACCEPTS_TEMP_BASAL, Sources.Overview)
+                                                    (context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?)?.cancel(Constants.notificationID)
+                                                    rxBus.send(EventMobileToWear(EventData.CancelNotification(dateUtil.now())))
+                                                    handler.post { loop.acceptChangeRequest() }
+                                                    binding.buttonsLayout.acceptTempButton.visibility = View.GONE
+                                                })
                                     })
                                 }
                             }
@@ -578,7 +579,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
         val quickWizardEntry = quickWizard.getActive()
         runOnUiThread {
             _binding ?: return@runOnUiThread
-            if (quickWizardEntry != null && lastBG != null && profile != null && pump.isInitialized() && !loop.runningMode.isSuspended()) {
+            if (quickWizardEntry != null && lastBG != null && profile != null && pump.isInitialized() && loop.runningMode != RM.Mode.DISCONNECTED_PUMP && !pump.isSuspended()) {
                 binding.buttonsLayout.quickWizardButton.visibility = View.VISIBLE
                 val wizard = quickWizardEntry.doCalc(profile, profileName, lastBG)
                 binding.buttonsLayout.quickWizardButton.text = quickWizardEntry.buttonText() + "\n" + rh.gs(app.aaps.core.objects.R.string.format_carbs, quickWizardEntry.carbs()) +
@@ -608,12 +609,12 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             // **** Various treatment buttons ****
             binding.buttonsLayout.carbsButton.visibility =
                 (profile != null && preferences.get(BooleanKey.OverviewShowCarbsButton)).toVisibility()
-            binding.buttonsLayout.treatmentButton.visibility = (!loop.runningMode.isSuspended() && pump.isInitialized() && profile != null
+            binding.buttonsLayout.treatmentButton.visibility = (loop.runningMode != RM.Mode.DISCONNECTED_PUMP && !pump.isSuspended() && pump.isInitialized() && profile != null
                 && preferences.get(BooleanKey.OverviewShowTreatmentButton)).toVisibility()
-            binding.buttonsLayout.wizardButton.visibility = (!loop.runningMode.isSuspended() && pump.isInitialized() && profile != null
+            binding.buttonsLayout.wizardButton.visibility = (loop.runningMode != RM.Mode.DISCONNECTED_PUMP && !pump.isSuspended() && pump.isInitialized() && profile != null
                 && preferences.get(BooleanKey.OverviewShowWizardButton)).toVisibility()
             binding.buttonsLayout.insulinButton.visibility = (profile != null && preferences.get(BooleanKey.OverviewShowInsulinButton)).toVisibility()
-            if (loop.runningMode.isSuspended() || !pump.isInitialized()) {
+            if (loop.runningMode == RM.Mode.DISCONNECTED_PUMP || pump.isSuspended() || !pump.isInitialized()) {
                 setRibbon(
                     binding.buttonsLayout.insulinButton,
                     app.aaps.core.ui.R.attr.ribbonTextWarningColor,
