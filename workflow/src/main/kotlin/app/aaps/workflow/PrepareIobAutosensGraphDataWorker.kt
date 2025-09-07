@@ -313,13 +313,13 @@ class PrepareIobAutosensGraphDataWorker(
         data.overviewData.bgParabolaSeries = FixedLineGraphSeries(Array(bgParabolaArrayHist.size) { i -> bgParabolaArrayHist[i] }).also {
             it.isDrawBackground = false
             it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
-            it.thickness = 7
+            it.thickness = 8
         }
         data.overviewData.bgParabolaPredictionSeries = FixedLineGraphSeries(Array(bgParabolaArrayPrediction.size) { i ->  bgParabolaArrayPrediction[i] }).also {
             it.setCustomPaint(Paint().also { paint ->
                 paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 7f
-                paint.pathEffect = DashPathEffect(floatArrayOf(4f, 4f), 0f)
+                paint.strokeWidth = 8f
+                paint.pathEffect = DashPathEffect(floatArrayOf(6f, 6f), 0f)
                 paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
             })
         }
