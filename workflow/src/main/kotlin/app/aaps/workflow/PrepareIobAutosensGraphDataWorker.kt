@@ -6,6 +6,8 @@ import android.graphics.Paint
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import app.aaps.core.data.aps.SMBDefaults
+import app.aaps.core.data.configuration.Constants
+import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.graph.data.BarGraphSeries
 import app.aaps.core.graph.data.DataPointWithLabelInterface
 import app.aaps.core.graph.data.DeviationDataPoint
@@ -147,6 +149,8 @@ class PrepareIobAutosensGraphDataWorker(
         data.overviewData.maxFromMinValueFound = Double.MIN_VALUE
 
         val adsData = data.iobCobCalculator.ads.clone()
+
+        val toUnits = if (profileUtil.units == GlucoseUnit.MGDL) 1.0 else Constants.MGDL_TO_MMOLL
 
         while (time <= endTime) {
             if (isStopped) return Result.failure(workDataOf("Error" to "stopped"))
@@ -300,14 +304,14 @@ class PrepareIobAutosensGraphDataWorker(
             for (i in 0 until 21 step 5) {
                 val timestamp = now + (i * 60 * 1000).toLong()
                 val value = a0 + a1*i/5 +a2*i*i/25
-                bgParabolaArrayPrediction.add(ScaledDataPoint(timestamp, value, data.overviewData.bgParabolaScale))
+                bgParabolaArrayPrediction.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
             }
             // fitted parabola
             val dur = (glucoseStatus.parabolaMinutes).toInt()
             for (i in -dur until 1 step 5) {
                 val timestamp = now + (i * 60 * 1000).toLong()
                 val value = a0 + a1*i/5 +a2*i*i/25
-                bgParabolaArrayHist.add(ScaledDataPoint(timestamp, value, data.overviewData.bgParabolaScale))
+                bgParabolaArrayHist.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
             }
         }
         data.overviewData.bgParabolaSeries = FixedLineGraphSeries(Array(bgParabolaArrayHist.size) { i -> bgParabolaArrayHist[i] }).also {
