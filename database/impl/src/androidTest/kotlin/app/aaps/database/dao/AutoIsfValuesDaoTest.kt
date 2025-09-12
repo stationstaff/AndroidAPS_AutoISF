@@ -46,6 +46,7 @@ class AutoIsfValuesDaoTest {
                 acceIsf == other.acceIsf &&
                 bgIsf == other.bgIsf &&
                 ppIsf == other.ppIsf &&
+                driftIsf == other.driftIsf &&
                 duraIsf == other.duraIsf &&
                 finalIsf == other.finalIsf &&
                 iobThEffective == other.iobThEffective &&
@@ -107,6 +108,7 @@ class AutoIsfValuesDaoTest {
                 acceIsf = isf,
                 bgIsf = isf+0.1,
                 ppIsf = isf+0.2,
+                driftIsf = isf+0.25,
                 duraIsf = isf+0.3,
                 finalIsf= isf+0.4,
                 iobThEffective = isf+0.5

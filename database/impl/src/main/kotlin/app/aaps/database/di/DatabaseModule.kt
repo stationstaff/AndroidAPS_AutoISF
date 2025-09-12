@@ -198,7 +198,7 @@ open class DatabaseModule {
         override fun migrate(database: SupportSQLiteDatabase) {
             // Creation of table TABLE_AUTOISF_VALUES
             database.execSQL(
-                "CREATE TABLE IF NOT EXISTS `${TABLE_AUTOISF_VALUES}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `acceIsf` DOUBLE NOT NULL, `bgIsf` DOUBLE NOT NULL, `ppIsf` DOUBLE NOT NULL, `duraIsf` DOUBLE NOT NULL, `finalIsf` DOUBLE NOT NULL, `iobThEffective` DOUBLE NOT NULL, `utcOffset` INTEGER NOT NULL, `version` INTEGER NOT NULL, `dateCreated` INTEGER NOT NULL, `isValid` INTEGER NOT NULL, `referenceId` INTEGER, `nightscoutSystemId` TEXT, `nightscoutId` TEXT, `pumpType` TEXT, `pumpSerial` TEXT, `temporaryId` INTEGER, `pumpId` INTEGER, `startId` INTEGER, `endId` INTEGER)"
+                "CREATE TABLE IF NOT EXISTS `${TABLE_AUTOISF_VALUES}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `acceIsf` DOUBLE NOT NULL, `bgIsf` DOUBLE NOT NULL, `ppIsf` DOUBLE NOT NULL, `driftIsf` DOUBLE NOT NULL, `duraIsf` DOUBLE NOT NULL, `finalIsf` DOUBLE NOT NULL, `iobThEffective` DOUBLE NOT NULL, `utcOffset` INTEGER NOT NULL, `version` INTEGER NOT NULL, `dateCreated` INTEGER NOT NULL, `isValid` INTEGER NOT NULL, `referenceId` INTEGER, `nightscoutSystemId` TEXT, `nightscoutId` TEXT, `pumpType` TEXT, `pumpSerial` TEXT, `temporaryId` INTEGER, `pumpId` INTEGER, `startId` INTEGER, `endId` INTEGER)"
             )
             // Creation of index for table TABLE_AUTOISF_VALUES
             database.execSQL("CREATE INDEX IF NOT EXISTS `index_autoIsfValues_id` ON `${TABLE_AUTOISF_VALUES}` (`id`)")

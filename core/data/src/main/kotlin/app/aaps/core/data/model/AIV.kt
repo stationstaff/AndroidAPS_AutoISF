@@ -11,6 +11,7 @@ data class AIV(
     var acceIsf: Double,
     var bgIsf: Double,
     var ppIsf: Double,
+    var driftIsf: Double,       // place bolder
     var duraIsf: Double,
     var finalIsf: Double,
     var iobThEffective: Double,
@@ -28,6 +29,8 @@ data class AIV(
                 acceIsf == other.acceIsf &&
                 bgIsf == other.bgIsf &&
                 ppIsf == other.ppIsf &&
+                driftIsf == other.driftIsf &&
+                driftIsf == other.driftIsf &&
                 duraIsf == other.duraIsf &&
                 finalIsf == other.finalIsf &&
                 iobThEffective == other.iobThEffective &&

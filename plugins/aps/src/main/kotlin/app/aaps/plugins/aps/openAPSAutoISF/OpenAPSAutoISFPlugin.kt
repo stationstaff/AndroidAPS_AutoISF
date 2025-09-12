@@ -165,6 +165,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         acceIsf = 1.0,
         bgIsf =  1.0,
         ppIsf = 1.0,
+        driftIsf = 1.0,
         duraIsf = 1.0,
         finalIsf = 1.0,
         iobThEffective = 0.0
@@ -340,6 +341,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             acceIsf = 1.0,
             bgIsf =  1.0,
             ppIsf = 1.0,
+            driftIsf = 1.0,
             duraIsf = 1.0,
             finalIsf = 1.0,
             iobThEffective = 0.0

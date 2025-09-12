@@ -23,6 +23,7 @@ data class AutoIsfValues(
     var acceIsf: Double,
     var bgIsf: Double,
     var ppIsf: Double,
+    val driftIsf: Double,       // place holder
     val duraIsf: Double,
     var finalIsf: Double,
     var iobThEffective: Double,
