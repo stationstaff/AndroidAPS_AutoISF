@@ -19,7 +19,12 @@ interface OverviewMenus {
         ACT,
         DEVSLOPE,
         HR,
-        STEPS
+        STEPS,
+        FIN_ISF,
+        ACC_ISF,
+        BG_ISF,
+        PP_ISF,
+        DUR_ISF,
     }
 
     val setting: List<Array<Boolean>>
