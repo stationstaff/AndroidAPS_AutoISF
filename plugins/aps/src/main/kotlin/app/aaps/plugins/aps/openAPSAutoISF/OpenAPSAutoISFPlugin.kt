@@ -176,7 +176,6 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     private val recentSteps30Minutes; get() = StepService.getRecentStepCount30Min()
     private val recentSteps60Minutes; get() = StepService.getRecentStepCount60Min()
     private val phone_moved; get() = PhoneMovementDetector.phoneMoved()
-    private val disposable = CompositeDisposable()
 
     override fun onStart() {
         super.onStart()
