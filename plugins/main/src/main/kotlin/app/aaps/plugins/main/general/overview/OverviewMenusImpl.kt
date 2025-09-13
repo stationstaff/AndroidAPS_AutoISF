@@ -112,8 +112,8 @@ class OverviewMenusImpl @Inject constructor(
             else
                 listOf(
                     arrayOf(true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
-                    arrayOf(false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
-                    arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false)
+                    arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
+                    arrayOf(false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false)
                 )
 
     @Synchronized
@@ -171,7 +171,7 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.PRE) insert = predictionsAvailable
-                //else if (m == CharTypeData.BG_PARAB) insert = runningAutoisf
+                else if (m == CharTypeData.BG_PARAB) insert = runningAutoisf
                 if (insert && m.primary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, true)
                     itemRow++
@@ -201,7 +201,12 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
-                else if (m == CharTypeData.IOB_TH) insert = loop.lastRun?.request?.algorithm?.name =="AUTO_ISF"
+                else if (m == CharTypeData.IOB_TH) insert = runningAutoisf
+                else if (m == CharTypeData.FIN_ISF) insert = runningAutoisf
+                else if (m == CharTypeData.ACC_ISF) insert = runningAutoisf
+                else if (m == CharTypeData.BG_ISF) insert = runningAutoisf
+                else if (m == CharTypeData.PP_ISF) insert = runningAutoisf
+                else if (m == CharTypeData.DUR_ISF) insert = runningAutoisf
                 if (insert && m.secondary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, false)
                     itemRow++
