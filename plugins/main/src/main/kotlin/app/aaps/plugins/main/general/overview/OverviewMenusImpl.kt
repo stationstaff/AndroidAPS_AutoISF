@@ -63,7 +63,7 @@ class OverviewMenusImpl @Inject constructor(
         ABS(R.string.overview_show_abs_insulin, app.aaps.core.ui.R.attr.iobColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.abs_insulin_shortname),
         IOB(R.string.overview_show_iob, app.aaps.core.ui.R.attr.iobColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = app.aaps.core.ui.R.string.iob),
         COB(R.string.overview_show_cob, app.aaps.core.ui.R.attr.cobColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = app.aaps.core.ui.R.string.cob),
-        IOB_TH(R.string.overview_show_iobTH, app.aaps.core.ui.R.attr.iobThColor, app.aaps.core.ui.R.attr.menuTextColorInverse, primary = false, secondary = true, shortnameId = R.string.iob_threshold_shortname),
+        IOB_TH(R.string.overview_show_iobTH, app.aaps.core.ui.R.attr.iobThColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.iob_threshold_shortname),
         DEV(R.string.overview_show_deviations, app.aaps.core.ui.R.attr.bgiColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.deviation_shortname),
         BGI(R.string.overview_show_bgi, app.aaps.core.ui.R.attr.bgiColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.bgi_shortname),
         SEN(R.string.overview_show_sensitivity, app.aaps.core.ui.R.attr.ratioColor, app.aaps.core.ui.R.attr.menuTextColorInverse, primary = false, secondary = true, shortnameId = R.string.sensitivity_shortname),
