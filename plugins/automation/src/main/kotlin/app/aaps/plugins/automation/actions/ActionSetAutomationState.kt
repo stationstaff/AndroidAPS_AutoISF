@@ -71,7 +71,7 @@ class ActionSetAutomationState(injector: HasAndroidInjector) : Action(injector) 
 
     override fun doAction(callback: Callback) {
         automationState.setState(stateNameDropdown.value, stateValueDropdown.value)
-        callback.result(instantiator.providePumpEnactResult().success(true).comment(app.aaps.core.ui.R.string.ok)).run()
+        callback.result(pumpEnactResultProvider.get().success(true).comment(app.aaps.core.ui.R.string.ok)).run()
     }
 
     override fun toJSON(): String {

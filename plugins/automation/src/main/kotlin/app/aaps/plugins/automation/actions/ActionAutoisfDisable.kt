@@ -23,9 +23,9 @@ class ActionAutoisfDisable(injector: HasAndroidInjector) : Action(injector) {
         if (currentAutoisfStatus) {
             uel.log(app.aaps.core.data.ue.Action.AUTOISF_DISABLED, Sources.Automation, title)
             sp.putBoolean(R.string.enable_autoISF, false)
-            callback.result(instantiator.providePumpEnactResult().success(true).comment(R.string.autoisf_disabled)).run()
+            callback.result(pumpEnactResultProvider.get().success(true).comment(R.string.autoisf_disabled)).run()
         } else {
-            callback.result(instantiator.providePumpEnactResult().success(true).comment(R.string.autoisf_alreadydisabled)).run()
+            callback.result(pumpEnactResultProvider.get().success(true).comment(R.string.autoisf_alreadydisabled)).run()
         }
     }
 

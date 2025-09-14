@@ -35,9 +35,9 @@ class ActionSetAcceWeight(injector: HasAndroidInjector) : Action(injector) {
                 title + ": " + rh.gs(R.string.automate_set_acce_weight, new_weight.value)
             )
             sp.putDouble(R.string.bgAccel_ISF_weight, new_weight.value)
-            callback.result(instantiator.providePumpEnactResult().success(true).comment(R.string.weight_new)).run()
+            callback.result(pumpEnactResultProvider.get().success(true).comment(R.string.weight_new)).run()
         } else {
-            callback.result(instantiator.providePumpEnactResult().success(false).comment(R.string.weight_old)).run()
+            callback.result(pumpEnactResultProvider.get().success(false).comment(R.string.weight_old)).run()
         }
     }
 

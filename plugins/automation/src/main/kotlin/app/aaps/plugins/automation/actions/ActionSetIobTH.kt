@@ -38,9 +38,9 @@ class ActionSetIobTH(injector: HasAndroidInjector) : Action(injector) {
                 ValueWithUnit.Percent(new_iobTH.value.toInt())
             )
             sp.putInt(R.string.iob_threshold_percent, new_iobTH.value)
-            callback.result(instantiator.providePumpEnactResult().success(true).comment(R.string.weight_new)).run()
+            callback.result(pumpEnactResultProvider.get().success(true).comment(R.string.weight_new)).run()
         } else {
-            callback.result(instantiator.providePumpEnactResult().success(false).comment(R.string.weight_old)).run()
+            callback.result(pumpEnactResultProvider.get().success(false).comment(R.string.weight_old)).run()
         }
     }
 
