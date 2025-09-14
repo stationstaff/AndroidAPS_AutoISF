@@ -25,6 +25,7 @@ import app.aaps.core.interfaces.aps.Loop
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.overview.OverviewMenus
+import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventRefreshOverview
@@ -43,7 +44,8 @@ class OverviewMenusImpl @Inject constructor(
     private val preferences: Preferences,
     private val rxBus: RxBus,
     private val config: Config,
-    private val loop: Loop
+    private val loop: Loop,
+    private val activePlugin: ActivePlugin
 ) : OverviewMenus {
 
     enum class CharTypeData(
@@ -154,7 +156,8 @@ class OverviewMenusImpl @Inject constructor(
                 config.AAPSCLIENT -> true
                 else              -> false
             }
-            val runningAutoisf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
+            //val runningAutoIsf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
+            val runningAutoIsf =  activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
             val popup = PopupWindow(v.context)
             popup.setBackgroundDrawable(ColorDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground)))
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
@@ -171,7 +174,7 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.PRE) insert = predictionsAvailable
-                else if (m == CharTypeData.BG_PARAB) insert = runningAutoisf
+                else if (m == CharTypeData.BG_PARAB) insert = runningAutoIsf
                 if (insert && m.primary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, true)
                     itemRow++
@@ -201,12 +204,12 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
-                else if (m == CharTypeData.IOB_TH) insert = runningAutoisf
-                else if (m == CharTypeData.FIN_ISF) insert = runningAutoisf
-                else if (m == CharTypeData.ACC_ISF) insert = runningAutoisf
-                else if (m == CharTypeData.BG_ISF) insert = runningAutoisf
-                else if (m == CharTypeData.PP_ISF) insert = runningAutoisf
-                else if (m == CharTypeData.DUR_ISF) insert = runningAutoisf
+                else if (m == CharTypeData.IOB_TH) insert = runningAutoIsf
+                else if (m == CharTypeData.FIN_ISF) insert = runningAutoIsf
+                else if (m == CharTypeData.ACC_ISF) insert = runningAutoIsf
+                else if (m == CharTypeData.BG_ISF) insert = runningAutoIsf
+                else if (m == CharTypeData.PP_ISF) insert = runningAutoIsf
+                else if (m == CharTypeData.DUR_ISF) insert = runningAutoIsf
                 if (insert && m.secondary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, false)
                     itemRow++
