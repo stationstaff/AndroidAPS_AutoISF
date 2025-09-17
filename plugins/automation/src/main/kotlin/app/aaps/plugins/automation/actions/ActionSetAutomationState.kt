@@ -7,7 +7,7 @@ import app.aaps.core.interfaces.plugin.ActivePlugin
 import app.aaps.core.interfaces.queue.Callback
 import app.aaps.core.utils.JsonHelper
 import app.aaps.plugins.automation.R
-import app.aaps.plugins.automation.elements.InputDropdownMenu
+import app.aaps.plugins.automation.elements.InputDropdownStateMenu
 import app.aaps.plugins.automation.elements.LabelWithElement
 import app.aaps.plugins.automation.elements.LayoutBuilder
 import dagger.android.HasAndroidInjector
@@ -19,16 +19,16 @@ class ActionSetAutomationState(injector: HasAndroidInjector) : Action(injector) 
     @Inject lateinit var activePlugin: ActivePlugin
     @Inject lateinit var automationState: AutomationStateInterface
 
-    private var stateNameDropdown: InputDropdownMenu
-    private var stateValueDropdown: InputDropdownMenu
+    private var stateNameDropdown: InputDropdownStateMenu
+    private var stateValueDropdown: InputDropdownStateMenu
 
     init {
         injector.androidInjector().inject(this)
 
-        stateNameDropdown = InputDropdownMenu(rh) { stateName ->
+        stateNameDropdown = InputDropdownStateMenu(rh) { stateName ->
             updateStateValueDropdown(stateName)
         }
-        stateValueDropdown = InputDropdownMenu(rh)
+        stateValueDropdown = InputDropdownStateMenu(rh)
 
         // Populate state names dropdown with all available states
         val allStates = automationState.getAllStates()

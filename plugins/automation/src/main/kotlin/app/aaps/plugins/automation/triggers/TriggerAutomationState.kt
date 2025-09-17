@@ -5,7 +5,7 @@ import app.aaps.core.interfaces.automation.AutomationStateInterface
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.utils.JsonHelper
 import app.aaps.plugins.automation.R
-import app.aaps.plugins.automation.elements.InputDropdownMenu
+import app.aaps.plugins.automation.elements.InputDropdownStateMenu
 import app.aaps.plugins.automation.elements.InputString
 import app.aaps.plugins.automation.elements.LabelWithElement
 import app.aaps.plugins.automation.elements.LayoutBuilder
@@ -23,8 +23,8 @@ class TriggerAutomationState(injector: HasAndroidInjector) : Trigger(injector) {
     var stateName = InputString()
     var stateValue = InputString()
 
-    private var stateNameDropdown: InputDropdownMenu
-    private var stateValueDropdown: InputDropdownMenu
+    private var stateNameDropdown: InputDropdownStateMenu
+    private var stateValueDropdown: InputDropdownStateMenu
 
     private constructor(injector: HasAndroidInjector, stateName: String, stateValue: String) : this(injector) {
         injector.androidInjector().inject(this)
@@ -39,10 +39,10 @@ class TriggerAutomationState(injector: HasAndroidInjector) : Trigger(injector) {
     init {
         injector.androidInjector().inject(this)
 
-        stateNameDropdown = InputDropdownMenu(rh) { stateName ->
+        stateNameDropdown = InputDropdownStateMenu(rh) { stateName ->
             updateStateValueDropdown(stateName)
         }
-        stateValueDropdown = InputDropdownMenu(rh)
+        stateValueDropdown = InputDropdownStateMenu(rh)
 
         // Populate state names dropdown with all available states
         val allStates = automationStateService.getAllStates()
