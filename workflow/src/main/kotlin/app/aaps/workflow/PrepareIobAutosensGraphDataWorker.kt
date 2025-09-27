@@ -254,7 +254,7 @@ class PrepareIobAutosensGraphDataWorker(
             it.setCustomPaint(Paint().also { paint ->
                 paint.style = Paint.Style.STROKE
                 paint.strokeWidth = 3f
-                paint.pathEffect = DashPathEffect(floatArrayOf(8f, 8f), 0f)
+                paint.pathEffect = DashPathEffect(floatArrayOf(2f, 2f), 0f)
                 paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.iobThColor)
             })
         }
