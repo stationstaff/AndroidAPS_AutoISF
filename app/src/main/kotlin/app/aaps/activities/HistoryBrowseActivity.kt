@@ -384,29 +384,35 @@ class HistoryBrowseActivity : TranslatedDaggerAppCompatActivity() {
                 else          -> 0.0
             }
             var maxAutoIsfFactor = 1.0
-            var minAutoIsfFactor = 1.0
+            //var minAutoIsfFactor = 1.0
+            var commonIsfCount = 0
             if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal]) {
                 maxAutoIsfFactor = max(maxAutoIsfFactor, historyBrowserData.overviewData.maxFinalIsfValueFound)
-                minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minFinalIsfValueFound)
+                //minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minFinalIsfValueFound)
+                commonIsfCount++
             }
             if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal]) {
                 maxAutoIsfFactor = max(maxAutoIsfFactor, historyBrowserData.overviewData.maxAcceIsfValueFound)
-                minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minAcceIsfValueFound)
+                //minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minAcceIsfValueFound)
+                commonIsfCount++
             }
             if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal]) {
                 maxAutoIsfFactor = max(maxAutoIsfFactor, historyBrowserData.overviewData.maxBgIsfValueFound)
-                minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minBgIsfValueFound)
+                //minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minBgIsfValueFound)
+                commonIsfCount++
             }
             if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal]) {
                 maxAutoIsfFactor = max(maxAutoIsfFactor, historyBrowserData.overviewData.maxPpIsfValueFound)
-                minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minPpIsfValueFound)
+                //minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minPpIsfValueFound)
+                commonIsfCount++
             }
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal]) {
                 maxAutoIsfFactor = max(maxAutoIsfFactor, historyBrowserData.overviewData.maxDuraIsfValueFound)
-                minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minDuraIsfValueFound)
+                //minAutoIsfFactor = min(minAutoIsfFactor, historyBrowserData.overviewData.minDuraIsfValueFound)
+                commonIsfCount++
             }
-            val useCommonISFForScale = maxAutoIsfFactor > 1.0 || minAutoIsfFactor < 1.0
-            val maxYValueForScale = max(maxAutoIsfFactor, 2.0 - minAutoIsfFactor)       // ensure Y=1 is in the center of the graph
+            val useCommonISFForScale = commonIsfCount>1
+            val maxYValueForScale = maxAutoIsfFactor //max(maxAutoIsfFactor, 2.0 - minAutoIsfFactor)       // ensure Y=1 is in the center of the graph
 
             if (menuChartSettings[g + 1][OverviewMenus.CharType.ABS.ordinal]) secondGraphData.addAbsIob(useABSForScale, 1.0, 0.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.IOB.ordinal]) secondGraphData.addIob(useIobForScale, 1.0, 0.0)
@@ -419,11 +425,11 @@ class HistoryBrowseActivity : TranslatedDaggerAppCompatActivity() {
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] && config.isDev()) secondGraphData.addDeviationSlope(useDSForScale, 1.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.HR.ordinal] && config.isDev()) secondGraphData.addHeartRate(useHRForScale, 1.0)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.STEPS.ordinal] && config.isDev()) secondGraphData.addSteps(useSTEPSForScale, 1.0)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal] && runningAutoIsf ) secondGraphData.addFinalIsf(useFINAL_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor, maxYValueForScale)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] && runningAutoIsf ) secondGraphData.addAcceIsf(useACCE_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] && runningAutoIsf ) secondGraphData.addBgIsf(useBG_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] && runningAutoIsf ) secondGraphData.addPpIsf(usePP_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
-            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal] && runningAutoIsf ) secondGraphData.addDuraIsf(useDURA_ISFForScale, if (useCommonISFForScale) 1.0 else 0.8, maxAutoIsfFactor,maxYValueForScale)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.FIN_ISF.ordinal] && runningAutoIsf ) secondGraphData.addFinalIsf(useFINAL_ISFForScale,1.0, useCommonISFForScale, maxAutoIsfFactor)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.ACC_ISF.ordinal] && runningAutoIsf ) secondGraphData.addAcceIsf(useACCE_ISFForScale,1.0, useCommonISFForScale, maxAutoIsfFactor)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.BG_ISF.ordinal] && runningAutoIsf ) secondGraphData.addBgIsf(useBG_ISFForScale, 1.0, useCommonISFForScale, maxAutoIsfFactor)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.PP_ISF.ordinal] && runningAutoIsf ) secondGraphData.addPpIsf(usePP_ISFForScale, 1.0, useCommonISFForScale, maxAutoIsfFactor)
+            if (menuChartSettings[g + 1][OverviewMenus.CharType.DUR_ISF.ordinal] && runningAutoIsf ) secondGraphData.addDuraIsf(useDURA_ISFForScale, 1.0, useCommonISFForScale, maxAutoIsfFactor)
             if (menuChartSettings[g + 1][OverviewMenus.CharType.DEVSLOPE.ordinal] && config.isDev()) secondGraphData.addDeviationSlope(
                 useDSForScale,
                 if (useDSForScale) 1.0 else 0.8,

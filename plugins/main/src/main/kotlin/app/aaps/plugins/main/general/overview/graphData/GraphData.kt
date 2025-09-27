@@ -18,6 +18,7 @@ import app.aaps.core.graph.data.PointsWithLabelGraphSeries
 import app.aaps.core.graph.data.ScaledDataPoint
 import app.aaps.core.graph.data.TimeAsXAxisLabelFormatter
 import app.aaps.core.interfaces.logging.AAPSLogger
+import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.overview.OverviewData
 import app.aaps.core.interfaces.profile.ProfileFunction
 import app.aaps.core.interfaces.profile.ProfileUtil
@@ -337,62 +338,77 @@ import kotlin.math.max
     }
 
     // AutoISF interim data
-    fun addAcceIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
-        if (maxCommonFactor > 1.0) {
-            maxY = upperY
+    fun addAcceIsf(useForScale: Boolean, scale: Double, useCommonFactor: Boolean,  maxCommonFactor: Double) {
+        if (useCommonFactor) {
+            maxY = maxCommonFactor
             minY = 2.0 - maxY
         } else if (useForScale) {
-            maxY = max(overviewData.maxAcceIsfValueFound, upperY)
+            maxY = max(overviewData.maxAcceIsfValueFound, maxCommonFactor)
             minY = 2.0 - maxY
         }
+        if (maxY == 1.0) { maxY += 1.0e-6 }
+        if (minY == 1.0) { minY -= 1.0e-6 }
+        aapsLogger.debug ( "addAcceIsf -  maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.acceIsfScale.multiplier = maxY * scale / max(overviewData.maxAcceIsfValueFound, maxCommonFactor)
         addSeries(overviewData.acceIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 
-    fun addBgIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
-        if (maxCommonFactor > 1.0) {
-            maxY = upperY
+    fun addBgIsf(useForScale: Boolean, scale: Double,useCommonFactor: Boolean,  maxCommonFactor: Double) {
+        if (useCommonFactor) {
+            maxY = maxCommonFactor
             minY = 2.0 - maxY
         } else if (useForScale) {
-            maxY = max(overviewData.maxBgIsfValueFound,  upperY)
+            maxY = max(overviewData.maxBgIsfValueFound,  maxCommonFactor)
             minY = 2.0 - maxY
         }
+        if (maxY == 1.0) { maxY += 1.0e-6 }
+        if (minY == 1.0) { minY -= 1.0e-6 }
+        aapsLogger.debug ( "addBgIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.bgIsfScale.multiplier = maxY * scale / max(overviewData.maxBgIsfValueFound ,maxCommonFactor)
         addSeries(overviewData.bgIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 
-    fun addPpIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
-        if (maxCommonFactor > 1.0) {
-            maxY = upperY
+    fun addPpIsf(useForScale: Boolean, scale: Double, useCommonFactor: Boolean,  maxCommonFactor: Double) {
+        if (useCommonFactor) {
+            maxY = maxCommonFactor
             minY = 2.0 - maxY
         } else if (useForScale) {
-            maxY = max(overviewData.maxPpIsfValueFound,  upperY)
+            maxY = max(overviewData.maxPpIsfValueFound,  maxCommonFactor)
             minY = 2.0 - maxY
         }
+        if (maxY == 1.0) { maxY += 1.0e-6 }
+        if (minY == 1.0) { minY -= 1.0e-6 }
+        aapsLogger.debug ( "addPpIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.ppIsfScale.multiplier = maxY * scale / max(overviewData.maxPpIsfValueFound, maxCommonFactor)
         addSeries(overviewData.ppIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 
-    fun addDuraIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
-        if (maxCommonFactor > 1.0) {
-            maxY = upperY
+    fun addDuraIsf(useForScale: Boolean, scale: Double, useCommonFactor: Boolean,  maxCommonFactor: Double) {
+        if (useCommonFactor) {
+            maxY = maxCommonFactor
             minY = 2.0 - maxY
         } else if (useForScale) {
-            maxY = max(overviewData.maxDuraIsfValueFound,  upperY)
+            maxY = max(overviewData.maxDuraIsfValueFound,  maxCommonFactor)
             minY = 2.0 - maxY
         }
+        if (maxY == 1.0) { maxY += 1.0e-6 }
+        if (minY == 1.0) { minY -= 1.0e-6 }
+        aapsLogger.debug ( "addDuraIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.duraIsfScale.multiplier = maxY * scale / max(overviewData.maxDuraIsfValueFound, maxCommonFactor)
         addSeries(overviewData.duraIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
 
-    fun addFinalIsf(useForScale: Boolean, scale: Double, maxCommonFactor: Double, upperY: Double) {
-        if (maxCommonFactor > 1.0) {
-            maxY = upperY
+    fun addFinalIsf(useForScale: Boolean, scale: Double, useCommonFactor: Boolean,  maxCommonFactor: Double) {
+        if (useCommonFactor) {
+            maxY = maxCommonFactor
             minY = 2.0 - maxY
         } else if (useForScale) {
-            maxY = max(overviewData.maxFinalIsfValueFound, upperY)
+            maxY = max(overviewData.maxFinalIsfValueFound, maxCommonFactor)
             minY = 2.0 - maxY
         }
+        if (maxY == 1.0) { maxY += 1.0e-6 }
+        if (minY == 1.0) { minY -= 1.0e-6 }
+        aapsLogger.debug ( "addFinalIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.finalIsfScale.multiplier = maxY * scale / max(overviewData.maxFinalIsfValueFound, maxCommonFactor)
         addSeries(overviewData.finalIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
