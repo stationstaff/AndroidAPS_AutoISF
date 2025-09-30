@@ -11,10 +11,12 @@ import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.Round
 import app.aaps.core.keys.IntKey
 import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.objects.aps.DetermineBasalResult
 import app.aaps.core.utils.HtmlHelper
 import app.aaps.plugins.sync.R
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.text.append
 
 @Singleton
 class ProcessedDeviceStatusDataImpl @Inject constructor(
@@ -110,6 +112,39 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
             string.append("<span style=\"color:${level.toColor()}\">")
             if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
             string.append("</span>") // color
+            return HtmlHelper.fromHtml(string.toString())
+        }
+
+    override val aisfStatus: Spanned
+        get() {
+            val string = StringBuilder()
+                .append("<span style=\"color:${rh.gac(app.aaps.core.ui.R.attr.nsTitleColor)}\">")
+                .append(rh.gs(R.string.script_debug_short))
+                .append(": </span>")
+
+            // test warning level
+            val level = when {
+                openAPSData.clockSuggested + T.mins(preferences.get(IntKey.NsClientUrgentAlarmStaleData).toLong()).msecs() < dateUtil.now() -> ProcessedDeviceStatusData.Levels.URGENT
+
+                openAPSData.clockSuggested + T.mins(preferences.get(IntKey.NsClientAlarmStaleData).toLong()).msecs() < dateUtil.now()       -> ProcessedDeviceStatusData.Levels.WARN
+                else                                                                                                                        -> ProcessedDeviceStatusData.Levels.INFO
+            }
+            string.append("<span style=\"color:${level.toColor()}\">")
+            if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
+            string.append("</span>") // color
+            return HtmlHelper.fromHtml(string.toString())
+        }
+
+    override val extendedAisfStatus: Spanned
+        get() {
+            val debugInfo = getAPSResult()?.scriptDebug
+            if (debugInfo.isNullOrEmpty()) {
+                return HtmlHelper.fromHtml("")
+            }
+            val string = StringBuilder()
+            debugInfo.forEach { line ->
+                string.append(line).append("<br>")
+            }
             return HtmlHelper.fromHtml(string.toString())
         }
 

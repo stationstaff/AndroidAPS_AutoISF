@@ -780,6 +780,10 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             // Uploader status from ns
             binding.uploader.text = processedDeviceStatusData.uploaderStatusSpanned
             binding.uploader.setOnClickListener { activity?.let { OKDialog.show(it, rh.gs(R.string.uploader), processedDeviceStatusData.extendedUploaderStatus) } }
+
+            // AISF status from ns
+            binding.aisfdebug.text = processedDeviceStatusData.aisfStatus
+            binding.aisfdebug.setOnClickListener { activity?.let { OKDialog.show(it, rh.gs(R.string.aisfdebug), processedDeviceStatusData.extendedAisfStatus) } }
         }
     }
 
