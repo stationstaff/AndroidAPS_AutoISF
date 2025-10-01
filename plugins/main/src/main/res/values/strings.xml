@@ -234,7 +234,7 @@
     <string name="change_your_input">Change your input!</string>
     <string name="openaps">OpenAPS</string>
     <string name="uploader">Uploader</string>
-    <string name="aisfdebug">AISF Script Debug</string>
+    <string name="aisfdebug">Script Debug</string>
     <string name="data_status">BG data status</string>
     <string name="quickwizard_settings">QuickWizard settings</string>
     <string name="keep_screen_on_title">Keep screen on</string>

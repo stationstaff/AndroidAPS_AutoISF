@@ -158,6 +158,7 @@ class OverviewMenusImpl @Inject constructor(
             }
             //val runningAutoIsf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
             val runningAutoIsf =  activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
+            val masterAutoIsf = runningAutoIsf && !config.AAPSCLIENT
             val popup = PopupWindow(v.context)
             popup.setBackgroundDrawable(ColorDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground)))
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
@@ -204,12 +205,12 @@ class OverviewMenusImpl @Inject constructor(
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
-                else if (m == CharTypeData.IOB_TH) insert = runningAutoIsf
-                else if (m == CharTypeData.FIN_ISF) insert = runningAutoIsf
-                else if (m == CharTypeData.ACC_ISF) insert = runningAutoIsf
-                else if (m == CharTypeData.BG_ISF) insert = runningAutoIsf
-                else if (m == CharTypeData.PP_ISF) insert = runningAutoIsf
-                else if (m == CharTypeData.DUR_ISF) insert = runningAutoIsf
+                else if (m == CharTypeData.IOB_TH) insert = masterAutoIsf
+                else if (m == CharTypeData.FIN_ISF) insert = masterAutoIsf
+                else if (m == CharTypeData.ACC_ISF) insert = masterAutoIsf
+                else if (m == CharTypeData.BG_ISF) insert = masterAutoIsf
+                else if (m == CharTypeData.PP_ISF) insert = masterAutoIsf
+                else if (m == CharTypeData.DUR_ISF) insert = masterAutoIsf
                 if (insert && m.secondary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, false)
                     itemRow++

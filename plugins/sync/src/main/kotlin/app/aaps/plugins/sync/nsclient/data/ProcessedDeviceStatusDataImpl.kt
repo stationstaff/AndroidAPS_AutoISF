@@ -9,9 +9,10 @@ import app.aaps.core.interfaces.objects.Instantiator
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.Round
+import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.interfaces.BooleanPreferenceKey
 import app.aaps.core.keys.interfaces.Preferences
-import app.aaps.core.objects.aps.DetermineBasalResult
 import app.aaps.core.utils.HtmlHelper
 import app.aaps.plugins.sync.R
 import javax.inject.Inject
@@ -110,7 +111,7 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
                 else                                                                                                                        -> ProcessedDeviceStatusData.Levels.INFO
             }
             string.append("<span style=\"color:${level.toColor()}\">")
-            if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
+            if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minOrSecAgo(rh, openAPSData.clockSuggested)).append(" ")
             string.append("</span>") // color
             return HtmlHelper.fromHtml(string.toString())
         }
@@ -130,7 +131,10 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
                 else                                                                                                                        -> ProcessedDeviceStatusData.Levels.INFO
             }
             string.append("<span style=\"color:${level.toColor()}\">")
-            if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
+            var activeAlgorithm = getAPSResult()?.algorithm?.name.toString()
+            if ( activeAlgorithm == "SMB" && preferences.get(BooleanKey.ApsUseDynamicSensitivity)) { activeAlgorithm = "DynISF" }
+            string.append( activeAlgorithm)
+            //if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
             string.append("</span>") // color
             return HtmlHelper.fromHtml(string.toString())
         }
