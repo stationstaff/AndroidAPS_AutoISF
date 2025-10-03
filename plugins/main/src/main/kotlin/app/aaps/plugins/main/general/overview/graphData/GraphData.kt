@@ -345,7 +345,7 @@ class GraphData @Inject constructor(
         }
         if (maxY == 1.0) { maxY += 1.0e-6 }
         if (minY == 1.0) { minY -= 1.0e-6 }
-        aapsLogger.debug ( "addAcceIsf -  maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
+        //aapsLogger.debug ( "addAcceIsf -  maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.acceIsfScale.multiplier = maxY * scale / max(overviewData.maxAcceIsfValueFound, maxCommonFactor)
         addSeries(overviewData.acceIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
@@ -360,7 +360,7 @@ class GraphData @Inject constructor(
         }
         if (maxY == 1.0) { maxY += 1.0e-6 }
         if (minY == 1.0) { minY -= 1.0e-6 }
-        aapsLogger.debug ( "addBgIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
+        //aapsLogger.debug ( "addBgIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.bgIsfScale.multiplier = maxY * scale / max(overviewData.maxBgIsfValueFound ,maxCommonFactor)
         addSeries(overviewData.bgIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
@@ -375,7 +375,7 @@ class GraphData @Inject constructor(
         }
         if (maxY == 1.0) { maxY += 1.0e-6 }
         if (minY == 1.0) { minY -= 1.0e-6 }
-        aapsLogger.debug ( "addPpIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
+        //aapsLogger.debug ( "addPpIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.ppIsfScale.multiplier = maxY * scale / max(overviewData.maxPpIsfValueFound, maxCommonFactor)
         addSeries(overviewData.ppIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
@@ -390,7 +390,7 @@ class GraphData @Inject constructor(
         }
         if (maxY == 1.0) { maxY += 1.0e-6 }
         if (minY == 1.0) { minY -= 1.0e-6 }
-        aapsLogger.debug ( "addDuraIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
+        //aapsLogger.debug ( "addDuraIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.duraIsfScale.multiplier = maxY * scale / max(overviewData.maxDuraIsfValueFound, maxCommonFactor)
         addSeries(overviewData.duraIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }
@@ -405,7 +405,7 @@ class GraphData @Inject constructor(
         }
         if (maxY == 1.0) { maxY += 1.0e-6 }
         if (minY == 1.0) { minY -= 1.0e-6 }
-        aapsLogger.debug ( "addFinalIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
+        //aapsLogger.debug ( "addFinalIsf - maxY: $maxY, minY: $minY, useForScale: $useForScale, maxCommonFactor: $maxCommonFactor")
         overviewData.finalIsfScale.multiplier = maxY * scale / max(overviewData.maxFinalIsfValueFound, maxCommonFactor)
         addSeries(overviewData.finalIsfSeries as LineGraphSeries<ScaledDataPoint>)
     }

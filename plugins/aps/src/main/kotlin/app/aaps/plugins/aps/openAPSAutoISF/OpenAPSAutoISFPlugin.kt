@@ -384,7 +384,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         preferences.put(BooleanKey.ActivityMonitorStepsActive, stepActivityDetected)
         preferences.put(BooleanKey.ActivityMonitorStepsInactive, stepInactivityDetected)
         if (autoIsfMode) {
-            variableSensitivity = autoISF(now)
+            variableSensitivity = autoISF(profile)
         }
         val calendar = Calendar.getInstance()
         val lastAppStart = preferences.get(LongKey.AppStart)
@@ -794,7 +794,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             autosensData.autosensResult
         } else autosensResult.sensResult = "autosens disabled"
 
-        val dura05: Double = glucose_status.duraISFminutes
+        val dura05: Double = glucose_status!!.duraISFminutes
         val avg05: Double = glucose_status.duraISFaverage
         val maxISFReduction: Double = autoISF_max
         var sens_modified = false

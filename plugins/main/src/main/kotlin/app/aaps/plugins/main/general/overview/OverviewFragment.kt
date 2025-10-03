@@ -865,7 +865,7 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             if (glucoseStatus != null) {
                 binding.infoLayout.deltaLarge.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.delta)
                 binding.infoLayout.deltaLarge.setTextColor(lastBgColor)
-                binding.infoLayout.bgAcceleration.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.bgAcceleration)
+                //binding.infoLayout.bgAcceleration.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.bgAcceleration)
                 binding.infoLayout.delta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.delta)
                 binding.infoLayout.avgDelta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.shortAvgDelta)
                 binding.infoLayout.longAvgDelta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.longAvgDelta)

@@ -6,7 +6,6 @@ import app.aaps.plugins.automation.AutomationFragment
 import app.aaps.plugins.automation.AutomationPlugin
 import app.aaps.plugins.automation.actions.Action
 import app.aaps.plugins.automation.actions.ActionAlarm
-import app.aaps.plugins.automation.actions.ActionSettingsExport
 import app.aaps.plugins.automation.actions.ActionAutoisfDisable
 import app.aaps.plugins.automation.actions.ActionAutoisfEnable
 import app.aaps.plugins.automation.actions.ActionCarePortalEvent

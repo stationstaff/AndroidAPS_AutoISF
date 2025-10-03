@@ -170,7 +170,7 @@ class Widget : AppWidgetProvider() {
 
         val glucoseStatus = glucoseStatusProvider.glucoseStatusData
         if (glucoseStatus != null) {
-            views.setTextViewText(R.id.bgAcceleration, profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.bgAcceleration))
+            //views.setTextViewText(R.id.bgAcceleration, profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.bgAcceleration))
             views.setTextViewText(R.id.delta, profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.delta))
             views.setTextViewText(R.id.avg_delta, profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.shortAvgDelta))
             views.setTextViewText(R.id.long_avg_delta, profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.longAvgDelta))
