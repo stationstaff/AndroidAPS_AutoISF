@@ -45,6 +45,7 @@ import app.aaps.plugins.automation.actions.ActionNotification
 import app.aaps.plugins.automation.actions.ActionProfileSwitch
 import app.aaps.plugins.automation.actions.ActionProfileSwitchPercent
 import app.aaps.plugins.automation.actions.ActionRunAutotune
+import app.aaps.plugins.automation.actions.ActionSMBChange
 import app.aaps.plugins.automation.actions.ActionSendSMS
 import app.aaps.plugins.automation.actions.ActionSetAutomationState
 import app.aaps.plugins.automation.actions.ActionSetAcceWeight
@@ -264,7 +265,8 @@ class AutomationPlugin @Inject constructor(
         }
         val enabled = constraintChecker.isAutomationEnabled()
         if (!enabled.value()) {
-            executionLog.add(enabled.getMostLimitedReasons())
+            val reason = enabled.getMostLimitedReasons()
+            if (executionLog.lastOrNull() != reason) executionLog.add(reason)
             rxBus.send(EventAutomationUpdateGui())
             commonEventsEnabled = false
         }
@@ -383,10 +385,6 @@ class AutomationPlugin @Inject constructor(
 
     fun getActionDummyObjects(): List<Action> {
         val actions = mutableListOf(
-            //ActionLoopDisable(injector),
-            //ActionLoopEnable(injector),
-            //ActionLoopResume(injector),
-            //ActionLoopSuspend(injector),
             ActionStopProcessing(injector),
             ActionStartTempTarget(injector),
             ActionStopTempTarget(injector),
@@ -397,7 +395,8 @@ class AutomationPlugin @Inject constructor(
             ActionSetAutomationState(injector),
             ActionProfileSwitchPercent(injector),
             ActionProfileSwitch(injector),
-            ActionSendSMS(injector)
+            ActionSendSMS(injector),
+            ActionSMBChange(injector)
         )
         if (config.isEngineeringMode() && config.isDev()) {
             actions.add(ActionRunAutotune(injector))

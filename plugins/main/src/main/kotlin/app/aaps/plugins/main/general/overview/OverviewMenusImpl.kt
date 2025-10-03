@@ -1,7 +1,7 @@
 package app.aaps.plugins.main.general.overview
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.text.SpannableString
 import android.text.style.BackgroundColorSpan
 import android.text.style.ForegroundColorSpan
@@ -20,6 +20,7 @@ import android.widget.TextView
 import androidx.annotation.AttrRes
 import androidx.annotation.StringRes
 import androidx.appcompat.widget.PopupMenu
+import androidx.core.graphics.drawable.toDrawable
 import androidx.gridlayout.widget.GridLayout
 import app.aaps.core.interfaces.aps.Loop
 import app.aaps.core.interfaces.configuration.Config
@@ -30,6 +31,7 @@ import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.rx.bus.RxBus
 import app.aaps.core.interfaces.rx.events.EventRefreshOverview
 import app.aaps.core.interfaces.rx.events.EventScale
+import app.aaps.core.keys.BooleanKey
 import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.plugins.main.R
 import app.aaps.plugins.main.general.overview.keys.OverviewStringKey
@@ -55,7 +57,8 @@ class OverviewMenusImpl @Inject constructor(
         val primary: Boolean,
         val secondary: Boolean,
         @StringRes val shortnameId: Int,
-        val enabledByDefault: Boolean = false
+        val enabledByDefault: Boolean = false,
+        var visibility: () -> Boolean = { true }
     ) {
 
         PRE(R.string.overview_show_predictions, app.aaps.core.ui.R.attr.predictionColor, app.aaps.core.ui.R.attr.menuTextColor, primary = true, secondary = false, shortnameId = R.string.prediction_shortname, enabledByDefault = true),
@@ -79,6 +82,18 @@ class OverviewMenusImpl @Inject constructor(
         BG_ISF(R.string.overview_show_bg_isf, app.aaps.core.ui.R.attr.bgIsfColor, app.aaps.core.ui.R.attr.menuTextColorInverse, primary = false, secondary = true, shortnameId = R.string.bg_isf_shortname),
         PP_ISF(R.string.overview_show_pp_isf, app.aaps.core.ui.R.attr.ppIsfColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.pp_isf_shortname),
         DUR_ISF(R.string.overview_show_dura_isf, app.aaps.core.ui.R.attr.duraIsfColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.dura_isf_shortname),
+    }
+
+    init {
+        CharTypeData.PRE.visibility = {
+            when {
+                config.APS        -> loop.lastRun?.request?.hasPredictions == true
+                config.AAPSCLIENT -> true
+                else              -> false
+            }
+        }
+        CharTypeData.DEVSLOPE.visibility = { config.isDev() }
+        CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) }
     }
 
     companion object {
@@ -141,6 +156,7 @@ class OverviewMenusImpl @Inject constructor(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     override fun setupChartMenu(chartButton: ImageButton, scaleButton: Button) {
         chartButton.setColorFilter(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.defaultTextColor))
         scaleButton.setCompoundDrawablesWithIntrinsicBounds(
@@ -151,16 +167,10 @@ class OverviewMenusImpl @Inject constructor(
         )
         chartButton.setOnClickListener { v: View ->
             var itemRow = 0
-            val predictionsAvailable: Boolean = when {
-                config.APS        -> loop.lastRun?.request?.hasPredictions == true
-                config.AAPSCLIENT -> true
-                else              -> false
-            }
-            //val runningAutoIsf =  loop.lastRun?.request?.algorithm?.name == "AUTO_ISF"
+            val popup = PopupWindow(v.context)
             val runningAutoIsf =  activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
             val masterAutoIsf = runningAutoIsf && !config.AAPSCLIENT
-            val popup = PopupWindow(v.context)
-            popup.setBackgroundDrawable(ColorDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground)))
+            popup.setBackgroundDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground).toDrawable())
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
             val horizontalScrollView = HorizontalScrollView(v.context)    // Workaround because I was not able to manage first column width for long labels
             horizontalScrollView.addView(scrollView)
@@ -171,18 +181,15 @@ class OverviewMenusImpl @Inject constructor(
             scrollView.addView(layout)
             layout.columnCount = MAX_GRAPHS
 
-            // instert primary items
+            // insert primary items
             CharTypeData.entries.forEach { m ->
-                var insert = true
-                if (m == CharTypeData.PRE) insert = predictionsAvailable
-                else if (m == CharTypeData.BG_PARAB) insert = runningAutoIsf
-                if (insert && m.primary) {
+                if (m.visibility.invoke() && m.primary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, true)
                     itemRow++
                 }
             }
 
-            // insert hearder row
+            // insert header row
             var layoutParamsLabel = GridLayout.LayoutParams(GridLayout.spec(itemRow, 1), GridLayout.spec(0, 1))
             val textView = TextView(v.context).also {
                 it.text = " ${rh.gs(R.string.graph_menu_divider_header)}"
@@ -201,7 +208,7 @@ class OverviewMenusImpl @Inject constructor(
             }
             itemRow++
 
-            // instert secondary items
+            // insert secondary items
             CharTypeData.entries.forEach { m ->
                 var insert = true
                 if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
@@ -211,7 +218,7 @@ class OverviewMenusImpl @Inject constructor(
                 else if (m == CharTypeData.BG_ISF) insert = masterAutoIsf
                 else if (m == CharTypeData.PP_ISF) insert = masterAutoIsf
                 else if (m == CharTypeData.DUR_ISF) insert = masterAutoIsf
-                if (insert && m.secondary) {
+                if (m.visibility.invoke() && m.secondary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, false)
                     itemRow++
                 }

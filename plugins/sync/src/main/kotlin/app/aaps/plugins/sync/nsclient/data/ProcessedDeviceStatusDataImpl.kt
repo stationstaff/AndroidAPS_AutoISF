@@ -5,7 +5,6 @@ import app.aaps.core.data.time.T
 import app.aaps.core.interfaces.aps.APSResult
 import app.aaps.core.interfaces.nsclient.NSSettingsStatus
 import app.aaps.core.interfaces.nsclient.ProcessedDeviceStatusData
-import app.aaps.core.interfaces.objects.Instantiator
 import app.aaps.core.interfaces.resources.ResourceHelper
 import app.aaps.core.interfaces.utils.DateUtil
 import app.aaps.core.interfaces.utils.Round
@@ -16,6 +15,7 @@ import app.aaps.core.keys.interfaces.Preferences
 import app.aaps.core.utils.HtmlHelper
 import app.aaps.plugins.sync.R
 import javax.inject.Inject
+import javax.inject.Provider
 import javax.inject.Singleton
 import kotlin.text.append
 
@@ -24,7 +24,7 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
     private val rh: ResourceHelper,
     private val dateUtil: DateUtil,
     private val preferences: Preferences,
-    private val instantiator: Instantiator
+    private val apsResultProvider: Provider<APSResult>
 ) : ProcessedDeviceStatusData {
 
     override var pumpData: ProcessedDeviceStatusData.PumpData? = null
@@ -156,7 +156,7 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
         get() = if (openAPSData.clockSuggested != 0L) openAPSData.clockSuggested else -1
 
     override fun getAPSResult(): APSResult? =
-        openAPSData.suggested?.let { instantiator.provideAPSResultObject(it) }
+        openAPSData.suggested?.let { apsResultProvider.get().with(it) }
 
     override val uploaderStatus: String
         get() {
