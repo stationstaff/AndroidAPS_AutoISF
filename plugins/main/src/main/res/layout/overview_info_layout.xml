@@ -93,37 +93,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:textAlignment="textEnd"
-                android:text="acc: "
-                android:contentDescription="bg acceleration"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/bgAcceleration"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:textAlignment="textEnd"
-                tools:text="n/a"
-                android:textAppearance="@style/TextAppearance.AppCompat.Small"
-                tools:ignore="HardcodedText" />
-
-        </TableRow>
-
-        <TableRow
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:focusable="true">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:textAlignment="textEnd"
-                android:text="Δ: "
                 android:contentDescription="last delta"
+                android:text="Δ: "
+                android:textAlignment="textEnd"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:ignore="HardcodedText" />
 
@@ -201,11 +173,10 @@
         android:id="@+id/version"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10sp"
         android:text="3.3.1.3 (hash)"
         android:textAlignment="viewEnd"
         android:textSize="10sp"
-        app:layout_constraintStart_toStartOf="@+id/bg"
+        app:layout_constraintEnd_toStartOf="@+id/simple_mode"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText,SmallSp" />
 

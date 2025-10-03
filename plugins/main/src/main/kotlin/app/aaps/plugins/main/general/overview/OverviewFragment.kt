@@ -865,13 +865,11 @@ class OverviewFragment : DaggerFragment(), View.OnClickListener, OnLongClickList
             if (glucoseStatus != null) {
                 binding.infoLayout.deltaLarge.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.delta)
                 binding.infoLayout.deltaLarge.setTextColor(lastBgColor)
-                //binding.infoLayout.bgAcceleration.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.bgAcceleration)
                 binding.infoLayout.delta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.delta)
                 binding.infoLayout.avgDelta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.shortAvgDelta)
                 binding.infoLayout.longAvgDelta.text = profileUtil.fromMgdlToSignedStringInUnits(glucoseStatus.longAvgDelta)
             } else {
                 binding.infoLayout.deltaLarge.text = ""
-                binding.infoLayout.bgAcceleration.text = rh.gs(app.aaps.core.ui.R.string.value_unavailable_short)
                 binding.infoLayout.delta.text = "Δ " + rh.gs(app.aaps.core.ui.R.string.value_unavailable_short)
                 binding.infoLayout.avgDelta.text = ""
                 binding.infoLayout.longAvgDelta.text = ""
