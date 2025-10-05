@@ -84,17 +84,41 @@ class OverviewMenusImpl @Inject constructor(
         DUR_ISF(R.string.overview_show_dura_isf, app.aaps.core.ui.R.attr.duraIsfColor, app.aaps.core.ui.R.attr.menuTextColor, primary = false, secondary = true, shortnameId = R.string.dura_isf_shortname),
     }
 
-    init {
-        CharTypeData.PRE.visibility = {
-            when {
-                config.APS        -> loop.lastRun?.request?.hasPredictions == true
-                config.AAPSCLIENT -> true
-                else              -> false
-            }
+    private val runningAutoIsf: Boolean
+        get() = try {
+            activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
+        } catch (e: Exception) {
+            false
         }
-        CharTypeData.DEVSLOPE.visibility = { config.isDev() }
-        CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) }
-    }
+    private val masterAutoIsf: Boolean; get() = runningAutoIsf && !config.AAPSCLIENT
+    private val runningDynIsf: Boolean
+        get() = preferences.get(BooleanKey.ApsUseDynamicSensitivity) &&
+            try {
+                activePlugin.activeAPS.algorithm.name == "SMB"
+            } catch (e: Exception) {
+                false
+            }
+
+    /**
+    init {
+       CharTypeData.PRE.visibility = {
+           when {
+               config.APS        -> loop.lastRun?.request?.hasPredictions == true
+               config.AAPSCLIENT -> true
+               else              -> false
+           }
+       }
+       //CharTypeData.DEVSLOPE.visibility = { config.isDev() }
+       //CharTypeData.BG_PARAB.visibility = { runningAutoIsf }
+       //CharTypeData.IOB_TH.visibility = { masterAutoIsf }
+       //CharTypeData.VAR_SENS.visibility = { preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf }
+       //CharTypeData.FIN_ISF.visibility = { masterAutoIsf }
+       //CharTypeData.ACC_ISF.visibility = {masterAutoIsf }
+       //CharTypeData.BG_ISF.visibility = { masterAutoIsf }
+       //CharTypeData.PP_ISF.visibility = { masterAutoIsf }
+       //CharTypeData.DUR_ISF.visibility = { masterAutoIsf }
+     }
+    **/
 
     companion object {
 
@@ -104,7 +128,7 @@ class OverviewMenusImpl @Inject constructor(
     override fun enabledTypes(graph: Int): String {
         val r = StringBuilder()
         for (type in CharTypeData.entries)
-            if (setting[graph][type.ordinal]) {
+            if (isActiveCharTypeData(graph,type.ordinal) && type.secondary) {
                 r.append(rh.gs(type.shortnameId))
                 r.append(" ")
             }
@@ -128,10 +152,37 @@ class OverviewMenusImpl @Inject constructor(
                 }
             else
                 listOf(
-                    arrayOf(true, true, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
+                    arrayOf(true, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
                     arrayOf(false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false),
                     arrayOf(false, false, false, false, false, false, true, false, false, false, false, false, false, false, false, false, false, false, false, false, false)
                 )
+
+    @Synchronized
+    private fun isSelectableCharTypeData(m: Int): Boolean  {
+        val isSelectable = when  {
+            m  == CharTypeData.PRE.ordinal      -> when {
+                                                       config.APS        -> loop.lastRun?.request?.hasPredictions == true
+                                                       config.AAPSCLIENT -> true
+                                                       else              -> false
+                                                   }
+            m == CharTypeData.DEVSLOPE.ordinal  -> config.isDev()
+            m == CharTypeData.BG_PARAB.ordinal  -> runningAutoIsf
+            m == CharTypeData.VAR_SENS.ordinal  -> runningAutoIsf || runningDynIsf
+            m == CharTypeData.IOB_TH.ordinal    -> masterAutoIsf
+            m == CharTypeData.FIN_ISF.ordinal   -> masterAutoIsf
+            m == CharTypeData.ACC_ISF .ordinal  -> masterAutoIsf
+            m == CharTypeData.BG_ISF.ordinal    -> masterAutoIsf
+            m == CharTypeData.PP_ISF.ordinal    -> masterAutoIsf
+            m == CharTypeData.DUR_ISF.ordinal   -> masterAutoIsf
+            else                                -> true
+        }
+        return isSelectable
+    }
+
+    @Synchronized
+    override fun isActiveCharTypeData(graph: Int, m: Int): Boolean  {
+        return if (!setting[graph][m]) false else isSelectableCharTypeData(m)
+    }
 
     @Synchronized
     private fun storeGraphConfig() {
@@ -168,8 +219,8 @@ class OverviewMenusImpl @Inject constructor(
         chartButton.setOnClickListener { v: View ->
             var itemRow = 0
             val popup = PopupWindow(v.context)
-            val runningAutoIsf =  activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
-            val masterAutoIsf = runningAutoIsf && !config.AAPSCLIENT
+            //val runningAutoIsf =  activePlugin.activeAPS.algorithm.name == "AUTO_ISF"
+            //val masterAutoIsf = runningAutoIsf && !config.AAPSCLIENT
             popup.setBackgroundDrawable(rh.gac(chartButton.context, app.aaps.core.ui.R.attr.popupWindowBackground).toDrawable())
             val scrollView = ScrollView(v.context)                        // required to be able to scroll menu on low res screen
             val horizontalScrollView = HorizontalScrollView(v.context)    // Workaround because I was not able to manage first column width for long labels
@@ -183,7 +234,7 @@ class OverviewMenusImpl @Inject constructor(
 
             // insert primary items
             CharTypeData.entries.forEach { m ->
-                if (m.visibility.invoke() && m.primary) {
+                if (isSelectableCharTypeData( m.ordinal) && m.primary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, true)
                     itemRow++
                 }
@@ -210,15 +261,16 @@ class OverviewMenusImpl @Inject constructor(
 
             // insert secondary items
             CharTypeData.entries.forEach { m ->
-                var insert = true
-                if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
-                else if (m == CharTypeData.IOB_TH) insert = masterAutoIsf
-                else if (m == CharTypeData.FIN_ISF) insert = masterAutoIsf
-                else if (m == CharTypeData.ACC_ISF) insert = masterAutoIsf
-                else if (m == CharTypeData.BG_ISF) insert = masterAutoIsf
-                else if (m == CharTypeData.PP_ISF) insert = masterAutoIsf
-                else if (m == CharTypeData.DUR_ISF) insert = masterAutoIsf
-                if (m.visibility.invoke() && m.secondary) {
+                //var insert = true
+                //if (m == CharTypeData.DEVSLOPE) insert = config.isDev()
+                //else if (m == CharTypeData.VAR_SENS) insert = preferences.get(BooleanKey.ApsUseDynamicSensitivity) || runningAutoIsf
+                //else if (m == CharTypeData.IOB_TH) insert = masterAutoIsf
+                //else if (m == CharTypeData.FIN_ISF) insert = masterAutoIsf
+                //else if (m == CharTypeData.ACC_ISF) insert = masterAutoIsf
+                //else if (m == CharTypeData.BG_ISF) insert = masterAutoIsf
+                //else if (m == CharTypeData.PP_ISF) insert = masterAutoIsf
+                //else if (m == CharTypeData.DUR_ISF) insert = masterAutoIsf
+                if (isSelectableCharTypeData(m.ordinal) && m.secondary) {
                     createCustomMenuItemView(v.context, m, itemRow, layout, false)
                     itemRow++
                 }
