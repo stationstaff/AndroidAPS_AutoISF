@@ -319,43 +319,6 @@ class PrepareIobAutosensGraphDataWorker(
             })
         }
 
-        // BG PARABOLA
-        val bgParabolaArrayHist: MutableList<ScaledDataPoint> = ArrayList()
-        val bgParabolaArrayPrediction: MutableList<ScaledDataPoint> = ArrayList()
-        val glucoseStatus = glucoseStatusProvider.glucoseStatusData as GlucoseStatusAutoIsf?    //glucoseStatusProvider.glucoseStatusData
-        val corr = glucoseStatus?.corrSqu ?: 0.0
-        if ( corr > 0.0) {
-            val a0 = glucoseStatus!!.a0
-            val a1 = glucoseStatus.a1
-            val a2 = glucoseStatus.a2
-            // parabola extrapolation
-            for (i in 0 until 21 step 5) {
-                val timestamp = now + (i * 60 * 1000).toLong()
-                val value = a0 + a1*i/5 +a2*i*i/25
-                bgParabolaArrayPrediction.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
-            }
-            // fitted parabola
-            val dur = (glucoseStatus.parabolaMinutes).toInt()
-            for (i in -dur until 1 step 5) {
-                val timestamp = now + (i * 60 * 1000).toLong()
-                val value = a0 + a1*i/5 +a2*i*i/25
-                bgParabolaArrayHist.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
-            }
-        }
-        data.overviewData.bgParabolaSeries = FixedLineGraphSeries(Array(bgParabolaArrayHist.size) { i -> bgParabolaArrayHist[i] }).also {
-            it.isDrawBackground = false
-            it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
-            it.thickness = 8
-        }
-        data.overviewData.bgParabolaPredictionSeries = FixedLineGraphSeries(Array(bgParabolaArrayPrediction.size) { i ->  bgParabolaArrayPrediction[i] }).also {
-            it.setCustomPaint(Paint().also { paint ->
-                paint.style = Paint.Style.STROKE
-                paint.strokeWidth = 8f
-                paint.pathEffect = DashPathEffect(floatArrayOf(6f, 6f), 0f)
-                paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
-            })
-        }
-
         // BGI
         data.overviewData.minusBgiSeries = FixedLineGraphSeries(Array(bgiArrayHist.size) { i -> bgiArrayHist[i] }).also {
             it.isDrawBackground = false
@@ -411,6 +374,44 @@ class PrepareIobAutosensGraphDataWorker(
         }
 
         // AUTO_ISF
+        // BG PARABOLA
+        if (overviewMenus.isActiveCharTypeData(0,OverviewMenus.CharType.BG_PARAB.ordinal)) {
+            val bgParabolaArrayHist: MutableList<ScaledDataPoint> = ArrayList()
+            val bgParabolaArrayPrediction: MutableList<ScaledDataPoint> = ArrayList()
+            val glucoseStatus = glucoseStatusProvider.glucoseStatusData as GlucoseStatusAutoIsf?    //glucoseStatusProvider.glucoseStatusData
+            val corr = glucoseStatus?.corrSqu ?: 0.0
+            if (corr > 0.0) {
+                val a0 = glucoseStatus!!.a0
+                val a1 = glucoseStatus.a1
+                val a2 = glucoseStatus.a2
+                // parabola extrapolation
+                for (i in 0 until 21 step 5) {
+                    val timestamp = now + (i * 60 * 1000).toLong()
+                    val value = a0 + a1 * i / 5 + a2 * i * i / 25
+                    bgParabolaArrayPrediction.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
+                }
+                // fitted parabola
+                val dur = (glucoseStatus.parabolaMinutes).toInt()
+                for (i in -dur until 1 step 5) {
+                    val timestamp = now + (i * 60 * 1000).toLong()
+                    val value = a0 + a1 * i / 5 + a2 * i * i / 25
+                    bgParabolaArrayHist.add(ScaledDataPoint(timestamp, value * toUnits, data.overviewData.bgParabolaScale))
+                }
+            }
+            data.overviewData.bgParabolaSeries = FixedLineGraphSeries(Array(bgParabolaArrayHist.size) { i -> bgParabolaArrayHist[i] }).also {
+                it.isDrawBackground = false
+                it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
+                it.thickness = 8
+            }
+            data.overviewData.bgParabolaPredictionSeries = FixedLineGraphSeries(Array(bgParabolaArrayPrediction.size) { i -> bgParabolaArrayPrediction[i] }).also {
+                it.setCustomPaint(Paint().also { paint ->
+                    paint.style = Paint.Style.STROKE
+                    paint.strokeWidth = 8f
+                    paint.pathEffect = DashPathEffect(floatArrayOf(6f, 6f), 0f)
+                    paint.color = rh.gac(ctx, app.aaps.core.ui.R.attr.bgParabolaColor)
+                })
+            }
+        }
         val acceIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val bgIsfArray: MutableList<ScaledDataPoint> = ArrayList()
         val ppIsfArray: MutableList<ScaledDataPoint> = ArrayList()
