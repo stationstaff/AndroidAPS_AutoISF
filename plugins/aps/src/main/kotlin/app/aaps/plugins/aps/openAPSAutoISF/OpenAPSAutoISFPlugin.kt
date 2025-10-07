@@ -81,6 +81,7 @@ import app.aaps.plugins.aps.R
 import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
 import app.aaps.plugins.aps.openAPSSMB.StepService
+import com.google.gson.Gson
 import dagger.android.HasAndroidInjector
 import org.json.JSONObject
 import io.reactivex.rxjava3.disposables.CompositeDisposable
@@ -498,10 +499,11 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val flatBGsDetected = bgQualityCheck.state == BgQualityCheck.State.FLAT
         val smbRatio = determine_varSMBratio(glucoseStatus.glucose.toInt(), target_bg, loopWantedSmb)
 
+        val gson = Gson()
         aapsLogger.debug(LTag.APS, ">>> Invoking determine_basal AutoISF <<<")
         aapsLogger.debug(LTag.APS, "Glucose status:     $glucoseStatus")
         aapsLogger.debug(LTag.APS, "Current temp:       $currentTemp")
-        aapsLogger.debug(LTag.APS, "IOB data:           ${iobArray.joinToString()}")
+        aapsLogger.debug(LTag.APS, "IOB data:           ${gson.toJson(iobArray)}")
         aapsLogger.debug(LTag.APS, "Profile:            $oapsProfile")
         aapsLogger.debug(LTag.APS, "Autosens data:      $autosensResult")
         aapsLogger.debug(LTag.APS, "Meal data:          $mealData")
