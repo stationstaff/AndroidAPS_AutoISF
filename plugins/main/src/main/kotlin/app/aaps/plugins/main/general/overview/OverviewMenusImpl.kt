@@ -170,10 +170,12 @@ class OverviewMenusImpl @Inject constructor(
             m == CharTypeData.VAR_SENS.ordinal  -> runningAutoIsf || runningDynIsf
             m == CharTypeData.IOB_TH.ordinal    -> masterAutoIsf
             m == CharTypeData.FIN_ISF.ordinal   -> masterAutoIsf
-            m == CharTypeData.ACC_ISF .ordinal  -> masterAutoIsf
+            m == CharTypeData.ACC_ISF.ordinal   -> masterAutoIsf
             m == CharTypeData.BG_ISF.ordinal    -> masterAutoIsf
             m == CharTypeData.PP_ISF.ordinal    -> masterAutoIsf
             m == CharTypeData.DUR_ISF.ordinal   -> masterAutoIsf
+            m == CharTypeData.HR.ordinal        -> !config.AAPSCLIENT
+            m == CharTypeData.STEPS.ordinal     -> !config.AAPSCLIENT
             else                                -> true
         }
         return isSelectable
