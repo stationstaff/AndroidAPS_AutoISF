@@ -309,11 +309,11 @@
     <string name="sensitivity_shortname">SENS%</string>
     <string name="variable_sensitivity_shortname">VSENS</string>
     <string name="bgParabola_shortname">BG_PARAB</string>
-    <string name="acce_isf_shortname">ACC_ISF</string>
-    <string name="bg_isf_shortname">BG_ISF</string>
-    <string name="pp_isf_shortname">PP_ISF</string>
-    <string name="dura_isf_shortname">DUR_ISF</string>
-    <string name="final_isf_shortname">FIN_ISF</string>
+    <string name="acce_isf_shortname">ACCE</string>
+    <string name="bg_isf_shortname">BG</string>
+    <string name="pp_isf_shortname">PP</string>
+    <string name="dura_isf_shortname">DURA</string>
+    <string name="final_isf_shortname">FINAL</string>
     <string name="iob_threshold_shortname">IOB_TH</string>
     <string name="graph_scale">Graph scale</string>
     <string name="graph_menu_divider_header">Graph</string>
