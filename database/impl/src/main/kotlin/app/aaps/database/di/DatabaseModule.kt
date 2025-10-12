@@ -13,6 +13,7 @@ import app.aaps.database.entities.TABLE_HEART_RATE
 import app.aaps.database.entities.TABLE_PREFERENCE_CHANGES
 import app.aaps.database.entities.TABLE_RUNNING_MODE
 import app.aaps.database.entities.TABLE_STEPS_COUNT
+import app.aaps.database.entities.TABLE_THERAPY_EVENTS
 import app.aaps.database.entities.TABLE_USER_ENTRY
 import dagger.Module
 import dagger.Provides
@@ -119,7 +120,6 @@ open class DatabaseModule {
             dropCustomIndexes(db)
         }
     }
-
     internal val migration24to25 = object : Migration(24, 25) {
         override fun migrate(db: SupportSQLiteDatabase) {
             // Creation of table TABLE_STEPS_COUNT
@@ -194,22 +194,7 @@ open class DatabaseModule {
         }
     }
 
-    internal val migration30to31 = object : Migration(30, 31) {
-        override fun migrate(db: SupportSQLiteDatabase) {
-            // Creation of table TABLE_AUTOISF_VALUES
-            db.execSQL(
-                "CREATE TABLE IF NOT EXISTS `${TABLE_AUTOISF_VALUES}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER NOT NULL, `acceIsf` DOUBLE NOT NULL, `bgIsf` DOUBLE NOT NULL, `ppIsf` DOUBLE NOT NULL, `driftIsf` DOUBLE NOT NULL, `duraIsf` DOUBLE NOT NULL, `finalIsf` DOUBLE NOT NULL, `iobThEffective` DOUBLE NOT NULL, `utcOffset` INTEGER NOT NULL, `version` INTEGER NOT NULL, `dateCreated` INTEGER NOT NULL, `isValid` INTEGER NOT NULL, `referenceId` INTEGER, `nightscoutSystemId` TEXT, `nightscoutId` TEXT, `pumpType` TEXT, `pumpSerial` TEXT, `temporaryId` INTEGER, `pumpId` INTEGER, `startId` INTEGER, `endId` INTEGER)"
-            )
-            // Creation of index for table TABLE_AUTOISF_VALUES
-            db.execSQL("CREATE INDEX IF NOT EXISTS `index_autoIsfValues_id` ON `${TABLE_AUTOISF_VALUES}` (`id`)")
-            db.execSQL("CREATE INDEX IF NOT EXISTS `index_autoIsfValues_timestamp` ON `${TABLE_AUTOISF_VALUES}` (`timestamp`)")
-
-            // Custom indexes must be dropped on migration to pass room schema checking after upgrade
-            dropCustomIndexes(db)
-        }
-    }
-
     /** List of all migrations for easy reply in tests. */
     @VisibleForTesting
-    internal val migrations = arrayOf(migration20to21, migration21to22, migration22to23, migration23to24, migration24to25, migration25to26, migration26to27, migration27to28, migration28to29, migration29to30, migration30to31)
+    internal val migrations = arrayOf(migration20to21, migration21to22, migration22to23, migration23to24, migration24to25, migration25to26, migration26to27, migration27to28, migration28to29, migration29to30)
 }
