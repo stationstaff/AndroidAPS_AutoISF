@@ -546,10 +546,10 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             rxBus.send(EventAPSCalculationFinished())
         }
         autoIsfValues.timestamp = now
-        aapsLogger.debug(LTag.APS, "autoIsfValues to write contains: $autoIsfValues")
+        //aapsLogger.debug(LTag.APS, "autoIsfValues to write contains: $autoIsfValues")
         disposable += persistenceLayer.insertOrUpdateAutoIsfValues(autoIsfValues).subscribe()
-        val autoIsfRecords = persistenceLayer.getAutoIsfValuesFromTime(now-100000L)
-        aapsLogger.debug(LTag.APS, "autoIsfValues records read contain: $autoIsfRecords")
+        //val autoIsfRecords = persistenceLayer.getAutoIsfValuesFromTime(now-100000L)
+        //aapsLogger.debug(LTag.APS, "autoIsfValues records read contain: $autoIsfRecords")
         rxBus.send(EventOpenAPSUpdateGui())
     }
 

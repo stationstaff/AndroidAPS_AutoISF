@@ -238,6 +238,7 @@ class PrepareIobAutosensGraphDataWorker(
 
             time += 5 * 60 * 1000L
         }
+
         // IOB_TH
         val iobThArray: MutableList<ScaledDataPoint> = ArrayList()
         data.overviewData.maxIobThValueFound = Double.MIN_VALUE
@@ -250,7 +251,7 @@ class PrepareIobAutosensGraphDataWorker(
                 data.overviewData.minIobThValueFound = min(data.overviewData.minIobThValueFound, iobThEffective)
             }
         }
-        aapsLogger.debug(LTag.APS, "iob_TH min/max range is ${data.overviewData.minIobThValueFound} to ${data.overviewData.maxIobThValueFound}")
+        //aapsLogger.debug(LTag.APS, "iob_TH min/max range is ${data.overviewData.minIobThValueFound} to ${data.overviewData.maxIobThValueFound}")
         data.overviewData.iobThSeries = LineGraphSeries(Array(iobThArray.size) { i -> iobThArray[i] }).also {
             it.setCustomPaint(Paint().also { paint ->
                 paint.style = Paint.Style.STROKE
@@ -454,11 +455,11 @@ class PrepareIobAutosensGraphDataWorker(
                 data.overviewData.minFinalIsfValueFound = min(data.overviewData.minFinalIsfValueFound, finalIsf)
             }
         }
-        aapsLogger.debug(LTag.APS, "acce_ISF min/max range is ${data.overviewData.minAcceIsfValueFound} to ${data.overviewData.maxAcceIsfValueFound}")
-        aapsLogger.debug(LTag.APS, "bg_ISF min/max range is ${data.overviewData.minBgIsfValueFound} to ${data.overviewData.maxBgIsfValueFound}")
-        aapsLogger.debug(LTag.APS, "pp_ISF min/max range is ${data.overviewData.minPpIsfValueFound} to ${data.overviewData.maxPpIsfValueFound}")
-        aapsLogger.debug(LTag.APS, "dura_ISF min/max range is ${data.overviewData.minDuraIsfValueFound} to ${data.overviewData.maxDuraIsfValueFound}")
-        aapsLogger.debug(LTag.APS, "final_ISF min/max range is ${data.overviewData.minFinalIsfValueFound} to ${data.overviewData.maxFinalIsfValueFound}")
+        //aapsLogger.debug(LTag.APS, "acce_ISF min/max range is ${data.overviewData.minAcceIsfValueFound} to ${data.overviewData.maxAcceIsfValueFound}")
+        //aapsLogger.debug(LTag.APS, "bg_ISF min/max range is ${data.overviewData.minBgIsfValueFound} to ${data.overviewData.maxBgIsfValueFound}")
+        //aapsLogger.debug(LTag.APS, "pp_ISF min/max range is ${data.overviewData.minPpIsfValueFound} to ${data.overviewData.maxPpIsfValueFound}")
+        //aapsLogger.debug(LTag.APS, "dura_ISF min/max range is ${data.overviewData.minDuraIsfValueFound} to ${data.overviewData.maxDuraIsfValueFound}")
+        //aapsLogger.debug(LTag.APS, "final_ISF min/max range is ${data.overviewData.minFinalIsfValueFound} to ${data.overviewData.maxFinalIsfValueFound}")
         data.overviewData.acceIsfSeries = LineGraphSeries(Array(acceIsfArray.size) { i -> acceIsfArray[i] }).also {
             it.color = rh.gac(ctx, app.aaps.core.ui.R.attr.acceIsfColor)
             it.thickness = 3

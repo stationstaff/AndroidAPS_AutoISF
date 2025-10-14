@@ -258,7 +258,7 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
             a0 = a0,
             a1 = a1,
             a2 = a2,
-        ).also { aapsLogger.debug(LTag.GLUCOSE, it.log(decimalFormatter)) }.asRounded()
+        )   //.also { aapsLogger.debug(LTag.GLUCOSE, it.log(decimalFormatter)) }.asRounded()
     }
 
     companion object {
