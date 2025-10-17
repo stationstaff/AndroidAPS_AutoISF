@@ -131,10 +131,11 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
                 else                                                                                                                        -> ProcessedDeviceStatusData.Levels.INFO
             }
             string.append("<span style=\"color:${level.toColor()}\">")
-            var activeAlgorithm = getAPSResult()?.algorithm?.name.toString()
-            if ( activeAlgorithm == "SMB" && preferences.get(BooleanKey.ApsUseDynamicSensitivity)) { activeAlgorithm = "DynISF" }
-            string.append( activeAlgorithm)
-            //if (openAPSData.clockSuggested != 0L) string.append(dateUtil.minAgo(rh, openAPSData.clockSuggested)).append(" ")
+            var activeAlgorithm = getAlgorithm
+            if (activeAlgorithm == "SMB" && preferences.get(BooleanKey.ApsUseDynamicSensitivity)) {
+                activeAlgorithm = "DynISF"
+            }
+            string.append(activeAlgorithm)
             string.append("</span>") // color
             return HtmlHelper.fromHtml(string.toString())
         }
@@ -154,6 +155,13 @@ class ProcessedDeviceStatusDataImpl @Inject constructor(
 
     override val openApsTimestamp: Long
         get() = if (openAPSData.clockSuggested != 0L) openAPSData.clockSuggested else -1
+
+    private val getAlgorithm: String
+        get() = try {
+            openAPSData.suggested!!.algorithm.name
+        } catch (e: Exception) {
+            ""
+        }
 
     override fun getAPSResult(): APSResult? =
         openAPSData.suggested?.let { apsResultProvider.get().with(it) }
