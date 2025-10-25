@@ -315,7 +315,7 @@ class HistoryBrowseActivity : TranslatedDaggerAppCompatActivity() {
             preferences.get(UnitDoubleKey.OverviewLowMark),
             preferences.get(UnitDoubleKey.OverviewHighMark)
         )
-        graphData.addBgReadings(menuChartSettings[0][OverviewMenus.CharType.PRE.ordinal], this)
+        graphData.addBgReadings(false, this)        //menuChartSettings[0][OverviewMenus.CharType.PRE.ordinal], this)
         graphData.addBucketedData()
         graphData.addTreatments(this)
         graphData.addEps(this, 0.95)
