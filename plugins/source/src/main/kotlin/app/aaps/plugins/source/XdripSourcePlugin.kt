@@ -63,10 +63,11 @@ class XdripSourcePlugin @Inject constructor(
 
     override fun advancedFilteringSupported(): Boolean = advancedFiltering
 
-    private fun detectSource(glucoseValue: GV) {
-        aapsLogger.debug(LTag.BGSOURCE, "Libre reading coming from source ${glucoseValue.sourceSensor}")
+    //private fun detectSource(glucoseValue: GV) {
+    //    aapsLogger.debug(LTag.BGSOURCE, "Libre reading coming from source ${glucoseValue.sourceSensor}")
     @VisibleForTesting
     fun detectSource(glucoseValue: GV) {
+        aapsLogger.debug(LTag.BGSOURCE, "Libre reading coming from source ${glucoseValue.sourceSensor}")
         advancedFiltering = arrayOf(
             SourceSensor.DEXCOM_NATIVE_UNKNOWN,
             SourceSensor.DEXCOM_G6_NATIVE,
@@ -90,7 +91,7 @@ class XdripSourcePlugin @Inject constructor(
         @Inject lateinit var persistenceLayer: PersistenceLayer
         @Inject lateinit var dateUtil: DateUtil
         @Inject lateinit var dataWorkerStorage: DataWorkerStorage
-        @Inject lateinit var uel: UserEntryLogger
+        //@Inject lateinit var uel: UserEntryLogger
         @Inject lateinit var preferences: Preferences
         @Inject lateinit var profileUtil: ProfileUtil
         @Inject lateinit var automationStateService: AutomationStateInterface
