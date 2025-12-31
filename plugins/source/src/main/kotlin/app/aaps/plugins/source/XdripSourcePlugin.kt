@@ -3,6 +3,7 @@ package app.aaps.plugins.source
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import androidx.annotation.VisibleForTesting
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import app.aaps.core.data.configuration.Constants
@@ -18,7 +19,6 @@ import app.aaps.core.interfaces.automation.AutomationStateInterface
 import app.aaps.core.interfaces.db.PersistenceLayer
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
-import app.aaps.core.interfaces.logging.UserEntryLogger
 import app.aaps.core.interfaces.plugin.PluginDescription
 import app.aaps.core.interfaces.profile.ProfileUtil
 import app.aaps.core.interfaces.receivers.Intents
@@ -57,19 +57,20 @@ class XdripSourcePlugin @Inject constructor(
     aapsLogger, rh
 ), BgSource, XDripSource {
 
-    private var advancedFiltering = false
+    @VisibleForTesting
+    var advancedFiltering = false
     override var sensorBatteryLevel = -1
 
     override fun advancedFilteringSupported(): Boolean = advancedFiltering
 
     private fun detectSource(glucoseValue: GV) {
         aapsLogger.debug(LTag.BGSOURCE, "Libre reading coming from source ${glucoseValue.sourceSensor}")
+    @VisibleForTesting
+    fun detectSource(glucoseValue: GV) {
         advancedFiltering = arrayOf(
             SourceSensor.DEXCOM_NATIVE_UNKNOWN,
-            SourceSensor.DEXCOM_G5_NATIVE,
             SourceSensor.DEXCOM_G6_NATIVE,
             SourceSensor.DEXCOM_G7_NATIVE,
-            SourceSensor.DEXCOM_G5_NATIVE_XDRIP,
             SourceSensor.DEXCOM_G6_NATIVE_XDRIP,
             SourceSensor.DEXCOM_G7_NATIVE_XDRIP,
             SourceSensor.DEXCOM_G7_XDRIP,
@@ -78,7 +79,6 @@ class XdripSourcePlugin @Inject constructor(
             SourceSensor.LIBRE_3,
         ).any { it == glucoseValue.sourceSensor }
     }
-
 
     // cannot be inner class because of needed injection
     class XdripSourceWorker(
@@ -111,7 +111,6 @@ class XdripSourcePlugin @Inject constructor(
 
         @SuppressLint("CheckResult")
         override suspend fun doWorkAndLog(): Result {
-            //val preferences = Preferences
             var ret = Result.success()
 
             if (!xdripSourcePlugin.isEnabled()) return Result.success(workDataOf("Result" to "Plugin not enabled"))
@@ -187,10 +186,12 @@ class XdripSourcePlugin @Inject constructor(
                 else -> newSensorStartTime
             }
             // Always update glucoseValues, but use the decided sensorStartTime
-            persistenceLayer.insertCgmSourceData(Sources.Xdrip, glucoseValues, emptyList(), finalSensorStartTime)
-                .doOnError { ret = Result.failure(workDataOf("Error" to it.toString())) }
-                .blockingGet()
-                .also { savedValues -> savedValues.all().forEach { xdripSourcePlugin.detectSource(it) } }
+            if (glucoseValues[0].timestamp > 0 && glucoseValues[0].value > 0.0)
+                persistenceLayer.insertCgmSourceData(Sources.Xdrip, glucoseValues, emptyList(), finalSensorStartTime)
+                    .doOnError { ret = Result.failure(workDataOf("Error" to it.toString())) }
+                    .blockingGet()
+                    .also { savedValues -> savedValues.all().forEach { xdripSourcePlugin.detectSource(it) } }
+            else return Result.failure(workDataOf("Error" to "missing glucoseValue"))
             xdripSourcePlugin.sensorBatteryLevel = bundle.getInt(Intents.EXTRA_SENSOR_BATTERY, -1)
             return ret
         }

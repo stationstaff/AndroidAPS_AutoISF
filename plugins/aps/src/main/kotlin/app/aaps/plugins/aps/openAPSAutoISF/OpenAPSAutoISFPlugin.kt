@@ -3,12 +3,11 @@ package app.aaps.plugins.aps.openAPSAutoISF
 import app.aaps.core.interfaces.automation.AutomationStateInterface
 import android.content.Context
 import android.content.Intent
+import androidx.collection.LongSparseArray
+import androidx.collection.forEach
 import android.icu.util.Calendar
 import android.net.Uri
-import android.util.LongSparseArray
 import androidx.core.net.toUri
-import androidx.core.util.forEach
-import androidx.core.util.size
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.PreferenceManager
@@ -276,7 +275,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             // can default to 0, e.g. for the first 2-3 loops in a virgin setup
             aapsLogger.debug("calculateVariableIsf CALC ${dateUtil.dateAndTimeAndSecondsString(timestamp)} $sensitivity")
             autoIsfCache.put(key, sensitivity)
-            if (autoIsfCache.size > 1000) autoIsfCache.clear()
+            if (autoIsfCache.size() > 1000) autoIsfCache.clear()
         }
         // this return is mandatory, otherwise it messed up the AutoISF algo.
         return Pair("OFF", null)
@@ -510,6 +509,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "MicroBolusAllowed:  $microBolusAllowed")
         aapsLogger.debug(LTag.APS, "flatBGsDetected:    $flatBGsDetected")
         aapsLogger.debug(LTag.APS, "AutoIsfMode:        $autoIsfMode")
+        //aapsLogger.debug(LTag.APS, "AutoISF extras:     ${Json.encodeToString(OapsProfile.serializer(), oapsProfile)}")
 
         determineBasalAutoISF.determine_basal(
             glucose_status = glucoseStatus,
@@ -1176,6 +1176,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsMaxBasal, dialogMessage = R.string.openapsma_max_basal_summary, title = R.string.openapsma_max_basal_title))
             addPreference(AdaptiveDoublePreference(ctx = context, doubleKey = DoubleKey.ApsSmbMaxIob, dialogMessage = R.string.openapssmb_max_iob_summary, title = R.string.openapssmb_max_iob_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsUseAutosens, title = R.string.openapsama_use_autosens))
+            //addPreference(AdaptiveUnitPreference(ctx = context, unitKey = UnitDoubleKey.ApsLgsThreshold, dialogMessage = R.string.lgs_threshold_summary, title = R.string.lgs_threshold_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsSensitivityRaisesTarget, summary = R.string.sensitivity_raises_target_summary, title = R.string.sensitivity_raises_target_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsResistanceLowersTarget, summary = R.string.resistance_lowers_target_summary, title = R.string.resistance_lowers_target_title))
             addPreference(AdaptiveSwitchPreference(ctx = context, booleanKey = BooleanKey.ApsAutoIsfHighTtRaisesSens, summary = R.string.high_temptarget_raises_sensitivity_summary, title = R.string.high_temptarget_raises_sensitivity_title))
