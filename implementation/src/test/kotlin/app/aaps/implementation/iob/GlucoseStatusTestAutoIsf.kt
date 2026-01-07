@@ -44,7 +44,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
     @Test fun calculateValidGlucoseStatusAutoIsf() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgData())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(-2.0)
         assertThat(glucoseStatus.shortAvgDelta).isWithin(0.001).of(-2.5) // -2 -2.5 -3 deltas are relative to current value
@@ -66,7 +66,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
     @Test fun calculateValidLibreGlucoseStatusAutoIsf() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateDummyBgData())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateValidLibreData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(-2.0)
         assertThat(glucoseStatus.shortAvgDelta).isWithin(0.001).of(-2.5) // -2 -2.5 -3 deltas are relative to current value
@@ -88,7 +88,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
     @Test fun calculateValidGlucoseStatusWith10mGap() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgDataWith10mGap())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
-        val glucoseStatus =  GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
+        val glucoseStatus =  GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)!!
 
         assertThat(glucoseStatus.duraISFminutes).isEqualTo(35.0) // plateau size records in minutes
         assertThat(glucoseStatus.duraISFaverage).isWithin(0.1).of(221.9) // average during above time window
@@ -126,7 +126,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
     @Test fun oneRecordShouldProduceZeroDeltas() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateOneCurrentRecordBgData())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(0.0)
         assertThat(glucoseStatus.shortAvgDelta).isWithin(0.001).of(0.0) // -2 -2.5 -3 deltas are relative to current value
@@ -143,20 +143,20 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
 
     @Test fun insufficientDataShouldReturnNull() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateInsufficientBgData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)
         assertThat(glucoseStatus).isNull()
     }
 
     @Test fun oldDataShouldReturnNull() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateOldBgData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)
         assertThat(glucoseStatus).isNull()
     }
 
     @Test fun returnOldDataIfAllowed() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateOldBgData())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(true)
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(true)
         assertThat(glucoseStatus).isNotNull()
     }
 

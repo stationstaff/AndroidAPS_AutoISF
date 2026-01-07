@@ -5,10 +5,8 @@ import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.utils.DateUtil
-import app.aaps.core.interfaces.utils.DecimalFormatter
 import app.aaps.plugins.aps.openAPS.DeltaCalculator
 import app.aaps.plugins.aps.openAPSAutoISF.extensions.asRounded
-import app.aaps.plugins.aps.openAPSAutoISF.extensions.log
 import dagger.Reusable
 import javax.inject.Inject
 import kotlin.math.pow
@@ -20,7 +18,6 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
     private val aapsLogger: AAPSLogger,
     private val iobCobCalculator: IobCobCalculator,
     private val dateUtil: DateUtil,
-    private val decimalFormatter: DecimalFormatter,
     private val deltaCalculator: DeltaCalculator,
 ) {
 
