@@ -103,7 +103,6 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
         //
         //  y = a2*x^2 + a1*x + a0      or
         //  y = a*x^2  + b*x  + c       respectively
-        @Suppress("SpellCheckingInspection")
         var duraP = 0.0
         var deltaPl = 0.0
         var deltaPn = 0.0
