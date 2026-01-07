@@ -194,7 +194,7 @@ class OpenAPSAMAPlugin @Inject constructor(
         val mealData = iobCobCalculator.getMealDataWithWaitingForCalculationFinish()
         val calendar = Calendar.getInstance()
         val lastAppStart = preferences.get(LongKey.AppStart)
-        val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart) / 60000
+        val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart).milliseconds.inWholeMinutes
 
         val oapsProfile = OapsProfile(
             dia = min(profile.dia, 3.0),
