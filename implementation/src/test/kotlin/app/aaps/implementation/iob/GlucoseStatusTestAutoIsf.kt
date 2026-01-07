@@ -191,6 +191,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
         return list
     }
 
+/* Comment out never used function
     private fun generateValidBgDataWith15mGap(): MutableList<InMemoryGlucoseValue> {
         val list: MutableList<InMemoryGlucoseValue> = ArrayList()
         list.add(InMemoryGlucoseValue(value = 214.0, timestamp = 1514766900000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
@@ -203,7 +204,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
         list.add(InMemoryGlucoseValue(value = 228.0, timestamp = 1514764800000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.UNKNOWN))
         return list
     }
-
+*/
     private fun generateDummyBgData(): MutableList<InMemoryGlucoseValue> {
         val list: MutableList<InMemoryGlucoseValue> = ArrayList()
         list.add(InMemoryGlucoseValue(value = 214.0, timestamp = 1514766900000, trendArrow = TrendArrow.FLAT, sourceSensor = SourceSensor.LIBRE_2))
