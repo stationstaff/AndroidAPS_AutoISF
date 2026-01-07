@@ -3,7 +3,6 @@ package app.aaps.plugins.aps.openAPSAMA
 import android.content.Context
 import android.content.Intent
 import android.icu.util.Calendar
-import android.net.Uri
 import androidx.core.net.toUri
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceManager
@@ -59,7 +58,6 @@ import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
 import app.aaps.plugins.aps.openAPSSMB.PhoneMovementDetector
 import app.aaps.plugins.aps.openAPSSMB.StepService
-import dagger.android.HasAndroidInjector
 import app.aaps.plugins.aps.openAPSSMB.GlucoseStatusCalculatorSMB
 import org.json.JSONObject
 import javax.inject.Inject
