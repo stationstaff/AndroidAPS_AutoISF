@@ -1,12 +1,10 @@
 package app.aaps.plugins.aps.openAPSAutoISF
 
-import app.aaps.core.interfaces.automation.AutomationStateInterface
 import android.content.Context
 import android.content.Intent
+import android.icu.util.Calendar
 import androidx.collection.LongSparseArray
 import androidx.collection.forEach
-import android.icu.util.Calendar
-import android.net.Uri
 import androidx.core.net.toUri
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
@@ -15,8 +13,8 @@ import androidx.preference.PreferenceScreen
 import androidx.preference.SwitchPreference
 import app.aaps.core.data.aps.SMBDefaults
 import app.aaps.core.data.configuration.Constants
-import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.data.model.AIV
+import app.aaps.core.data.model.GlucoseUnit
 import app.aaps.core.data.model.SC
 import app.aaps.core.data.plugin.PluginType
 import app.aaps.core.data.time.T
@@ -27,6 +25,7 @@ import app.aaps.core.interfaces.aps.CurrentTemp
 import app.aaps.core.interfaces.aps.GlucoseStatus
 import app.aaps.core.interfaces.aps.GlucoseStatusAutoIsf
 import app.aaps.core.interfaces.aps.OapsProfileAutoIsf
+import app.aaps.core.interfaces.automation.AutomationStateInterface
 import app.aaps.core.interfaces.bgQualityCheck.BgQualityCheck
 import app.aaps.core.interfaces.configuration.Config
 import app.aaps.core.interfaces.constraints.Constraint
@@ -74,17 +73,16 @@ import app.aaps.core.validators.preferences.AdaptiveIntPreference
 import app.aaps.core.validators.preferences.AdaptiveIntentPreference
 import app.aaps.core.validators.preferences.AdaptiveSwitchPreference
 import app.aaps.core.validators.preferences.AdaptiveUnitPreference
-import app.aaps.plugins.aps.openAPSSMB.PhoneMovementDetector
 import app.aaps.plugins.aps.OpenAPSFragment
 import app.aaps.plugins.aps.R
 import app.aaps.plugins.aps.events.EventOpenAPSUpdateGui
 import app.aaps.plugins.aps.events.EventResetOpenAPSGui
+import app.aaps.plugins.aps.openAPSSMB.PhoneMovementDetector
 import app.aaps.plugins.aps.openAPSSMB.StepService
 import com.google.gson.Gson
-import dagger.android.HasAndroidInjector
-import org.json.JSONObject
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.kotlin.plusAssign
+import org.json.JSONObject
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Provider
@@ -93,6 +91,7 @@ import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Singleton
 open class OpenAPSAutoISFPlugin @Inject constructor(
@@ -373,7 +372,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "invoke found step counts 5m:$recentSteps5Minutes, 10m:$recentSteps10Minutes, 15m:$recentSteps15Minutes, 30m:$recentSteps30Minutes, 60m:$recentSteps60Minutes")
         consoleError.clear()
         consoleLog.clear()
-        val hour = max(1, Calendar.getInstance().get(Calendar.HOUR_OF_DAY))
+        val calendar = Calendar.getInstance()
+        val hour = max(1, calendar.get(Calendar.HOUR_OF_DAY))
         val activityRatio = activityMonitor(isTempTarget, glucoseStatus.glucose, targetBg, hour)
         val activityLog = if (consoleLog.size==0) "Activity Monitor skipped" else consoleLog[0]
         consoleLog.clear()
@@ -386,9 +386,8 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         if (autoIsfMode) {
             variableSensitivity = autoISF(profile)
         }
-        val calendar = Calendar.getInstance()
         val lastAppStart = preferences.get(LongKey.AppStart)
-        val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart) / 60000
+        val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart).milliseconds.inWholeMinutes
         val oapsProfile = OapsProfileAutoIsf(
             dia = 0.0, // not used
             min_5m_carbimpact = 0.0, // not used
@@ -627,7 +626,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
     fun round(value: Double, digits: Int): Double {
         if (value.isNaN()) return Double.NaN
         val scale = 10.0.pow(digits.toDouble())
-        return Math.round(value * scale) / scale
+        return (value * scale).roundToInt() / scale
     }
 
     fun convert_bg(value: Double): String =
@@ -657,7 +656,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         val phoneMoved = PhoneMovementDetector.phoneMoved()
         val lastAppStart = preferences.get(LongKey.AppStart)
         //val elapsedTimeSinceLastStart = (dateUtil.now() - lastAppStart) / 60000
-        val time_since_start = (dateUtil.now() - lastAppStart) / 60000
+        val time_since_start = (dateUtil.now() - lastAppStart).milliseconds.inWholeMinutes
         val activityDetection = preferences.get(BooleanKey.ApsActivityDetection)
         val activity_scale_factor = preferences.get(DoubleKey.ActivityScaleFactor)              // profile.activity_scale_factor;
         val inactivity_scale_factor = preferences.get(DoubleKey.InactivityScaleFactor)          // profile.inactivity_scale_factor;
