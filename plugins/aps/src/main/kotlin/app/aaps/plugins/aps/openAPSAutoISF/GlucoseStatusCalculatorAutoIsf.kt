@@ -13,6 +13,7 @@ import dagger.Reusable
 import javax.inject.Inject
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 @Reusable
 class GlucoseStatusCalculatorAutoIsf @Inject constructor(
@@ -93,7 +94,7 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
                 if (then.recalculated > oldAvg * (1 - bw) && then.recalculated < oldAvg * (1 + bw)) {
                     sumBG += then.recalculated
                     oldAvg = sumBG / n  // was: (i + 1)
-                    minutesDur = ((nowDate - thenDate) / (1000.0 * 60)).roundToInt().toLong()
+                    minutesDur = ((nowDate - thenDate) / (1000.0 * 60)).roundToLong()
                 } else {
                     break
                 }
