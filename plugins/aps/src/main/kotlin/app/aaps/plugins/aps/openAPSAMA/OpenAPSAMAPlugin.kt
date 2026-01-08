@@ -65,6 +65,7 @@ import javax.inject.Provider
 import javax.inject.Singleton
 import kotlin.math.floor
 import kotlin.math.min
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 class OpenAPSAMAPlugin @Inject constructor(
