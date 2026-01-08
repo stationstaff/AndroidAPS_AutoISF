@@ -28,7 +28,7 @@ import kotlin.math.roundToInt
 @Singleton
 class DetermineBasalSMB @Inject constructor(
     private val profileUtil: ProfileUtil,
-    private val fabricPrivacy: FabricPrivacy
+    private val fabricPrivacy: FabricPrivacy,
     private val profileFunction: ProfileFunction
 ) {
 
