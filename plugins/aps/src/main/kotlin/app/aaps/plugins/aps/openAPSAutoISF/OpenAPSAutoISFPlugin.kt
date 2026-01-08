@@ -92,6 +92,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 open class OpenAPSAutoISFPlugin @Inject constructor(
