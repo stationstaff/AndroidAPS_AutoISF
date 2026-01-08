@@ -50,24 +50,24 @@ and carb ratios.
 1. Sign in to Github, or [create a new Github Account](https://github.com/signup) if you do not 
    have one yet  
 2. Create a fork of this repo in your own account by pressing the "Fork" button
-  * If the Fork button is greyed out, you probably already have a fork of AndroidAPS and Github 
-    does not allow two Forks of the same base repository
-  * If you are familiar with the git command line tool on your PC, you can use it to add this 
-    repository as a second remote, checkout this branch locally and push it to your already 
-    existing AndroidAPS repository. This will allow to reuse any existing Github repository secrets
-    already created for using the browser build functionality for the official AndroidAPS version.  
-  * If you do not know how to use the git command line tool, you can also create a clone of
-    a [forkable copy of this repo](https://github.com/T-o-b-i-a-s/AndroidAPS-autoisf-clonable), 
+  * If the "Fork" button is greyed out, you probably already have a fork of AndroidAPS, as Github 
+    does not allow two forks of the same base repository
+  * If you do not know how to use the `git` command line tool and forking this repo does not
+    work, you can create a clone of a [forkable copy of this repo](https://github.com/T-o-b-i-a-s/AndroidAPS-autoisf-clonable), 
     however you will then need to create your Github repository secrets again for this repo to be 
-    able to use the browser build
+    able to use the browser build.
+  * If you are familiar with the `git` command line tool on your PC, you can use it to add this
+    repository as a second remote, checkout this branch locally and push it to your already
+    existing AndroidAPS repository. This will allow to reuse any existing Github repository secrets
+    already created for using the browser build functionality for the official AndroidAPS version.
 3. If you have never used the browser build before or you have used the forkable copy to create 
-   your for, now follow the [Preparation steps](https://androidaps.readthedocs.io/de/latest/SettingUpAaps/BrowserBuild.html#preparation-steps) 
+   your fork, now follow the [preparation steps](https://androidaps.readthedocs.io/de/latest/SettingUpAaps/BrowserBuild.html#preparation-steps) 
    to create secrets within your forked autoisf Repository. Make sure the secrets are created within 
    the repository that contains this autoisf branch. This is a one time step to setup the browser
    build and can be skipped if you already did it earlier. 
 4. Now start the browser build using the Github Action 
    [aaps-ci](https://androidaps.readthedocs.io/de/latest/SettingUpAaps/BrowserBuild.html#aaps-ci-github-actions-to-build-the-aaps-apk). 
-   At the moment when the description above asks you to select the "master" branch, make sure to
+   At the moment when the description asks you to select the "master" branch, make sure to
    select this branch "3.4.0.0+aisf3.2.0" when setting the parameters to really create AndroidAPS
    with autoISF included.
 5. After the build is completed, you can download the APK from your Google Drive that was used when
