@@ -30,15 +30,15 @@ and carb ratios.
   from the official [Nightscout AndroidAPS](https://github.com/nightscout/AndroidAPS)
   repo as a base and adds autoISF 3.2.0 to it.
 
-## What's new in autoISF Version 3.2.0 when compared to AutoISF 3.0.3
-* Allows to plot autoISF parameters on the main screen to visualize the parabola used to determine
-  acceleration and the autoISF factors that adjust insulin sensitivity
-* Provides autoISF as an APS Algorithm plugin
-* Calibrating and smoothing for Libre sensors without xDrip+
-* Logfiles are stored in hourly slices in Documents/aapsLogs to make them accessible to tools 
-  on the phone (other apps have read access to Documents)
-* Improved support for 1-minute glucose values from Freestyle Libre 3
-* Improved output of autoISF results in autoISF Tab
+## What's new in autoISF Version 3.2.0 when compared to AutoISF 3.1.0
+* Allows to plot the fitted parabola on the main screen in the main graph
+  to visualize it and compare it against the other predictions
+* Allows to plot the autoISF factors on the main screen in the subgraphs
+  to visualize it and compare their individual contributions
+* Allows to plot the effective IobTH on the main screen in a subgraph
+  and visualize it and compare it against IOB and COB
+* In the AAPS Client allow to show the script debug from the main app
+  to understand what happend in the last loop and the reasons
 
 ## Why was autoISF not added to the current AndroidAPS "master" version 3.4.0.0?
 * With AndroidAPS 3.3, autoISF was introduced as a plugin, but can only be enabled in dev mode
