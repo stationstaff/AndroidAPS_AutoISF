@@ -43,6 +43,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
 
     @Test fun calculateValidGlucoseStatusAutoIsf() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgData())
+        whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateValidLibreData())
         val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
         assertThat(glucoseStatus.glucose).isWithin(0.001).of(214.0)
         assertThat(glucoseStatus.delta).isWithin(0.001).of(-2.0)
@@ -58,8 +59,8 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
         assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(-0.21) // glucose acceleration
         assertThat(glucoseStatus.a0).isWithin(0.1).of(214.0) //
         assertThat(glucoseStatus.a1).isWithin(0.01).of(-2.68) //
-        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.11) //
-        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(1.0) // parabola fit quality
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.1071) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.00001).of(1.0) // parabola fit quality
     }
 
     @Test fun calculateValidLibreGlucoseStatusAutoIsf() {
@@ -80,8 +81,8 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
         assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(2.62) // glucose acceleration
         assertThat(glucoseStatus.a0).isWithin(0.1).of(113.9) //
         assertThat(glucoseStatus.a1).isWithin(0.01).of(-0.18) //
-        assertThat(glucoseStatus.a2).isWithin(0.0001).of(1.31) //
-        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(0.997) // parabola fit quality
+        assertThat(glucoseStatus.a2).isWithin(0.0002).of(1.311) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.00001).of(0.99718) // parabola fit quality
     }
 
     @Test fun calculateValidGlucoseStatusWith10mGap() {
@@ -96,9 +97,9 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
         assertThat(glucoseStatus.deltaPn).isWithin(0.1).of(-2.77) // next delta
         assertThat(glucoseStatus.bgAcceleration).isWithin(0.01).of(-0.21) // glucose acceleration
         assertThat(glucoseStatus.a0).isWithin(0.1).of(214.0) //
-        assertThat(glucoseStatus.a1).isWithin(0.0001).of(-2.67) //
-        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.11) //
-        assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(1.0) // parabola fit quality
+        assertThat(glucoseStatus.a1).isWithin(0.0001).of(-2.6703) //
+        assertThat(glucoseStatus.a2).isWithin(0.0001).of(-0.1055) //
+        assertThat(glucoseStatus.corrSqu).isWithin(0.00001).of(1.0) // parabola fit quality
     }
     /*
         Not testing anymore, not valid for bucketed data
