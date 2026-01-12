@@ -193,44 +193,45 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
                         detC = sx4 * (sx2 * sy - sx * sxy) - sx3 * (sx3 * sy - sx * sx2y) + sx2 * (sx3 * sxy - sx2 * sx2y)
                     }
                     if (detH != 0.0) {
-                        val a: Double = detA / detH
-                        val b = detB / detH
-                        val c: Double = detC / detH
+                        val a: Double = detA / detH * scaleBg * (300 / scaleTime).pow(2.0)
+                        val b = detB / detH * scaleBg * (300 / scaleTime)
+                        val c: Double = detC / detH * scaleBg
                         val yMean = sy / n
                         var sSquares = 0.0
                         var sResidualSquares = 0.0
-                        var rawBg: Double
+                        //var rawBg: Double
                         for (j in 0..i) {
                             if (use1MinuteRaw) {
                                 val before = orig[j]
-                                rawBg = before.value
-                                sSquares += (rawBg / scaleBg - yMean).pow(2.0)
-                                val deltaT: Double = (before.timestamp - time0) / 1000.0 / scaleTime
+                                val scaledBg = before.value / scaleBg
+                                sSquares += (scaledBg - yMean).pow(2.0)
+                                val deltaT: Double = (before.timestamp - time0) / 1000.0 / 300
                                 val bgj: Double = a * deltaT.pow(2.0) + b * deltaT + c
-                                sResidualSquares += (rawBg / scaleBg - bgj).pow(2.0)
+                                sResidualSquares += (scaledBg - bgj/scaleBg).pow(2.0)
                             } else {                            // default case anyway
                                 val before = data[j]
-                                sSquares += (before.recalculated / scaleBg - yMean).pow(2.0)
-                                val deltaT: Double = (before.timestamp - time0) / 1000.0 / scaleTime
+                                val scaledBg = before.recalculated/ scaleBg
+                                sSquares += (scaledBg - yMean).pow(2.0)
+                                val deltaT: Double = (before.timestamp - time0) / 1000.0 / 300.0
                                 val bgj: Double = a * deltaT.pow(2.0) + b * deltaT + c
-                                sResidualSquares += (before.recalculated / scaleBg - bgj).pow(2.0)
+                                sResidualSquares += (scaledBg - bgj/scaleBg).pow(2.0)
                             }
-                            var rSqu = 0.64
-                            if (sSquares != 0.0) {
-                                rSqu = 1 - sResidualSquares / sSquares
-                            }
-                            if (rSqu >= corrMax) {
-                                corrMax = rSqu
+                        }
+                        var rSqu = 0.0
+                        if (sSquares != 0.0) {
+                            rSqu = 1 - sResidualSquares / sSquares
+                        }
+                        if (rSqu >= corrMax) {
+                            corrMax = rSqu
 
-                                duraP = -ti * scaleTime / 60.0 // remember we are going backwards in time
-                                val delta5Min = 5 * 60 / scaleTime
-                                deltaPl = -scaleBg * (a * (-delta5Min).pow(2.0) - b * delta5Min)    // 5 minute slope from last fitted bg ending at this bg, i.e. t=0
-                                deltaPn = scaleBg * (a * delta5Min.pow(2.0) + b * delta5Min)    // 5 minute slope to next fitted bg starting from this bg, i.e. t=0
-                                bgAcceleration = 2 * a * scaleBg
-                                a0 = c * scaleBg
-                                a1 = b * scaleBg
-                                a2 = a * scaleBg
-                            }
+                            duraP = -ti * scaleTime / 60.0 // remember we are going backwards in time
+                            val delta5Min = 1.0 //5 * 60 / scaleTime
+                            deltaPl = - (a * (-delta5Min).pow(2.0) - b * delta5Min)    // 5 minute slope from last fitted bg ending at this bg, i.e. t=0
+                            deltaPn =   (a * delta5Min.pow(2.0) + b * delta5Min)    // 5 minute slope to next fitted bg starting from this bg, i.e. t=0
+                            bgAcceleration = 2 * a
+                            a0 = c
+                            a1 = b
+                            a2 = a
                         }
                     }
                 }
