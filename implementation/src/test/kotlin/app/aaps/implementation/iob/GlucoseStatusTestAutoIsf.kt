@@ -150,7 +150,7 @@ class GlucoseStatusTestAutoIsf : TestBaseWithProfile() {
     @Test fun early15mGapShouldReturnNoFit() {
         whenever(autosensDataStore.getBucketedDataTableCopy()).thenReturn(generateValidBgDataWith15mGap())
         whenever(autosensDataStore.getBgReadingsDataTableCopy()).thenReturn(generateDummyLibreData())
-        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, decimalFormatter, deltaCalculator).getGlucoseStatusData(false)!!
+        val glucoseStatus = GlucoseStatusCalculatorAutoIsf(aapsLogger, iobCobCalculator, dateUtil, deltaCalculator).getGlucoseStatusData(false)!!
         assertThat(glucoseStatus.corrSqu).isWithin(0.001).of(0.0) //
     }
 

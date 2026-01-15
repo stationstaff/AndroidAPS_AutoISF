@@ -136,8 +136,8 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
             val time0 = if (use1MinuteRaw) orig[0].timestamp else data[0].timestamp
             var tiLast = 0.0
             //# for best numerical accuracy time and bg must be of same order of magnitude
-            val scaleTime = 300.0 // in 5m; values are  0, -1, -2, -3, -4, ...
-            val scaleBg = 50.0 // TIR range is now 1.4 - 3.6
+            val scaleTime = 1.0 // was 00.0 // in 5m; values are  0, -1, -2, -3, -4, ...
+            val scaleBg = 1.0   // was 50.0 // TIR range is now 1.4 - 3.6
 
             // if (data[i].recalculated > 38) {  } // not checked in past 1.5 years
             var n = 0
