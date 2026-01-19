@@ -5,6 +5,10 @@ import app.aaps.core.interfaces.iob.IobCobCalculator
 import app.aaps.core.interfaces.logging.AAPSLogger
 import app.aaps.core.interfaces.logging.LTag
 import app.aaps.core.interfaces.utils.DateUtil
+import app.aaps.core.keys.interfaces.Preferences
+import app.aaps.core.keys.BooleanKey
+import app.aaps.core.keys.IntKey
+import app.aaps.core.keys.LongKey
 import app.aaps.plugins.aps.openAPS.DeltaCalculator
 import app.aaps.plugins.aps.openAPSAutoISF.extensions.asRounded
 import dagger.Reusable
@@ -20,6 +24,8 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
     private val dateUtil: DateUtil,
     private val deltaCalculator: DeltaCalculator,
 ) {
+
+    @Inject lateinit var preferences: Preferences
 
     fun getGlucoseStatusData(allowOldData: Boolean): GlucoseStatusAutoIsf? {
         val data = iobCobCalculator.ads.getBucketedDataTableCopy() ?: return null
@@ -125,7 +131,10 @@ class GlucoseStatusCalculatorAutoIsf @Inject constructor(
         aapsLogger.debug(LTag.GLUCOSE, "BgReadings stamp=$fslDate; raw=$fslRaw; value=$fslValue; Libre=$fslReally; fitMinutes=$fslMinDur; fslSmooth=$fslSmooth; " +
             "BgBucketed value=$nowValue; recalc=$recalc; smooth=$smooth; filled=$filled; CGM=$cgm")
 
-        if (sizeRecords > 3) {
+        val calibrationDuration = preferences.get(IntKey.FslCalibrationDuration)
+        val calibrationMinutes = calibrationDuration - (dateUtil.now() - preferences.get(LongKey.FslCalibrationStart)) / 60000
+        val calibrationStopsSMB = calibrationMinutes > 0 && !preferences.get(BooleanKey.FslCalibrationEnd)
+        if (sizeRecords > 3 && !calibrationStopsSMB) {
             var sy = 0.0 // y
             var sx = 0.0 // x
             var sx2 = 0.0 // x^2
