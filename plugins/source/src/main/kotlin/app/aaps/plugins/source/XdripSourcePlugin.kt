@@ -155,7 +155,7 @@ class XdripSourcePlugin @Inject constructor(
                 preferences.put(DoubleKey.FslLastRaw, extraBgEstimate)
                 preferences.put(DoubleKey.FslLastSmooth, smooth)
                 preferences.put(LongKey.FslSmoothLastTimeRaw, thisTimeRaw)
-                var CalibrationMsg = "Calibration json: {\"offset\":$offset,\"slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
+                var CalibrationMsg = "Calibration json: {\"calibration_offset\":$offset,\"calibration_slope\":$slope,\"smoothFactor\":$factor,\"effectiveAlpha\":$effectiveAlpha"
                 CalibrationMsg += ",\"calibrationStart\":${preferences.get(LongKey.FslCalibrationStart)},\"calibrationIgnore\":${preferences.get(BooleanKey.FslCalibrationEnd)}"
                 CalibrationMsg += "}"
                 aapsLogger.debug(LTag.BGSOURCE, CalibrationMsg)
