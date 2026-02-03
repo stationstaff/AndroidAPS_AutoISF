@@ -198,6 +198,7 @@ open class OpenAPSAutoISFPlugin @Inject constructor(
         aapsLogger.debug(LTag.APS, "Loaded $count variable sensitivity values from database")
     }
 
+    // irrelevant here but gets called by other profile functions and must be TRUE; otherwise averageISF falls back to profile sens
     override fun supportsDynamicIsf() = true    //false //: Boolean = preferences.get(BooleanKey.ApsUseAutoIsf)
 
     override fun getIsfMgdl(profile: Profile, caller: String): Double? {
